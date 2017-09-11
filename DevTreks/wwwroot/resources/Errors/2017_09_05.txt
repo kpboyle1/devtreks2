@@ -1,0 +1,257 @@
+
+Log Entry : 4:46:24 PM Tuesday, September 5, 2017
+  :
+  :Point of contention: preview<br /> This contention message can be erased by clicking on any tab.<br />Application: resources<br />SubApplication: resources<br />Node Name: resourcepack<br />Id: 502<br />Service Id: 0<br />Account Id: DevTreks.Models.Account<br />Admin Message:System.Data.SqlClient.SqlException (0x80131904): Procedure or function 0GetNetworkConnections has too many arguments specified.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.CompleteAsyncExecuteReader()
+   at System.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at System.Data.SqlClient.SqlCommand.EndExecuteNonQuery(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.Helpers.SqlIOAsync.<RunProcIntAsync>d__7.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\Helpers\SqlIOAsync.cs:line 61
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Networks.<GetNetworkConnectionsAsync>d__17.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Networks.cs:line 385
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Networks.<GetNetworkAsync>d__16.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Networks.cs:line 332
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.SqlRepositories.MemberRepository.<GetNetworkByPartialNameAsync>d__9.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\DataAccess\SqlRepositories\MemberRepository.cs:line 213
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.MemberService.<GetNetworkByPartialNameAsync>d__8.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\MemberService.cs:line 67
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.ContentService.<GetNetworkAsync>d__12.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\ContentService.cs:line 68
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetNetworkAsync>d__15.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 157
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetContentModelAsync>d__14.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 141
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetViewAsync>d__12.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 60
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Controllers.CommonTreksController.<ContentAction>d__33.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Controllers\CommonTreksController.cs:line 224
+ClientConnectionId:98166670-75a7-48fb-8117-bcec5bad864c
+Error Number:8144,State:2,Class:16</ br><br />
+-------------------------------
+
+Log Entry : 4:51:26 PM Tuesday, September 5, 2017
+  :
+  :Point of contention: preview<br /> This contention message can be erased by clicking on any tab.<br />Application: resources<br />SubApplication: resources<br />Node Name: resourcepack<br />Id: 502<br />Service Id: 0<br />Account Id: DevTreks.Models.Account<br />Admin Message:System.Data.SqlClient.SqlException (0x80131904): Procedure or function 0GetNetworkConnections has too many arguments specified.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.CompleteAsyncExecuteReader()
+   at System.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at System.Data.SqlClient.SqlCommand.EndExecuteNonQuery(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.Helpers.SqlIOAsync.<RunProcIntAsync>d__7.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\Helpers\SqlIOAsync.cs:line 61
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Networks.<GetNetworkConnectionsAsync>d__17.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Networks.cs:line 385
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Networks.<GetNetworkAsync>d__16.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Networks.cs:line 332
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.SqlRepositories.MemberRepository.<GetNetworkByPartialNameAsync>d__9.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\DataAccess\SqlRepositories\MemberRepository.cs:line 213
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.MemberService.<GetNetworkByPartialNameAsync>d__8.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\MemberService.cs:line 67
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.ContentService.<GetNetworkAsync>d__12.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\ContentService.cs:line 68
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetNetworkAsync>d__15.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 157
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetContentModelAsync>d__14.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 141
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetViewAsync>d__12.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 60
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Controllers.CommonTreksController.<ContentAction>d__33.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Controllers\CommonTreksController.cs:line 224
+ClientConnectionId:2b9a481b-7b45-4be5-84b6-0af95668d15d
+Error Number:8144,State:2,Class:16</ br><br />
+-------------------------------
+
+Log Entry : 4:57:16 PM Tuesday, September 5, 2017
+  :
+  :Point of contention: preview<br /> This contention message can be erased by clicking on any tab.<br />Application: resources<br />SubApplication: resources<br />Node Name: resourcepack<br />Id: 502<br />Service Id: 0<br />Account Id: DevTreks.Models.Account<br />Admin Message:System.Data.SqlClient.SqlException (0x80131904): Procedure or function 0GetNetworkConnections has too many arguments specified.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.CompleteAsyncExecuteReader()
+   at System.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at System.Data.SqlClient.SqlCommand.EndExecuteNonQuery(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.Helpers.SqlIOAsync.<RunProcIntAsync>d__7.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\Helpers\SqlIOAsync.cs:line 62
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Networks.<GetNetworkConnectionsAsync>d__17.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Networks.cs:line 385
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Networks.<GetNetworkAsync>d__16.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Networks.cs:line 332
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.SqlRepositories.MemberRepository.<GetNetworkByPartialNameAsync>d__9.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\DataAccess\SqlRepositories\MemberRepository.cs:line 213
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.MemberService.<GetNetworkByPartialNameAsync>d__8.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\MemberService.cs:line 67
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.ContentService.<GetNetworkAsync>d__12.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\ContentService.cs:line 68
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetNetworkAsync>d__15.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 157
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetContentModelAsync>d__14.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 141
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.ContentViewModel.<SetViewAsync>d__12.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\ContentViewModel.cs:line 60
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Controllers.CommonTreksController.<ContentAction>d__33.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Controllers\CommonTreksController.cs:line 224
+ClientConnectionId:086e4881-7197-4aae-81e6-21e89bfeea34
+Error Number:8144,State:2,Class:16</ br><br />
+-------------------------------
+
+Log Entry : 5:02:06 PM Tuesday, September 5, 2017
+  :
+  :Point of contention: search<br /> This contention message can be erased by clicking on any tab.<br />Application: resources<br />SubApplication: resources<br />Node Name: resourcepack<br />Id: 0<br />Service Id: 0<br />Account Id: DevTreks.Models.Account<br />Admin Message:System.Data.SqlClient.SqlException (0x80131904): Procedure or function 0GetDefaultClubandMember has too many arguments specified.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at System.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.CompleteAsyncExecuteReader()
+   at System.Data.SqlClient.SqlCommand.InternalEndExecuteReader(IAsyncResult asyncResult, String endMethod)
+   at System.Data.SqlClient.SqlCommand.EndExecuteReaderInternal(IAsyncResult asyncResult)
+   at System.Data.SqlClient.SqlCommand.EndExecuteReader(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.Helpers.SqlIOAsync.<RunProcAsync>d__9.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\Helpers\SqlIOAsync.cs:line 100
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.AppHelpers.Members.<SetDefaultClubAndMemberAsync>d__18.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\AppHelpers\Members.cs:line 243
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Data.SqlRepositories.MemberRepository.<SetDefaultClubAndMemberAsync>d__10.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks.Data\DataAccess\SqlRepositories\MemberRepository.cs:line 224
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Services.MemberService.<SetDefaultClubAndMemberAsync>d__9.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Services\MemberService.cs:line 76
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Helpers.MemberHelper.<SetClubAndMemberAsync>d__1.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\MemberHelper.cs:line 26
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.SearchViewModel.<SetSearchModel>d__17.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\SearchViewModel.cs:line 106
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.ViewModels.SearchViewModel.<SetViewAsync>d__16.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\ViewModels\SearchViewModel.cs:line 66
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter`1.GetResult()
+   at DevTreks.Controllers.GreenTreksController.<SearchAction>d__25.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Controllers\GreenTreksController.cs:line 105
+ClientConnectionId:d037b80b-77b1-4daa-b77f-905372606f53
+Error Number:8144,State:2,Class:16</ br><br />
+-------------------------------

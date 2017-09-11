@@ -1,0 +1,229 @@
+
+Log Entry : 11:56:54 AM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:04:39 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:04:49 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:04:57 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:04:59 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:07:51 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:11:44 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:11:45 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:13:07 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:13:08 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:21:14 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:28:29 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.System.Xml.Xsl.XslTransformException: Cannot find a script or an extension object associated with namespace 'urn:displaydevpacks'.
+   at System.Xml.Xsl.Runtime.XmlQueryContext.InvokeXsltLateBoundFunction(String name, String namespaceUri, IList`1[] args)
+   at <xsl:template match="/">(XmlQueryRuntime , XPathNavigator )
+   at Root(XmlQueryRuntime )
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlSequenceWriter results)
+   at System.Xml.Xsl.XmlILCommand.Execute(Object defaultDocument, XmlResolver dataSources, XsltArgumentList argumentList, XmlWriter writer)
+   at System.Xml.Xsl.XslCompiledTransform.Transform(XmlReader input, XsltArgumentList arguments, TextWriter results)
+   at DevTreks.Helpers.HtmlHelperExtensions.<MakeHtml>d__101.MoveNext() in C:\DevTreksNetCore\DevTreks\DevTreks\Helpers\HtmlHelperExtensions.cs:line 6463Point of contention: The base xml document could not be converted to xhtml. Try rebuilding the base xml (by running new calculations). If the error persists the bad xml is probably coming from an error in a calculator or analyzer. This contention message can be erased by clicking on any tab.The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 12:58:25 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 1:34:31 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 1:35:02 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:The base xml document needed to begin running calculations has been successfully built. The calculations can now be run.<br />
+-------------------------------
+
+Log Entry : 1:36:56 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: outputprices<br />Node Name: output<br />Id: 2141223490<br />Service Id: 3449<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------
+
+Log Entry : 4:26:04 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 4:26:16 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The base xml document needed to begin running calculations has been successfully built. The calculations can now be run.<br />
+-------------------------------
+
+Log Entry : 4:28:29 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------
+
+Log Entry : 4:29:41 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------
+
+Log Entry : 4:31:20 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------
+
+Log Entry : 4:36:50 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 4:38:43 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------
+
+Log Entry : 4:46:59 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 5:00:55 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 5:01:46 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------
+
+Log Entry : 5:24:56 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 5:32:25 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 5:33:35 PM Wednesday, September 6, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:Point of contention: The following error took place:  A host for this calculator could not be found. This contention message can be erased by clicking on any tab.Point of contention: The following error took<br />
+-------------------------------

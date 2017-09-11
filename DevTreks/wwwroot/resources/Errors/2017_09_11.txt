@@ -1,0 +1,55 @@
+
+Log Entry : 8:39:28 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 8:53:52 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 8:57:52 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 10:12:05 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 10:13:55 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 10:14:37 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 10:18:09 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:An html file could not be made. Please try again.Point of contention: The stylesheet could not be found (StylesheetHelper.GetStylesheet()). This contention message can be erased by clicking on any tab.<br />
+-------------------------------
+
+Log Entry : 10:39:26 AM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147375200<br />Service Id: 1239<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------
+
+Log Entry : 4:00:25 PM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: operationprices<br />Node Name: operation<br />Id: 2091557301<br />Service Id: 3450<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 4:00:31 PM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: operationprices<br />Node Name: operation<br />Id: 2091557301<br />Service Id: 3450<br />Account Id: DevTreks.Models.Account<br />Admin Message:The base xml document needed to begin running calculations has been successfully built. The calculations can now be run.<br />
+-------------------------------
+
+Log Entry : 4:00:43 PM Monday, September 11, 2017
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: operationprices<br />Node Name: operation<br />Id: 2091557301<br />Service Id: 3450<br />Account Id: DevTreks.Models.Account<br />Admin Message:No display is needed by this step.<br />
+-------------------------------

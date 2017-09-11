@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>MathNet</RootNamespace>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if not exist &quot;$(OutDir)..\..\..\..\..\DevTreks\Extensions&quot;  mkdir &quot;$(OutDir)..\..\..\..\..\DevTreks\Extensions&quot;&#xD;&#xA;copy &quot;$(OutDir)$(TargetName).dll&quot; &quot;$(OutDir)..\..\..\..\..\DevTreks\Extensions\$(TargetName).dll&quot; /Y&#xD;&#xA;copy &quot;$(OutDir)$(TargetName).pdb&quot; &quot;$(OutDir)..\..\..\..\..\DevTreks\Extensions\$(TargetName).pbd&quot; /Y" />
+  </Target>
+
+</Project>

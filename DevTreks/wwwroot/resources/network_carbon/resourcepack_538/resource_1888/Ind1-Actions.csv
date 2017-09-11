@@ -1,0 +1,58 @@
+label,location,risks_and_indicators,01_01_2037,01_01_2027,01_01_2022,01_01_2020,01_01_2019,01_01_2018,01_01_2017,certainty1,certainty2,norm,weight
+NCA,1,Fresh Water Supply,0,0,0,0,0,0,0,0,0,none,1
+AF1A,1,6.4.2  Level of water stress: freshwater withdrawal as a proportion of available freshwater resources,1,1,1,1,2,3,3,5,3,weights,3
+AF1B,1,6.5.1  Degree of integrated water resources management implementation,2,2,2,2,2,3,3,4,2,weights,4
+NCB,1,Pollination,0,0,0,0,0,0,0,0,0,weights,1
+AF2A,1,2.4.1 Proportion of agricultural area under productive and sustainable agriculture,1,1,1,1,2,3,3,5,3,weights,3
+AF2B,1,Percent hectares supporing large and well-connected plant-pollinator networks (IPBES),2,2,2,2,2,3,3,4,2,weights,4
+NCC,1,Air quality,0,0,0,0,0,0,0,0,0,weights,1
+AF3A,1,Percent manufactoring facilities achieving air pollution levels within safety standards,1,1,1,1,2,3,3,5,3,weights,3
+AF3B,1,9.4.1 GHG emission per unit of value added,2,2,2,2,2,3,3,4,2,weights,4
+NC,1,Natural Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+PCA,1,Flood Control,0,0,0,0,0,0,0,0,0,weights,1
+AF4A,1,Percent company assets upgraded to withstand severe flood events,1,1,1,1,2,3,3,5,3,weights,3
+AF4B,1,11.b.1  Degree to which business continuity plan supports community disaster risk reduction strategies,2,2,2,2,2,3,3,4,2,weights,4
+PC,1,Physical Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+ECA,1,Employee Management,0,0,0,0,0,0,0,0,0,weights,1
+AF5A,1,5.1.1  Degree to which legal frameworks promote; enforce and monitor equality and non?discrimination on the basis of sex,1,1,1,1,2,3,3,5,3,weights,3
+AF5B,1,Percent company supply sourced with SSIFs; small-scale food producers who are female and indigenous,2,2,2,2,2,3,3,4,2,weights,4
+EC,1,Economic Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+TR,1,Social Performance Score,0,0,0,0,0,0,0,0,0,weights,1
+NCA_A,1,Fresh Water Supply,0,0,0,0,0,0,0,0,0,weights,1
+AF1A_A,1,6.4.2  Level of water stress: freshwater withdrawal as a proportion of available freshwater resources,5,5,5,4,3,3,3,5,3,weights,3
+AF1B_A,1,6.5.1  Degree of integrated water resources management implementation,5,4,4,4,3,2,2,4,2,weights,4
+NCB_A,1,Pollination,0,0,0,0,0,0,0,0,0,weights,1
+AF2A_A,1,2.4.1 Proportion of agricultural area under productive and sustainable agriculture,4,5,5,4,3,3,3,5,3,weights,3
+AF2B_A,1,Percent hectares supporing large and well-connected plant-pollinator networks (IPBES),4,4,4,4,3,2,2,4,2,weights,4
+NCC_A,1,Air quality,0,0,0,0,0,0,0,0,0,weights,1
+AF3A_A,1,Percent manufactoring facilities achieving air pollution levels within safety standards,5,5,5,4,3,3,3,5,3,weights,3
+AF3B_A,1,9.4.1 GHG emission per unit of value added,3.5,4,4,4,3,2,2,4,2,weights,4
+NC_A,1,Natural Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+PCA_A,1,Flood Control,0,0,0,0,0,0,0,0,0,weights,1
+AF4A_A,1,Percent company assets upgraded to withstand severe flood events,4.5,5,5,4,3,3,3,5,3,weights,3
+AF4B_A,1,11.b.1  Degree to which business continuity plan supports community disaster risk reduction strategies,5,4,4,4,3,2,2,4,2,weights,4
+PC_A,1,Physical Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+ECA_A,1,Employee Management,0,0,0,0,0,0,0,0,0,weights,1
+AF5A_A,1,5.1.1  Degree to which legal frameworks promote; enforce and monitor equality and non?discrimination on the basis of sex,4,5,5,4,3,3,3,5,3,weights,3
+AF5B_A,1,Percent company supply sourced with SSIFs; small-scale food producers who are female and indigenous,5,4,4,4,3,2,2,4,2,weights,4
+EC_A,1,Economic Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+TR_A,1,Social Performance Score,0,0,0,0,0,0,0,0,0,weights,1
+NCA_AA,1,Fresh Water Supply,0,0,0,0,0,0,0,0,0,none,1
+AF1A_AA,1,6.4.2  Level of water stress: freshwater withdrawal as a proportion of available freshwater resources,2,4.5,4,3.5,3,3,3,5,3,weights,3
+AF1B_AA,1,6.5.1  Degree of integrated water resources management implementation,2,3.5,3,3,2,1,2.5,4,2,weights,4
+NCB_AA,1,Pollination,0,0,0,0,0,0,0,0,0,weights,1
+AF2A_AA,1,2.4.1 Proportion of agricultural area under productive and sustainable agriculture,3.5,4.5,4,3.5,3,3,3,5,3,weights,3
+AF2B_AA,1,Percent hectares supporing large and well-connected plant-pollinator networks (IPBES),3.5,3.5,3,3,2,1,2.5,4,2,weights,4
+NCC_AA,1,Air quality,0,0,0,0,0,0,0,0,0,weights,1
+AF3A_AA,1,Percent manufactoring facilities achieving air pollution levels within safety standards,4,4.5,4,3.5,3,3,3,5,3,weights,3
+AF3B_AA,1,9.4.1 GHG emission per unit of value added,3,3.5,3,3,2,1,2.5,4,2,weights,4
+NC_AA,1,Natural Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+PCA_AA,1,Flood Control,0,0,0,0,0,0,0,0,0,weights,1
+AF4A_AA,1,Percent company assets upgraded to withstand severe flood events,3,4.5,4,3.5,3,3,3,5,3,weights,3
+AF4B_AA,1,11.b.1  Degree to which business continuity plan supports community disaster risk reduction strategies,2.5,3.5,3,3,2,1,2.5,4,2,weights,4
+PC_AA,1,Physical Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+ECA_AA,1,Employee Management,0,0,0,0,0,0,0,0,0,weights,1
+AF5A_AA,1,5.1.1  Degree to which legal frameworks promote; enforce and monitor equality and non?discrimination on the basis of sex,1,4.5,4,3.5,3,3,3,5,3,weights,3
+AF5B_AA,1,Percent company supply sourced with SSIFs; small-scale food producers who are female and indigenous,1.5,3.5,3,3,2,1,2.5,4,2,weights,4
+EC_AA,1,Economic Capital Score,0,0,0,0,0,0,0,0,0,weights,1
+TR_AA,1,Social Performance Score,0,0,0,0,0,0,0,0,0,weights,1

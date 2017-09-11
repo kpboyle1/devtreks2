@@ -1,0 +1,51 @@
+﻿@using DevTreks.Helpers
+
+@model RegisterViewModel
+
+@{
+    ViewBag.Title = AppHelper.GetResource("JOININ_JOININ");
+}
+<p><strong>@Html.ActionLink("Home", "Index", "Home", routeValues: null, htmlAttributes: new { data_role = "button", data_mini = "true", data_inline = "true" }) > @ViewData["Title"] </strong></p>
+<p><strong>Create a new DevTreks login with email and password.</strong></p>
+<h2>@ViewBag.Title.</h2>
+
+<form asp-controller="Account" asp-action="Register" method="post" class="form-horizontal" role="form">
+    <h4>Create a new account.</h4>
+    <hr />
+    @Html.ValidationSummary()
+    <p>
+        <strong>@AppHelper.GetResource("JOININ_0A")</strong>
+    </p>
+    <ul data-role="listview" data-inset="true">
+        <li data-role="list-divider">Details</li>
+
+        <li class="ui-field-contain">
+            @Html.LabelFor(m => m.Email)
+            @Html.TextBoxFor(m => m.Email)
+        </li>
+        <li class="ui-field-contain">
+            @Html.LabelFor(m => m.Password)
+            @Html.PasswordFor(m => m.Password)
+        </li>
+
+        <li class="ui-field-contain">
+            @Html.LabelFor(m => m.ConfirmPassword)
+            @Html.PasswordFor(m => m.ConfirmPassword)
+        </li>
+
+        <li class="ui-field-contain">
+            <button type="submit">Register</button>
+        </li>
+    </ul>
+
+    <p>
+        <strong>@AppHelper.GetResource("JOININ_1")</strong>
+    </p>
+    <p>
+        <strong>@AppHelper.GetResource("JOININ_2")</strong>
+    </p>
+    <p>
+        <strong>@AppHelper.GetResource("JOININ_5")</strong>
+    </p>
+
+</form>

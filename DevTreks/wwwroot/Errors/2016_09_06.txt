@@ -1,0 +1,30 @@
+
+Log Entry : 11:33:50 AM Tuesday, September 6, 2016
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147376818<br />Service Id: 3448<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 11:33:57 AM Tuesday, September 6, 2016
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147376818<br />Service Id: 3448<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 3:02:12 PM Tuesday, September 6, 2016
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147409845<br />Service Id: 3448<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 3:03:15 PM Tuesday, September 6, 2016
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147409845<br />Service Id: 3448<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 3:09:28 PM Tuesday, September 6, 2016
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147409845<br />Service Id: 3448<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
+
+Log Entry : 3:25:06 PM Tuesday, September 6, 2016
+  :
+  :Point of contention: linkedviews<br /> This contention message can be erased by clicking on any tab.<br />Application: prices<br />SubApplication: inputprices<br />Node Name: input<br />Id: 2147409845<br />Service Id: 3448<br />Account Id: DevTreks.Models.Account<br />Admin Message:The calculated results do not exist. Make sure to build a base document if one has not already been built. Please try running the calculations, or asking the owner to run the calculations. Make sure that you clicked the Get AddIn link to open the calculator or analyzer.<br />
+-------------------------------
