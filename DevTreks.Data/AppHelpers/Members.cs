@@ -622,7 +622,7 @@ namespace DevTreks.Data.AppHelpers
             int iResult = await sqlIO.RunProcIntAsync( 
                 "0UpdateAccountIsDefault", colPrams);
             sqlIO.Dispose();
-            if (iResult == 0) bHasUpdated = true;
+            if (iResult == 1) bHasUpdated = true;
             return bHasUpdated;
         }
         public async Task<string> GetTopClubToMemberJoinIdAsync(ContentURI uriToEdit,

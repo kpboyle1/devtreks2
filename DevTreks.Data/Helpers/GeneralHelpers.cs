@@ -1886,7 +1886,8 @@ namespace DevTreks.Data.Helpers
                 //get rid of tab return chars
                 string sNoTabs = utf8String.Replace(TAB_DELIMITER, string.Empty);
                 string[] flines = sNoTabs.Split(LINE_DELIMITERS);
-                lines = new List<string>(flines.ToArray());
+                //210: avoid empty last lines in file
+                lines = new List<string>(flines.Where(l => !string.IsNullOrEmpty(l)).ToArray());
             }
             return lines;
         }
@@ -1901,14 +1902,14 @@ namespace DevTreks.Data.Helpers
                     //get rid of tab return chars
                     string sNoTabs = stringlines.Replace(TAB_DELIMITER, string.Empty);
                     string[] flines = sNoTabs.Split(LINE_DELIMITERS);
-                    lines = new List<string>(flines.ToArray());
+                    lines = new List<string>(flines.Where(l => !string.IsNullOrEmpty(l)).ToArray());
                 }
                 else if (stringlines.IndexOf(TAB_DELIMITER) > 0)
                 {
                     //get rid of line return chars
                     string sNoTabs = stringlines.Replace(LINE_DELIMITER, string.Empty);
                     string[] flines = sNoTabs.Split(TAB_DELIMITERS);
-                    lines = new List<string>(flines.ToArray());
+                    lines = new List<string>(flines.Where(l => !string.IsNullOrEmpty(l)).ToArray());
                 }
             }
             return lines;

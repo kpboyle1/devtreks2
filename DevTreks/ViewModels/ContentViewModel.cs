@@ -590,7 +590,6 @@ namespace DevTreks.ViewModels
                         if (ContentURIData.URIDataManager.UseSelectedLinkedView
                             == false)
                         {
-                            //use sqlxml for updates
                             bool bIsOkToSave = await contentService.UpdateAsync(ContentURIData,
                                 colDeletes, colUpdates);
                         }

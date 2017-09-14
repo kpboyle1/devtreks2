@@ -60,7 +60,11 @@ namespace DevTreks.Data.Helpers
             int iReturnValue = 0;
             // make sure connection is open
             SqlCommand cmd = await CreateCommandAsync(procName, prams);
+            //For UPDATE, INSERT, and DELETE statements, the return value is the number of rows affected 
+            //by the command. For all other types of statements, the return value is -1.
             iReturnValue = await cmd.ExecuteNonQueryAsync();
+            //2.1.0 addition to handle: returns -1 after update (isdefaultclub)
+            iReturnValue = 1;
             return iReturnValue;
         }
  

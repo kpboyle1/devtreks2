@@ -22,8 +22,9 @@ namespace DevTreks.Extensions
     ///             can override the protected members in base classes.
     ///Author:		www.devtreks.org
     ///Date:		2015, February
-    ///References:	www.devtreks.org/helptreks/linkedviews/help/linkedview/HelpFile/148
-    ///NOTES        1. This class implements the Event-based Asynchronous Pattern.         
+    ///References:	
+    ///NOTES        1. This class implements the Event-based Asynchronous Pattern.   
+    ///             2. Alternative syncronous events were chosen instead, but retain for info.
     /// </summary>
     public class BaseCalculator
     {

@@ -259,3 +259,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/DevTreks/wwwroot/resources
+/DevTreks/Extensions/ME2.dll
+/DevTreks/Extensions/ME2.pbd
+/DevTreks/Extensions/SB1.dll
+/DevTreks/Extensions/SB1.pbd

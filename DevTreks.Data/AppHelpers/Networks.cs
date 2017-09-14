@@ -474,7 +474,7 @@ namespace DevTreks.Data.AppHelpers
                 sqlIO.MakeInParam("@NewIsDefaultAccountToNetworkId",    SqlDbType.Int, 4, newIsDefaultAccountToNetworkId)
             };
             int iResult = await sqlIO.RunProcIntAsync("0UpdateNetworkDefaultId", colPrams);
-            if (iResult == 0) bHasUpdated = true;
+            if (iResult == 1) bHasUpdated = true;
             sqlIO.Dispose();
             return bHasUpdated;
         }

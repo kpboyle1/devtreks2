@@ -59,12 +59,10 @@ namespace DevTreks.Helpers
             }
             return bIsCompleted;
         }
-        
-        public async Task<XmlReader> GetStyleSheet(ContentURI uri,
-            DataHelpers.GeneralHelpers.DOC_STATE_NUMBER displayDocType,
-            ContentURI stylesheetURI)
+        public ContentURI GetStyleSheetURI(ContentURI uri,
+            DataHelpers.GeneralHelpers.DOC_STATE_NUMBER displayDocType)
         {
-            XmlReader stylesheetReader = null;
+            ContentURI stylesheetURI = new ContentURI();
             //if stylesheetURI hasn't been set, an error message should have
             //already been generated from the AddInStylesheetHelper module
             if (displayDocType
@@ -116,6 +114,65 @@ namespace DevTreks.Helpers
                 }
 
             }
+            return stylesheetURI;
+        }
+        public async Task<XmlReader> GetStyleSheet(ContentURI uri,
+            DataHelpers.GeneralHelpers.DOC_STATE_NUMBER displayDocType,
+            ContentURI stylesheetURI)
+        {
+            XmlReader stylesheetReader = null;
+            //210 refactor: moved to GetStylesheetURI
+            ////if stylesheetURI hasn't been set, an error message should have
+            ////already been generated from the AddInStylesheetHelper module
+            //if (displayDocType
+            //    == DataHelpers.GeneralHelpers.DOC_STATE_NUMBER.firstdoc)
+            //{
+            //    stylesheetURI
+            //        = DataHelpers.LinqHelpers.GetContentURIListIsMainStylesheet(
+            //            uri.URIDataManager.Resource);
+            //}
+            //else if (displayDocType
+            //    == DataHelpers.GeneralHelpers.DOC_STATE_NUMBER.seconddoc)
+            //{
+            //    //calcdocuri
+            //    ContentURI calcDocURI =
+            //        DataHelpers.LinqHelpers.GetLinkedViewIsSelectedAddIn(uri);
+            //    if (calcDocURI != null)
+            //    {
+            //        stylesheetURI
+            //            = DataHelpers.LinqHelpers.GetContentURIListIsMainStylesheet(
+            //                calcDocURI.URIDataManager.Resource);
+            //    }
+            //}
+            //if (displayDocType
+            //    == DataHelpers.GeneralHelpers.DOC_STATE_NUMBER.thirddoc)
+            //{
+            //    if (uri.URIDataManager.UseSelectedLinkedView == true)
+            //    {
+            //        //selectedlinkedviewuri
+            //        ContentURI selectedLinkedViewURI =
+            //            DevTreks.Data.Helpers.LinqHelpers.GetLinkedViewIsSelectedView(uri);
+            //        if (selectedLinkedViewURI != null)
+            //        {
+            //            stylesheetURI
+            //                = DataHelpers.LinqHelpers.GetContentURIListIsMainStylesheet(
+            //                    selectedLinkedViewURI.URIDataManager.Resource);
+            //        }
+            //        else
+            //        {
+            //            stylesheetURI
+            //            = DataHelpers.LinqHelpers.GetContentURIListIsMainStylesheet(
+            //            uri.URIDataManager.Resource);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        stylesheetURI
+            //            = DataHelpers.LinqHelpers.GetContentURIListIsMainStylesheet(
+            //            uri.URIDataManager.Resource);
+            //    }
+
+            //}
             if (stylesheetURI != null)
             {
                 string sURIPath = string.Empty;

@@ -14,7 +14,7 @@ using DevTreksHelpers = DevTreks.Data.Helpers;
 namespace DevTreks.Extensions
 {
     /// <summary>
-    ///Purpose:		The BaseCalculator class is a base class used 
+    ///Purpose:		The Calculator1 class is a base class used 
     ///             by most standard DevTreks calculators/analyzers to hold 
     ///             base properties, such as ids and names.
     ///Author:		www.devtreks.org

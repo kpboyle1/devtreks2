@@ -6396,11 +6396,11 @@ namespace DevTreks.Helpers
                 XmlUrlResolver oResolver = new XmlUrlResolver();
                 oResolver.Credentials = CredentialCache.DefaultCredentials;
                 //create an XsltArgumentList.
-                ContentURI stylesheetURI = new ContentURI();
                 StylesheetHelper styleHelper = new StylesheetHelper();
+                //210 refactor: get stylesheeturi and extObject directly (not byref)
+                ContentURI stylesheetURI = styleHelper.GetStyleSheetURI(model, displayDocType);
                 stylesheetReader = await styleHelper.GetStyleSheet(model, displayDocType,
                     stylesheetURI);
-                //210 refactor: get object directly
                 Object extensionObject = styleHelper.GetDisplayObjects(stylesheetURI);
                 bool bHasLoadedStyle = false;
                 XsltArgumentList oXslArgList = new XsltArgumentList();

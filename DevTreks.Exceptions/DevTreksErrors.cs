@@ -308,7 +308,7 @@ namespace DevTreks.Exceptions
                     }
                 }
 			}
-			catch (Exception x)
+			catch 
 			{
 				if (recursions == 1) 
 				{

@@ -86,7 +86,7 @@ namespace DevTreks.Extensions
                     capitalServicesInput.SetCapitalService1InputProperties(calcParameters,
                         currentCalculationsElement, currentElement);
                     bHasCalculations = SetCapitalServiceCalculations(calcParameters, 
-                        calculatorType, ref capitalServicesInput, ref sErrorMessage);
+                        calculatorType, capitalServicesInput, ref sErrorMessage);
                     //serialize the new calculations back into currentCalculationsElement
                     capitalServicesInput.SetCapitalService1InputAttributes(
                         calcParameters, currentCalculationsElement,
@@ -187,7 +187,7 @@ namespace DevTreks.Extensions
    
         public static bool SetCapitalServiceCalculations(CalculatorParameters calcParameters, 
             AgBudgetingHelpers.CALCULATOR_TYPES calculatorType,
-            ref CapitalService1Input capitalServiceInput, 
+            CapitalService1Input capitalServiceInput, 
             ref string errorMsg)
         {
             bool bHasCalculations = false;

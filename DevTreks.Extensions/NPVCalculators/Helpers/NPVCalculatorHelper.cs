@@ -112,7 +112,7 @@ namespace DevTreks.Extensions
             {
                 string sURIPath = await CalculatorHelpers.GetResourceURIPath(calcParameters.ExtensionDocToCalcURI,
                     sConstantsFullDocPath);
-                calcParameters.ErrorMessage = calcParameters.ExtensionDocToCalcURI.ErrorMessage;
+                calcParameters.ErrorMessage += calcParameters.ExtensionDocToCalcURI.ErrorMessage;
                 if (string.IsNullOrEmpty(calcParameters.ErrorMessage))
                 {
                     XElement rootConstants = CalculatorHelpers.LoadXElement(calcParameters.ExtensionDocToCalcURI,

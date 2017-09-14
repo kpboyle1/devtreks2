@@ -105,12 +105,17 @@ namespace DevTreks.Data.Helpers
                         var response = await client.GetStreamAsync(dataURL).ConfigureAwait(false);
                         if (response != null)
                         {
+                            string sNoEndingBlankLines = string.Empty;
                             using (StreamReader stream =
                                new StreamReader(response, Encoding.UTF8))
                             {
                                 while (!stream.EndOfStream)
                                 {
-                                    lines.Add(stream.ReadLine());
+                                    sNoEndingBlankLines = await stream.ReadLineAsync();
+                                    if (!string.IsNullOrEmpty(sNoEndingBlankLines))
+                                    {
+                                        lines.Add(stream.ReadLine());
+                                    }
                                 }
                             }
                         }

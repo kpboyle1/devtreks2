@@ -163,7 +163,7 @@ namespace DevTreks.Extensions.StatsAnalyzers
             //the problem matrix
             w = 0;
             int t = 0;
-            double dbTotalCost = 0;
+            //double dbTotalCost = 0;
             foreach (var feasibleOC in this.WOpComps)
             {
                 //any feasible oc that is not a child of the unique oc has a cost of zero
