@@ -1,8 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Composition;
-using System.Xml.Linq;
-using System.IO;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Errors = DevTreks.Exceptions.DevTreksErrors;
@@ -27,7 +24,7 @@ namespace DevTreks.Extensions
         }
         public string CalculatorsExtensionName { get; set; }
         public CALULATOR_CONTRACT_TYPES CONTRACT_TYPE { get; set; }
-
+        
         public async Task<bool> RunCalculatorStep(
             ExtensionContentURI extDocToCalcURI, ExtensionContentURI extCalcDocURI,
             string stepNumber, IList<string> urisToAnalyze,

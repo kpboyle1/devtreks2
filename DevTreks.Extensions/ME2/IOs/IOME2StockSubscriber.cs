@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml;
+﻿using System.Threading.Tasks;
 using System.Xml.Linq;
-using System.Threading.Tasks;
-using System.IO;
-using Errors = DevTreks.Exceptions.DevTreksErrors;
 
 namespace DevTreks.Extensions
 {
@@ -17,7 +10,6 @@ namespace DevTreks.Extensions
     ///             and returns a calculated xelement to the publisher for saving.
     ///Author:		www.devtreks.org
     ///Date:		2017, September
-    ///References:	www.devtreks.org/helptreks/linkedviews/help/linkedview/HelpFile/148
     ///NOTES        1. This calculator didn't need the SetAncestorObjects event raised 
     ///             by the base class.
     ///             2. This calculator doesn't use cumulative totals, so analyzers using 

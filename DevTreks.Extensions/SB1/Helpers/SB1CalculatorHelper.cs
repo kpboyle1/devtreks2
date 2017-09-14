@@ -124,7 +124,8 @@ namespace DevTreks.Extensions
                     calcParameters.LinkedViewElement, sConstantsIdAttName);
             if (!string.IsNullOrEmpty(sConstantsId))
             {
-                string sURIPath = await CalculatorHelpers.GetResourceURIPath(calcParameters.ExtensionDocToCalcURI, 
+                string sURIPath = await CalculatorHelpers.GetResourceURIPath(
+                    calcParameters.ExtensionDocToCalcURI, 
                     sConstantsFullDocPath);
                 calcParameters.ErrorMessage += calcParameters.ExtensionDocToCalcURI.ErrorMessage;
                 if (string.IsNullOrEmpty(calcParameters.ErrorMessage))
