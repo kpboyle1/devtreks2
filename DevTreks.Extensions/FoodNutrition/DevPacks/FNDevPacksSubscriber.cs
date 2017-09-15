@@ -10,14 +10,14 @@ namespace DevTreks.Extensions
     ///Author:		www.devtreks.org
     ///Date:		2017, September
     ///NOTES        1. This class has not been debugged. It's the same pattern as the 
-    ///             devpacks in the MECalculators extension which has been debugged.
+    ///             devpacks in the NPVCalculators extension which has been debugged.
     /// </summary>
-    public class DevPacksME2Subscriber : GeneralCalculator
+    public class FNDevPacksSubscriber : GeneralCalculator
     {
         //constructors
-        public DevPacksME2Subscriber() { }
+        public FNDevPacksSubscriber() { }
         //constructor sets class (base) properties
-        public DevPacksME2Subscriber(CalculatorParameters calcParameters)
+        public FNDevPacksSubscriber(CalculatorParameters calcParameters)
             : base(calcParameters)
         {
         }
@@ -44,11 +44,11 @@ namespace DevTreks.Extensions
             //note that e.CalcParams.ExtensionDoctoCalcURI.Resources[0] holds
             //parent contenturi used to start the extension 
             //(with original doctocalc file that is used when the linkedview is needed)
-            ME2CalculatorHelper meCalculatorHelper
-                = new ME2CalculatorHelper(e.CalculatorParams);
+            FNCalculatorHelper fnCalculatorHelper
+                = new FNCalculatorHelper(e.CalculatorParams);
             //run the calculations 
-            //bHasCalculations = meCalculatorHelper
-            //    .RunME2CalculatorCalculations().Result;
+            bHasCalculations = fnCalculatorHelper
+                .RunCalculations().Result;
             //pass the bool back to the publisher
             //by setting the HasCalculations property of CustomEventArgs
             e.HasCalculations = bHasCalculations;

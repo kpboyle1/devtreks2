@@ -16,13 +16,13 @@ namespace DevTreks.Extensions
     ///             an observations document. If that needs to change in the future, 
     ///             use a switch statement conditional on the analysis type.
     /// </summary>
-    public class ARSObservationsSubscriber : ObservationBuilderAsync
+    public class HCObservationsSubscriber : ObservationBuilderAsync
     {
         //constructors
-        public ARSObservationsSubscriber() { }
+        public HCObservationsSubscriber() { }
         //constructor sets class properties
-        public ARSObservationsSubscriber(CalculatorParameters calcParameters,
-            ARSAnalyzerHelper.ANALYZER_TYPES analyzerType)
+        public HCObservationsSubscriber(CalculatorParameters calcParameters,
+            HCAnalyzerHelper.ANALYZER_TYPES analyzerType)
             : base(calcParameters)
         {
             //the base class holds the parameters
@@ -30,7 +30,7 @@ namespace DevTreks.Extensions
 
         //properties
         //analyzers specific to this extension
-        public ARSAnalyzerHelper.ANALYZER_TYPES AnalyzerType { get; set; }
+        public HCAnalyzerHelper.ANALYZER_TYPES AnalyzerType { get; set; }
 
         //methods
         //subscribe to events and build observations document
@@ -51,12 +51,12 @@ namespace DevTreks.Extensions
         {
             //pass a byref xelement from the publisher's data
             XElement obsElement = new XElement(e.CurrentElement);
-            ARSAnalyzerHelper analyzerHelper = new ARSAnalyzerHelper();
+            HCAnalyzerHelper analyzerHelper = new HCAnalyzerHelper();
             this.AnalyzerType = analyzerHelper.GetAnalyzerType(e.CalculatorParams.AnalyzerParms.AnalyzerType);
             //if observation documents need to differ depending on the analysis
             //use a switch (this.AnalyzerType) here 
             SetObservationAttributes(e.CalculatorParams,
-                ref obsElement);
+                obsElement);
             //pass the new statelement back to the publisher
             //by setting the CalculatedElement property of CustomEventArgs
             e.CurrentElement = new XElement(obsElement);
@@ -66,17 +66,17 @@ namespace DevTreks.Extensions
         {
             //pass a byref xelement from the publisher's data
             XElement obsElement = new XElement(e.CurrentElement);
-            ARSAnalyzerHelper analyzerHelper = new ARSAnalyzerHelper();
+            HCAnalyzerHelper analyzerHelper = new HCAnalyzerHelper();
             this.AnalyzerType = analyzerHelper.GetAnalyzerType(e.CalculatorParams.AnalyzerParms.AnalyzerType);
             //if observation documents need to differ depending on the analysis
             //use a switch (this.AnalyzerType) here 
             SetLinkedViewAttributes(e.CalculatorParams,
-                ref obsElement);
+                obsElement);
             //pass the new statelement back to the publisher
             //by setting the CalculatedElement property of CustomEventArgs
             e.CurrentElement = new XElement(obsElement);
         }
-        private void SetObservationAttributes(CalculatorParameters calcParameters, ref XElement obsElement)
+        private void SetObservationAttributes(CalculatorParameters calcParameters, XElement obsElement)
         {
             if (calcParameters.DocToCalcReader != null)
             {
@@ -108,7 +108,7 @@ namespace DevTreks.Extensions
                             = NeedsObservation(sAttName, sAttValue);
                         if (bNeedsObservationInList)
                         {
-                            AddObservation( ref obsElement,
+                            AddObservation(obsElement,
                                 ref calcParameters, ref sAttName, ref sAttValue);
                             if (!string.IsNullOrEmpty(sAttValue)
                                 && !string.IsNullOrEmpty(sAttName))
@@ -136,7 +136,7 @@ namespace DevTreks.Extensions
             }
             return bNeedsObservation;
         }
-        private void SetLinkedViewAttributes(CalculatorParameters calcParameters, ref XElement obsElement)
+        private void SetLinkedViewAttributes(CalculatorParameters calcParameters, XElement obsElement)
         {
             if (calcParameters.LinkedViewElement != null)
             {
@@ -175,7 +175,7 @@ namespace DevTreks.Extensions
                                 = NeedsLinkedViewAttribute(sAttName, sAttValue);
                             if (bNeedsLinkedViewAttribute)
                             {
-                                AddObservation(ref obsElement,
+                                AddObservation(obsElement,
                                     ref calcParameters, ref sAttName, ref sAttValue);
                                 if (!string.IsNullOrEmpty(sAttValue)
                                     && !string.IsNullOrEmpty(sAttName))
@@ -188,7 +188,7 @@ namespace DevTreks.Extensions
                 }
             }
         }
-        
+
         public bool NeedsLinkedViewAttribute(string attName, string attValue)
         {
             bool bNeedsLinkedViewAttribute = false;
@@ -207,7 +207,7 @@ namespace DevTreks.Extensions
             }
             return bNeedsLinkedViewAttribute;
         }
-        private void AddObservation(ref XElement obsElement, ref CalculatorParameters calcParameters,
+        private void AddObservation(XElement obsElement, ref CalculatorParameters calcParameters,
             ref string attName, ref string attValue)
         {
             string sAttributeValueList = string.Empty;

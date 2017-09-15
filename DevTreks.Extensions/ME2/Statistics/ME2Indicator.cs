@@ -1680,6 +1680,8 @@ namespace DevTreks.Extensions
         {
             bool bHasCalculation = false;
             bool bHasIndicator1 = false;
+            string sAlgo = string.Empty;
+            int iAlgo = -1;
             List<double> qTs = new List<double>();
             if (indicatorIndex == 1)
             {
@@ -1691,7 +1693,7 @@ namespace DevTreks.Extensions
                         if (HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[1].IndURL);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[1].IndURL);
                         }
                         else if (HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
@@ -1700,7 +1702,7 @@ namespace DevTreks.Extensions
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[1].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[1].IndURL);
                         }
                         else
                         {
@@ -1711,7 +1713,7 @@ namespace DevTreks.Extensions
                                 && (!string.IsNullOrEmpty(ME2Indicators[1].IndMathSubType)))
                             {
                                 //use MathType, Distribution, and QTs to set QTM, QTL, and QTU
-                                await SetAlgoPRAStats(1, qTs);
+                                iAlgo = await SetAlgoPRAStats(1, qTs);
                             }
                         }
                         bHasIndicator1 = true;
@@ -1733,7 +1735,7 @@ namespace DevTreks.Extensions
                             if (HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                                 || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                             {
-                                await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[1].IndURL);
+                                sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[1].IndURL);
                             }
                             else if (HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                                || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
@@ -1742,7 +1744,7 @@ namespace DevTreks.Extensions
                                || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                                || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                             {
-                                await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[1].IndURL);
+                                sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[1].IndURL);
                             }
                             else
                             {
@@ -1750,7 +1752,7 @@ namespace DevTreks.Extensions
                                 if (ME2Indicators[1].IndMathSubType != Constants.NONE
                                     && (!string.IsNullOrEmpty(ME2Indicators[1].IndMathSubType)))
                                 {
-                                    await SetAlgoPRAStats(1, qTs);
+                                    iAlgo = await SetAlgoPRAStats(1, qTs);
                                 }
                             }
                         }
@@ -1773,7 +1775,7 @@ namespace DevTreks.Extensions
                             || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[2].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[2].IndURL);
                         }
                         else
                         {
@@ -1781,7 +1783,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[2].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[2].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(2, qTs);
+                                iAlgo = await SetAlgoPRAStats(2, qTs);
                             }
                         }
                     }
@@ -1800,14 +1802,14 @@ namespace DevTreks.Extensions
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12))
                         {
-                            await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[3].IndURL);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[3].IndURL);
                         }
                         else if (HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[3].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[3].IndURL);
                         }
                         else
                         {
@@ -1815,7 +1817,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[3].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[3].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(3, qTs);
+                                iAlgo = await SetAlgoPRAStats(3, qTs);
                             }
                         }
                     }
@@ -1832,14 +1834,14 @@ namespace DevTreks.Extensions
                         if (HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[4].IndURL);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[4].IndURL);
                         }
                         else if (HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[4].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[4].IndURL);
                         }
                         else
                         {
@@ -1847,7 +1849,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[4].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[4].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(4, qTs);
+                                iAlgo = await SetAlgoPRAStats(4, qTs);
                             }
                         }
                     }
@@ -1864,14 +1866,14 @@ namespace DevTreks.Extensions
                         if (HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[5].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[5].IndURL);
                         }
                         else if (HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[5].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[5].IndURL);
                         }
                         else
                         {
@@ -1879,7 +1881,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[5].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[5].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(5, qTs);
+                                iAlgo = await SetAlgoPRAStats(5, qTs);
                             }
                         }
                     }
@@ -1896,12 +1898,12 @@ namespace DevTreks.Extensions
                         if (HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[6].IndURL);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[6].IndURL);
                         }
                         else if (HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[6].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[6].IndURL);
                         }
                         else
                         {
@@ -1909,7 +1911,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[6].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[6].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(6, qTs);
+                                iAlgo = await SetAlgoPRAStats(6, qTs);
                             }
                         }
                     }
@@ -1926,12 +1928,12 @@ namespace DevTreks.Extensions
                         if (HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[7].IndURL);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[7].IndURL);
                         }
                         else if (HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[7].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[7].IndURL);
                         }
                         else
                         {
@@ -1939,7 +1941,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[7].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[7].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(7, qTs);
+                                iAlgo = await SetAlgoPRAStats(7, qTs);
                             }
                         }
                     }
@@ -1956,7 +1958,7 @@ namespace DevTreks.Extensions
                         if (HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[8].IndURL);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[8].IndURL);
                         }
                         else
                         {
@@ -1964,7 +1966,7 @@ namespace DevTreks.Extensions
                             if (ME2Indicators[8].IndMathSubType != Constants.NONE
                                     && (!string.IsNullOrEmpty(ME2Indicators[8].IndMathSubType)))
                             {
-                                await SetAlgoPRAStats(8, qTs);
+                                iAlgo = await SetAlgoPRAStats(8, qTs);
                             }
                         }
                     }
@@ -1982,7 +1984,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[9].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[9].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(9, qTs);
+                            iAlgo = await SetAlgoPRAStats(9, qTs);
                         }
                     }
                 }
@@ -1999,7 +2001,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[10].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[10].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(10, qTs);
+                            iAlgo = await SetAlgoPRAStats(10, qTs);
                         }
                     }
                 }
@@ -2016,7 +2018,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[11].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[11].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(11, qTs);
+                            iAlgo = await SetAlgoPRAStats(11, qTs);
                         }
                     }
                 }
@@ -2033,7 +2035,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[12].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[12].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(12, qTs);
+                            iAlgo = await SetAlgoPRAStats(12, qTs);
                         }
                     }
                 }
@@ -2050,7 +2052,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[13].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[13].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(13, qTs);
+                            iAlgo = await SetAlgoPRAStats(13, qTs);
                         }
                     }
                 }
@@ -2067,7 +2069,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[14].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[14].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(14, qTs);
+                            iAlgo = await SetAlgoPRAStats(14, qTs);
                         }
                     }
                 }
@@ -2084,7 +2086,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[15].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[15].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(15, qTs);
+                            iAlgo = await SetAlgoPRAStats(15, qTs);
                         }
                     }
                 }
@@ -2101,7 +2103,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[16].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[16].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(16, qTs);
+                            iAlgo = await SetAlgoPRAStats(16, qTs);
                         }
                     }
                 }
@@ -2118,7 +2120,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[17].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[17].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(17, qTs);
+                            iAlgo = await SetAlgoPRAStats(17, qTs);
                         }
                     }
                 }
@@ -2135,7 +2137,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[18].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[18].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(18, qTs);
+                            iAlgo = await SetAlgoPRAStats(18, qTs);
                         }
                     }
                 }
@@ -2152,7 +2154,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[19].IndMathSubType != Constants.NONE
                             && (!string.IsNullOrEmpty(ME2Indicators[19].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(19, qTs);
+                            iAlgo = await SetAlgoPRAStats(19, qTs);
                         }
                     }
                 }
@@ -2169,7 +2171,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[20].IndMathSubType != Constants.NONE
                                 && (!string.IsNullOrEmpty(ME2Indicators[20].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(19, qTs);
+                            iAlgo = await SetAlgoPRAStats(19, qTs);
                         }
                     }
                 }
@@ -2189,7 +2191,7 @@ namespace DevTreks.Extensions
                     indicatorIndex= 0;
                     if (HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9))
                     {
-                        await ProcessAlgosAsync3(indicatorIndex, DataURL);
+                        sAlgo = await ProcessAlgosAsync3(indicatorIndex, DataURL);
                     }
                     else if (HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10)
@@ -2199,7 +2201,7 @@ namespace DevTreks.Extensions
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                     {
-                        await ProcessAlgosAsync4(indicatorIndex, DataURL);
+                        sAlgo = await ProcessAlgosAsync4(indicatorIndex, DataURL);
                     }
                     else
                     {
@@ -2207,7 +2209,7 @@ namespace DevTreks.Extensions
                         if (ME2Indicators[0].IndMathSubType != Constants.NONE
                             && (!string.IsNullOrEmpty(ME2Indicators[0].IndMathSubType)))
                         {
-                            await SetAlgoPRAStats(0, qTs);
+                            iAlgo = await SetAlgoPRAStats(0, qTs);
                         }
                     }
                 }
@@ -2496,7 +2498,7 @@ namespace DevTreks.Extensions
                                     {
                                         //this generates descriptive stats based on data in data url
                                         //not based on distributions
-                                        algoIndicator = SetIndicatorData(ds.Key, ds.Value);
+                                        algoIndicator = await SetIndicatorData(ds.Key, ds.Value);
                                     }
                                     if (algoIndicator != 0)
                                     {
@@ -2922,7 +2924,7 @@ namespace DevTreks.Extensions
                     {
                         //this generates descriptive stats based on data in data url
                         //not based on distributions
-                        iIndicatorIndex = SetIndicatorData(iKey, ds.Value);
+                        iIndicatorIndex = await SetIndicatorData(iKey, ds.Value);
                     }
                     if (iIndicatorIndex != 0)
                     {
@@ -5341,13 +5343,13 @@ namespace DevTreks.Extensions
                         {
                             //this will handle algo2, 3, and 4 when they have data in a dataurl
                             //start with the descriptive stats for each column
-                            SetIndicatorData(ds.Key, ds.Value);
+                            int iAlgo = await SetIndicatorData(ds.Key, ds.Value);
                             //joint data means joint calcs must be run
                             //note that certain algos also mean the joint calcs must be run
                             if (string.IsNullOrEmpty(ME2Indicators[0].IndURL)
                                 || (ME2Indicators[0].IndURL == Constants.NONE))
                             {
-                                SetSeparateRanges(ds.Key);
+                                bool bHasSet = await SetSeparateRanges(ds.Key);
                             }
                         }
                     }
@@ -7036,7 +7038,7 @@ namespace DevTreks.Extensions
             {
                 //mathterm = colname = I1.Q1.housesize
                 //GetMathTerm = I1.Q1
-                if (mathterm.Contains(GetMathTerm(rowNumber, colNumber)))
+                if (mathterm.Contains(GetMathTerm(rowNumber, colNumber).Result))
                 {
                     return true;
                 }
@@ -7048,13 +7050,13 @@ namespace DevTreks.Extensions
             bool bHasTerm = false;
             //mathterm = colname = I1.Q1.housesize
             //GetMathTerm = I1.Q1
-            if (mathTerm.Contains(GetMathTerm(rowNumber, colNumber)))
+            if (mathTerm.Contains(GetMathTerm(rowNumber, colNumber).Result))
             {
                 return true;
             }
             return bHasTerm;
         }
-        private static string GetMathTerm(int rowNumber, int colNumber)
+        private static async Task<string> GetMathTerm(int rowNumber, int colNumber)
         {
             string sMathTerm = string.Empty;
             int iMTIndex = (16 * rowNumber) + colNumber;
@@ -7065,9 +7067,10 @@ namespace DevTreks.Extensions
             }
             return sMathTerm;
         }
-        public int SetIndicatorData(int index, List<List<double>> data)
+        public async Task<int> SetIndicatorData(int index, List<List<double>> data)
         {
             int iAlgoIndicator= -1;
+            int iAlgo = -1;
             if (data.Count > 0)
             {
                 //get colcount from first row
@@ -7192,7 +7195,7 @@ namespace DevTreks.Extensions
                     && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[0].IndMathExpression))
                 {
                     ME2Indicators[0].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[0].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 0, this);
@@ -7210,7 +7213,7 @@ namespace DevTreks.Extensions
                     && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[1].IndMathExpression))
                 {
                     ME2Indicators[1].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     //ME2Indicators[1].IndMathResult = GetObservedMathResult(index, ME2Indicators[1].IndMathSubType, SB1Type1, 
                     //    ME2Indicators[1].IndMathType, qTs, qTs.Average());
                     ME2Indicators[1].IndMathResult += sb.ToString();
@@ -7231,7 +7234,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[2].IndMathExpression))
                 {
                     ME2Indicators[2].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[2].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 2, this);
@@ -7249,7 +7252,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[3].IndMathExpression))
                 {
                     ME2Indicators[3].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[3].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 3, this);
@@ -7267,7 +7270,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[4].IndMathExpression))
                 {
                     ME2Indicators[4].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[4].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 4, this);
@@ -7285,7 +7288,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[5].IndMathExpression))
                 {
                     ME2Indicators[5].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[5].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 5, this);
@@ -7303,7 +7306,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[6].IndMathExpression))
                 {
                     ME2Indicators[6].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[6].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 6, this);
@@ -7321,7 +7324,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[7].IndMathExpression))
                 {
                     ME2Indicators[7].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[7].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 7, this);
@@ -7339,7 +7342,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[8].IndMathExpression))
                 {
                     ME2Indicators[8].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[8].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 8, this);
@@ -7357,7 +7360,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[9].IndMathExpression))
                 {
                     ME2Indicators[9].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[9].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 9, this);
@@ -7375,7 +7378,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[10].IndMathExpression))
                 {
                     ME2Indicators[10].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[10].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 10, this);
@@ -7393,7 +7396,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[11].IndMathExpression))
                 {
                     ME2Indicators[11].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[11].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 11, this);
@@ -7411,7 +7414,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[12].IndMathExpression))
                 {
                     ME2Indicators[12].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[12].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 12, this);
@@ -7429,7 +7432,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[13].IndMathExpression))
                 {
                     ME2Indicators[13].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[13].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 13, this);
@@ -7447,7 +7450,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[14].IndMathExpression))
                 {
                     ME2Indicators[14].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[14].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 14, this);
@@ -7465,7 +7468,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[15].IndMathExpression))
                 {
                     ME2Indicators[15].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[15].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 15, this);
@@ -7483,7 +7486,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[16].IndMathExpression))
                 {
                     ME2Indicators[16].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[16].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 16, this);
@@ -7501,7 +7504,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[17].IndMathExpression))
                 {
                     ME2Indicators[17].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[17].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 17, this);
@@ -7519,7 +7522,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[18].IndMathExpression))
                 {
                     ME2Indicators[18].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[18].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 18, this);
@@ -7537,7 +7540,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[19].IndMathExpression))
                 {
                     ME2Indicators[19].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[19].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 19, this);
@@ -7555,7 +7558,7 @@ namespace DevTreks.Extensions
                      && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[20].IndMathExpression))
                 {
                     ME2Indicators[20].IndTAmount = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(index, qTs.ToList());
+                    iAlgo = await SetAlgoPRAStats(index, qTs.ToList());
                     ME2Indicators[20].IndMathResult += sb.ToString();
                     iAlgoIndicator = index;
                     iSiblingIndicator = ME2Statistics.ME2Algos.GetSiblingIndicatorIndex(index, 20, this);
@@ -7854,121 +7857,125 @@ namespace DevTreks.Extensions
                     ME2Indicators[20].Ind5Amount = Math.Round(q5s.Average(), 4);
             }
         }
-        public void SetSeparateRanges(int index)
+        public async Task<bool> SetSeparateRanges(int index)
         {
+            bool bHasSet = false;
             List<double> qTs = new List<double>();
+            int iAlgo = -1;
             if (index == 0
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[0].IndMathExpression))
             {
                 //regular high and low estimation
-                SetAlgoPRAStats(0, qTs);
+                iAlgo = await SetAlgoPRAStats(0, qTs);
                 //SetTotalRange1();
             }
             else if (index == 1
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[1].IndMathExpression))
             {
                 //regular high and low estimation
-                SetAlgoPRAStats(1, qTs);;
+                iAlgo = await SetAlgoPRAStats(1, qTs);;
             }
             else if (index == 2
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[2].IndMathExpression))
             {
-                SetAlgoPRAStats(2, qTs);
+                iAlgo = await SetAlgoPRAStats(2, qTs);
             }
             else if (index == 3
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[3].IndMathExpression))
             {
-                SetAlgoPRAStats(3, qTs);
+                iAlgo = await SetAlgoPRAStats(3, qTs);
             }
             else if (index == 4
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[4].IndMathExpression))
             {
-                SetAlgoPRAStats(4, qTs);
+                iAlgo = await SetAlgoPRAStats(4, qTs);
             }
             else if (index == 5
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[5].IndMathExpression))
             {
-                SetAlgoPRAStats(5, qTs);
+                iAlgo = await SetAlgoPRAStats(5, qTs);
             }
             else if (index == 6
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[6].IndMathExpression))
             {
-                SetAlgoPRAStats(6, qTs);
+                iAlgo = await SetAlgoPRAStats(6, qTs);
             }
             else if (index == 7
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[7].IndMathExpression))
             {
-                SetAlgoPRAStats(7, qTs);
+                iAlgo = await SetAlgoPRAStats(7, qTs);
             }
             else if (index == 8
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[8].IndMathExpression))
             {
-                SetAlgoPRAStats(8, qTs);
+                iAlgo = await SetAlgoPRAStats(8, qTs);
             }
             else if (index == 9
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[9].IndMathExpression))
             {
-                SetAlgoPRAStats(9, qTs);
+                iAlgo = await SetAlgoPRAStats(9, qTs);
             }
             else if (index == 10
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[10].IndMathExpression))
             {
-                SetAlgoPRAStats(10, qTs);
+                iAlgo = await SetAlgoPRAStats(10, qTs);
             }
             else if (index == 11
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[11].IndMathExpression))
             {
-                SetAlgoPRAStats(11, qTs);
+                iAlgo = await SetAlgoPRAStats(11, qTs);
             }
             else if (index == 12
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[12].IndMathExpression))
             {
-                SetAlgoPRAStats(12, qTs);
+                iAlgo = await SetAlgoPRAStats(12, qTs);
             }
             else if (index == 13
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[13].IndMathExpression))
             {
-                SetAlgoPRAStats(13, qTs);
+                iAlgo = await SetAlgoPRAStats(13, qTs);
             }
             else if (index == 14
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[14].IndMathExpression))
             {
-                SetAlgoPRAStats(14, qTs);
+                iAlgo = await SetAlgoPRAStats(14, qTs);
             }
             else if (index == 15
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[15].IndMathExpression))
             {
-                SetAlgoPRAStats(15, qTs);
+                iAlgo = await SetAlgoPRAStats(15, qTs);
             }
             else if (index == 16
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[16].IndMathExpression))
             {
-                SetAlgoPRAStats(16, qTs);
+                iAlgo = await SetAlgoPRAStats(16, qTs);
             }
             else if (index == 17
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[17].IndMathExpression))
             {
-                SetAlgoPRAStats(17, qTs);
+                iAlgo = await SetAlgoPRAStats(17, qTs);
             }
             else if (index == 18
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[18].IndMathExpression))
             {
-                SetAlgoPRAStats(18, qTs);
+                iAlgo = await SetAlgoPRAStats(18, qTs);
             }
             else if (index == 19
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[19].IndMathExpression))
             {
-                SetAlgoPRAStats(19, qTs);
+                iAlgo = await SetAlgoPRAStats(19, qTs);
             }
             else if (index == 20
                  && ME2Statistics.ME2Algos.HasMathExpression(ME2Indicators[20].IndMathExpression))
             {
-                SetAlgoPRAStats(20, qTs);
+                iAlgo = await SetAlgoPRAStats(20, qTs);
             }
             else
             {
                 //ignore the row
             }
+            bHasSet = true;
+            return bHasSet;
         }
 
         public async Task<int> SetAlgoPRAStats(int index, List<double> qTs, double[] data = null)

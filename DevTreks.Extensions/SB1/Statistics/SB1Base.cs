@@ -13,7 +13,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Serialize and deserialize a Stock object with up to 20 indicators
     ///Author:		www.devtreks.org
-    ///Date:		2017, July
+    ///Date:		2017, September
     ///NOTES        1. These support unit input and output indicators. The Q must be set in 
     ///             the Op/Comp/Outcome.
     /// </summary>             
@@ -13831,7 +13831,7 @@ namespace DevTreks.Extensions
                         }
                     }
                     //process remaining indicators
-                    CalculateIndicators(indicatorNumber);
+                    bHasCalculations = await CalculateIndicators(indicatorNumber);
                     bHasCalculations = true;
                 }
                 else
@@ -14357,9 +14357,11 @@ namespace DevTreks.Extensions
             }
             return bHasMathType;
         }
-        public async void CalculateIndicators(int indicatorIndex)
+        public async Task<bool> CalculateIndicators(int indicatorIndex)
         {
+            bool bHasCalculations = false;
             bool bHasIndicator1 = false;
+            string sAlgo = string.Empty;
             List<double> qTs = new List<double>();
             if (indicatorIndex == 1)
             {
@@ -14372,7 +14374,7 @@ namespace DevTreks.Extensions
                         if (HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            ProcessAlgosAsync3(indicatorIndex, this.SB1URL1);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL1);
                         }
                         else if (HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                             || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
@@ -14381,7 +14383,7 @@ namespace DevTreks.Extensions
                             || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL1);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL1);
                         }
                         else
                         {
@@ -14392,7 +14394,7 @@ namespace DevTreks.Extensions
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType1)))
                             {
                                 //use MathType, Distribution, and QTs to set QTM, QTL, and QTU
-                                SetAlgoPRAStats(this.SB1Label1, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label1, qTs);
                             }
                         }
                         bHasIndicator1 = true;
@@ -14415,7 +14417,7 @@ namespace DevTreks.Extensions
                             if (HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                                 || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                             {
-                                ProcessAlgosAsync3(indicatorIndex, this.SB1URL1);
+                                sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL1);
                             }
                             else if (HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                                || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
@@ -14424,7 +14426,7 @@ namespace DevTreks.Extensions
                                || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                                || HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                             {
-                                ProcessAlgosAsync4(indicatorIndex, this.SB1URL1);
+                                sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL1);
                             }
                             else
                             {
@@ -14432,7 +14434,7 @@ namespace DevTreks.Extensions
                                 if (this.SB1MathSubType1 != Constants.NONE
                                     && (!string.IsNullOrEmpty(this.SB1MathSubType1)))
                                 {
-                                    SetAlgoPRAStats(this.SB1Label1, qTs);
+                                    sAlgo = await SetAlgoPRAStats(this.SB1Label1, qTs);
                                 }
                             }
                         }
@@ -14456,7 +14458,7 @@ namespace DevTreks.Extensions
                             || HasMathType(this.SB1Label2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(this.SB1Label2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL2);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL2);
                         }
                         else
                         {
@@ -14464,7 +14466,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType2 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType2)))
                             {
-                                SetAlgoPRAStats(this.SB1Label2, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label2, qTs);
                             }
                         }
                     }
@@ -14484,14 +14486,14 @@ namespace DevTreks.Extensions
                             || HasMathType(this.SB1Label3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                             || HasMathType(this.SB1Label3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12))
                         {
-                            ProcessAlgosAsync3(indicatorIndex, this.SB1URL3);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL3);
                         }
                         else if (HasMathType(this.SB1Label3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                             || HasMathType(this.SB1Label3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(this.SB1Label3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(this.SB1Label3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL3);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL3);
                         }
                         else
                         {
@@ -14499,7 +14501,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType3 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType3)))
                             {
-                                SetAlgoPRAStats(this.SB1Label3, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label3, qTs);
                             }
                         }
                     }
@@ -14517,14 +14519,14 @@ namespace DevTreks.Extensions
                         if (HasMathType(this.SB1Label4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(this.SB1Label4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            ProcessAlgosAsync3(indicatorIndex, this.SB1URL4);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL4);
                         }
                         else if (HasMathType(this.SB1Label4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(this.SB1Label4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                             || HasMathType(this.SB1Label4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(this.SB1Label4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL4);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL4);
                         }
                         else
                         {
@@ -14532,7 +14534,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType4 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType4)))
                             {
-                                SetAlgoPRAStats(this.SB1Label4, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label4, qTs);
                             }
                         }
                     }
@@ -14550,14 +14552,14 @@ namespace DevTreks.Extensions
                         if (HasMathType(this.SB1Label5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(this.SB1Label5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL5);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL5);
                         }
                         else if (HasMathType(this.SB1Label5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                            || HasMathType(this.SB1Label5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                            || HasMathType(this.SB1Label5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                            || HasMathType(this.SB1Label5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL5);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL5);
                         }
                         else
                         {
@@ -14565,7 +14567,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType5 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType5)))
                             {
-                                SetAlgoPRAStats(this.SB1Label5, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label5, qTs);
                             }
                         }
                     }
@@ -14583,12 +14585,12 @@ namespace DevTreks.Extensions
                         if (HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            ProcessAlgosAsync3(indicatorIndex, this.SB1URL6);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL6);
                         }
                         else if (HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                            || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL6);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL6);
                         }
                         else
                         {
@@ -14596,7 +14598,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType6 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType6)))
                             {
-                                SetAlgoPRAStats(this.SB1Label6, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label6, qTs);
                             }
                         }
                     }
@@ -14614,12 +14616,12 @@ namespace DevTreks.Extensions
                         if (HasMathType(this.SB1Label7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
                             || HasMathType(this.SB1Label7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
                         {
-                            ProcessAlgosAsync3(indicatorIndex, this.SB1URL7);
+                            sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL7);
                         }
                         else if (HasMathType(this.SB1Label7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                            || HasMathType(this.SB1Label7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL7);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL7);
                         }
                         else
                         {
@@ -14627,7 +14629,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType7 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType7)))
                             {
-                                SetAlgoPRAStats(this.SB1Label7, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label7, qTs);
                             }
                         }
                     }
@@ -14645,7 +14647,7 @@ namespace DevTreks.Extensions
                         if (HasMathType(this.SB1Label8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                            || HasMathType(this.SB1Label8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                         {
-                            ProcessAlgosAsync4(indicatorIndex, this.SB1URL8);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.SB1URL8);
                         }
                         else
                         {
@@ -14653,7 +14655,7 @@ namespace DevTreks.Extensions
                             if (this.SB1MathSubType8 != Constants.NONE
                                     && (!string.IsNullOrEmpty(this.SB1MathSubType8)))
                             {
-                                SetAlgoPRAStats(this.SB1Label8, qTs);
+                                sAlgo = await SetAlgoPRAStats(this.SB1Label8, qTs);
                             }
                         }
                     }
@@ -14672,7 +14674,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType9 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType9)))
                         {
-                            SetAlgoPRAStats(this.SB1Label9, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label9, qTs);
                         }
                     }
                 }
@@ -14690,7 +14692,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType10 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType10)))
                         {
-                            SetAlgoPRAStats(this.SB1Label10, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label10, qTs);
                         }
                     }
                 }
@@ -14708,7 +14710,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType11 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType11)))
                         {
-                            SetAlgoPRAStats(this.SB1Label11, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label11, qTs);
                         }
                     }
                 }
@@ -14726,7 +14728,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType12 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType12)))
                         {
-                            SetAlgoPRAStats(this.SB1Label12, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label12, qTs);
                         }
                     }
                 }
@@ -14744,7 +14746,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType13 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType13)))
                         {
-                            SetAlgoPRAStats(this.SB1Label13, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label13, qTs);
                         }
                     }
                 }
@@ -14762,7 +14764,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType14 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType14)))
                         {
-                            SetAlgoPRAStats(this.SB1Label14, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label14, qTs);
                         }
                     }
                 }
@@ -14780,7 +14782,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType15 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType15)))
                         {
-                            SetAlgoPRAStats(this.SB1Label15, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label15, qTs);
                         }
                     }
                 }
@@ -14798,7 +14800,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType16 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType16)))
                         {
-                            SetAlgoPRAStats(this.SB1Label16, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label16, qTs);
                         }
                     }
                 }
@@ -14816,7 +14818,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType17 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType17)))
                         {
-                            SetAlgoPRAStats(this.SB1Label17, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label17, qTs);
                         }
                     }
                 }
@@ -14834,7 +14836,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType18 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType18)))
                         {
-                            SetAlgoPRAStats(this.SB1Label18, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label18, qTs);
                         }
                     }
                 }
@@ -14852,7 +14854,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType19 != Constants.NONE
                             && (!string.IsNullOrEmpty(this.SB1MathSubType19)))
                         {
-                            SetAlgoPRAStats(this.SB1Label19, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label19, qTs);
                         }
                     }
                 }
@@ -14870,7 +14872,7 @@ namespace DevTreks.Extensions
                         if (this.SB1MathSubType20 != Constants.NONE
                                 && (!string.IsNullOrEmpty(this.SB1MathSubType20)))
                         {
-                            SetAlgoPRAStats(this.SB1Label20, qTs);
+                            sAlgo = await SetAlgoPRAStats(this.SB1Label20, qTs);
                         }
                     }
                 }
@@ -14891,7 +14893,7 @@ namespace DevTreks.Extensions
                     indicatorIndex = 0;
                     if (HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9))
                     {
-                        ProcessAlgosAsync3(indicatorIndex, this.DataURL);
+                        sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.DataURL);
                     }
                     else if (HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
                         || HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10)
@@ -14901,7 +14903,7 @@ namespace DevTreks.Extensions
                         || HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                         || HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                     {
-                        ProcessAlgosAsync4(indicatorIndex, this.DataURL);
+                        sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.DataURL);
                     }
                     else
                     {
@@ -14909,11 +14911,13 @@ namespace DevTreks.Extensions
                         if (this.SB1ScoreMathSubType != Constants.NONE
                             && (!string.IsNullOrEmpty(this.SB1ScoreMathSubType)))
                         {
-                            SetAlgoPRAStats(_score, qTs);
+                            sAlgo = await SetAlgoPRAStats(_score, qTs);
                         }
                     }
                 }
             }
+            bHasCalculations = true;
+            return bHasCalculations;
         }
         private bool HasIndicatorData(int indicatorIndex)
         {
@@ -15197,7 +15201,7 @@ namespace DevTreks.Extensions
                                     {
                                         //this generates descriptive stats based on data in data url
                                         //not based on distributions
-                                        algoIndicator = SetIndicatorData(ds.Key, ds.Value);
+                                        algoIndicator = await SetIndicatorData(ds.Key, ds.Value);
                                     }
                                     if (!string.IsNullOrEmpty(algoIndicator))
                                     {
@@ -15264,7 +15268,7 @@ namespace DevTreks.Extensions
             string sError = string.Empty;
             //see if there is a corresponding dataset
             //this requires a 1 to 1 relation between dataurls and jointdataurls
-            IDictionary<string, List<List<double>>> data = GetDataSet1(dataIndex);
+            IDictionary<string, List<List<double>>> data = await GetDataSet1(dataIndex);
             //has to replace the algo code above
             if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
                 || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
@@ -15643,7 +15647,7 @@ namespace DevTreks.Extensions
                     {
                         //this generates descriptive stats based on data in data url
                         //not based on distributions
-                        algoIndicator = SetIndicatorData(ds.Key, ds.Value);
+                        algoIndicator = await SetIndicatorData(ds.Key, ds.Value);
                     }
                     if (!string.IsNullOrEmpty(algoIndicator))
                     {
@@ -17771,7 +17775,7 @@ namespace DevTreks.Extensions
             }
             return dataSets;
         }
-        private IDictionary<string, List<List<double>>> GetDataSet1(int dataIndex)
+        private async Task<IDictionary<string, List<List<double>>>> GetDataSet1(int dataIndex)
         {
             //ok to return data with 0 members
             IDictionary<string, List<List<double>>> data = new Dictionary<string, List<List<double>>>();
@@ -17785,9 +17789,9 @@ namespace DevTreks.Extensions
                     || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
                     || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
                 {
-                    dlines = GetDataLines(dataURLs[dataIndex]);
-                    //async returns too fast - the xml is written before calcs have been added
-                    //dlines = await GetDataLinesAsync(dataURLs[dataIndex]);
+                    //dlines = GetDataLines(dataURLs[dataIndex]);
+                    //210: async used
+                    dlines = await GetDataLinesAsync(dataURLs[dataIndex]);
                 }
                 if (dlines != null)
                 {
@@ -17803,13 +17807,13 @@ namespace DevTreks.Extensions
                         {
                             //this will handle algo2, 3, and 4 when they have data in a dataurl
                             //start with the descriptive stats for each column
-                            SetIndicatorData(ds.Key, ds.Value);
+                            string sAlgo = await SetIndicatorData(ds.Key, ds.Value);
                             //joint data means joint calcs must be run
                             //note that certain algos also mean the joint calcs must be run
                             if (string.IsNullOrEmpty(this.SB1JointDataURL)
                                 || (this.SB1JointDataURL == Constants.NONE))
                             {
-                                SetSeparateRanges(ds.Key);
+                                bool bHasSet = await SetSeparateRanges(ds.Key);
                             }
                         }
                     }
@@ -19462,9 +19466,10 @@ namespace DevTreks.Extensions
             }
             return sMathTerm;
         } 
-        public string SetIndicatorData(string label, List<List<double>> data)
+        public async Task<string> SetIndicatorData(string label, List<List<double>> data)
         {
             string sAlgoIndicator = string.Empty;
+            string sAlgo = string.Empty;
             if (data.Count > 0)
             {
                 //get colcount from first row
@@ -19590,7 +19595,7 @@ namespace DevTreks.Extensions
                     && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression1))
                 {
                     this.SB1TAmount1 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     //this.SB1MathResult1 = this.GetObservedMathResult(label, this.SB1MathSubType1, this.SB1Type1, 
                     //    this.SB1MathType1, qTs, qTs.Average());
                     this.SB1MathResult1 += sb.ToString();
@@ -19611,7 +19616,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression2))
                 {
                     this.SB1TAmount2 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult2 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 2, this);
@@ -19629,7 +19634,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression3))
                 {
                     this.SB1TAmount3 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult3 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 3, this);
@@ -19647,7 +19652,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression4))
                 {
                     this.SB1TAmount4 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult4 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 4, this);
@@ -19665,7 +19670,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression5))
                 {
                     this.SB1TAmount5 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult5 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 5, this);
@@ -19683,7 +19688,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression6))
                 {
                     this.SB1TAmount6 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult6 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 6, this);
@@ -19701,7 +19706,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression7))
                 {
                     this.SB1TAmount7 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult7 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 7, this);
@@ -19719,7 +19724,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression8))
                 {
                     this.SB1TAmount8 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult8 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 8, this);
@@ -19737,7 +19742,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression9))
                 {
                     this.SB1TAmount9 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult9 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 9, this);
@@ -19755,7 +19760,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression10))
                 {
                     this.SB1TAmount10 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult10 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 10, this);
@@ -19773,7 +19778,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression11))
                 {
                     this.SB1TAmount11 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult11 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 11, this);
@@ -19791,7 +19796,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression12))
                 {
                     this.SB1TAmount12 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult12 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 12, this);
@@ -19809,7 +19814,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression13))
                 {
                     this.SB1TAmount13 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult13 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 13, this);
@@ -19827,7 +19832,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression14))
                 {
                     this.SB1TAmount14 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult14 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 14, this);
@@ -19845,7 +19850,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression15))
                 {
                     this.SB1TAmount15 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult15 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 15, this);
@@ -19863,7 +19868,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression16))
                 {
                     this.SB1TAmount16 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult16 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 16, this);
@@ -19881,7 +19886,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression17))
                 {
                     this.SB1TAmount17 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult17 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 17, this);
@@ -19899,7 +19904,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression18))
                 {
                     this.SB1TAmount18 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult18 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 18, this);
@@ -19917,7 +19922,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression19))
                 {
                     this.SB1TAmount19 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult19 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 19, this);
@@ -19935,7 +19940,7 @@ namespace DevTreks.Extensions
                      && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression20))
                 {
                     this.SB1TAmount20 = Math.Round(qTs.Average(), 4);
-                    SetAlgoPRAStats(label, qTs.ToList());
+                    sAlgo = await SetAlgoPRAStats(label, qTs.ToList());
                     this.SB1MathResult20 += sb.ToString();
                     sAlgoIndicator = label;
                     iSiblingIndicator = SB1Statistics.SB1Algos.GetSiblingIndicatorIndex(label, 20, this);
@@ -20221,115 +20226,119 @@ namespace DevTreks.Extensions
                     this.SB15Amount20 = Math.Round(q5s.Average(), 4);
             }
         }
-        public void SetSeparateRanges(string label)
+        public async Task<bool> SetSeparateRanges(string label)
         {
+            bool bHasSet = false;
+            string sAlgo = string.Empty;
             List<double> qTs = new List<double>();
             if (label == this.SB1Label1
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression1))
             {
                 //regular high and low estimation
-                SetAlgoPRAStats(this.SB1Label1, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label1, qTs);
                 //SetTotalRange1();
             }
             else if (label == this.SB1Label2
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression2))
             {
-                SetAlgoPRAStats(this.SB1Label2, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label2, qTs);
             }
             else if (label == this.SB1Label3
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression3))
             {
-                SetAlgoPRAStats(this.SB1Label3, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label3, qTs);
             }
             else if (label == this.SB1Label4
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression4))
             {
-                SetAlgoPRAStats(this.SB1Label4, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label4, qTs);
             }
             else if (label == this.SB1Label5
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression5))
             {
-                SetAlgoPRAStats(this.SB1Label5, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label5, qTs);
             }
             else if (label == this.SB1Label6
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression6))
             {
-                SetAlgoPRAStats(this.SB1Label6, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label6, qTs);
             }
             else if (label == this.SB1Label7
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression7))
             {
-                SetAlgoPRAStats(this.SB1Label7, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label7, qTs);
             }
             else if (label == this.SB1Label8
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression8))
             {
-                SetAlgoPRAStats(this.SB1Label8, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label8, qTs);
             }
             else if (label == this.SB1Label9
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression9))
             {
-                SetAlgoPRAStats(this.SB1Label9, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label9, qTs);
             }
             else if (label == this.SB1Label10
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression10))
             {
-                SetAlgoPRAStats(this.SB1Label10, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label10, qTs);
             }
             else if (label == this.SB1Label11
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression11))
             {
-                SetAlgoPRAStats(this.SB1Label11, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label11, qTs);
             }
             else if (label == this.SB1Label12
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression12))
             {
-                SetAlgoPRAStats(this.SB1Label12, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label12, qTs);
             }
             else if (label == this.SB1Label13
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression13))
             {
-                SetAlgoPRAStats(this.SB1Label13, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label13, qTs);
             }
             else if (label == this.SB1Label14
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression14))
             {
-                SetAlgoPRAStats(this.SB1Label14, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label14, qTs);
             }
             else if (label == this.SB1Label15
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression15))
             {
-                SetAlgoPRAStats(this.SB1Label15, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label15, qTs);
             }
             else if (label == this.SB1Label16
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression16))
             {
-                SetAlgoPRAStats(this.SB1Label16, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label16, qTs);
             }
             else if (label == this.SB1Label17
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression17))
             {
-                SetAlgoPRAStats(this.SB1Label17, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label17, qTs);
             }
             else if (label == this.SB1Label18
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression18))
             {
-                SetAlgoPRAStats(this.SB1Label18, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label18, qTs);
             }
             else if (label == this.SB1Label19
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression19))
             {
-                SetAlgoPRAStats(this.SB1Label19, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label19, qTs);
             }
             else if (label == this.SB1Label20
                  && SB1Statistics.SB1Algos.HasMathExpression(this.SB1MathExpression20))
             {
-                SetAlgoPRAStats(this.SB1Label20, qTs);
+                sAlgo = await SetAlgoPRAStats(this.SB1Label20, qTs);
             }
             else
             {
                 //ignore the row
             }
+            bHasSet = true;
+            return bHasSet;
         }
         
         public async Task<string> SetAlgoPRAStats(string label, List<double> qTs, double[] data = null)

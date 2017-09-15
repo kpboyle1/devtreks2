@@ -7,14 +7,14 @@ namespace DevTreks.Extensions
     ///Author:		www.devtreks.org
     ///Date:		2017, September
     /// </summary>
-    public class OutcomeME2StockCalculator
+    public class OutcomeFNStockCalculator
     {
-        public OutcomeME2StockCalculator(CalculatorParameters calcParameters)
+        public OutcomeFNStockCalculator(CalculatorParameters calcParameters)
         {
-            BIME2Calculator = new BIME2StockCalculator(calcParameters);
+            BIFN1Calculator = new BIFNStockCalculator(calcParameters);
         }
         //stateful health care stock
-        public BIME2StockCalculator BIME2Calculator { get; set; }
+        public BIFNStockCalculator BIFN1Calculator { get; set; }
 
         public bool AddCalculationsToCurrentElement(
             XElement currentCalculationsElement, XElement currentElement)
@@ -23,26 +23,26 @@ namespace DevTreks.Extensions
             if (currentElement.Name.LocalName
                 == Outcome.OUTCOME_PRICE_TYPES.outcomegroup.ToString())
             {
-                //the operation group can be used to insert calculators into 
-                //descendant operations and run totals for each operation
-                bHasCalculations = BIME2Calculator.SetOutcomeGroupME2Calculations(
-                    currentCalculationsElement, currentElement);
+                //outcomes are not used yet in this analyzer
+                //bHasCalculations = BIFN1Calculator.SetOutcomeGroupFNCalculations(
+                //    currentCalculationsElement, currentElement);
             }
             else if (currentElement.Name.LocalName
                 .EndsWith(Outcome.OUTCOME_PRICE_TYPES.outcome.ToString()))
             {
-                //bimachinerystockcalculator handles calculations
-                bHasCalculations = BIME2Calculator.SetOutcomeME2Calculations(
-                    currentCalculationsElement, currentElement);
+                //outcomes are not used yet in this analyzer
+                //bHasCalculations = BIFN1Calculator.SetOutcomeFNCalculations(
+                //    currentCalculationsElement, currentElement);
             }
             else if (currentElement.Name.LocalName
                 .EndsWith(Output.OUTPUT_PRICE_TYPES.output.ToString()))
             {
-                bHasCalculations = BIME2Calculator.SetTechOutputME2Calculations(
-                    currentCalculationsElement, currentElement);
+                //outputs are not used yet in this analyzer
+                //bHasCalculations = BIFN1Calculator.SetTechOutputFNCalculations(
+                //    currentCalculationsElement, currentElement);
             }
             return bHasCalculations;
         }
-        
+
     }
 }

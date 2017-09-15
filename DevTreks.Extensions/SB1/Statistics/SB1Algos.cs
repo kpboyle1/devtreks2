@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.SB1Statistics
     ///<summary>
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2017, April
+    ///Date:		2017, September
     ///NOTES        1. 
     /// </summary> 
     public class SB1Algos : SB1Base
@@ -169,7 +169,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     algoindicator = label;
                 }
                 //set the results
-                SetSA1AlgoRanges(label, sa);
+                bool bHasSet = await SetSA1AlgoRanges(label, sa);
                 //start with any error messages
                 this.SB1ScoreMathResult += sa.ErrorMessage;
             }
@@ -183,7 +183,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     algoindicator = label;
                 }
                 //set the results
-                SetNN1AlgoRanges(label, nn);
+                bool bHasSet = await SetNN1AlgoRanges(label, nn);
                 //start with any error messages
                 this.SB1ScoreMathResult += nn.ErrorMessage;
             }
@@ -602,7 +602,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 string[] algoIndicators = algoIndicator.Split(Constants.CSV_DELIMITERS);
                 string[] indicators = new string[] { };
                 //use the randomsample data to generate Score, ScoreM, ScoreL, and ScoreU
-                indicators = SetScoresFromRandomSamples(algoIndicators, pra.RandomSampleData, colNames);
+                indicators = await SetScoresFromRandomSamples(algoIndicators, pra.RandomSampleData, colNames);
                 algoIndicator = GetIndicatorsCSV(indicators.ToList(), algoIndicator);
             }
             return algoIndicator;
@@ -1741,7 +1741,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 //ignore the row
             }
         }
-        private string[] SetScoresFromRandomSamples(string[] indicators, Matrix<double> randomSampleData,
+        private async Task<string[]> SetScoresFromRandomSamples(string[] indicators, Matrix<double> randomSampleData,
             string[] colNames)
         {
             //1. store the Scores for each row in a double
@@ -1755,7 +1755,7 @@ namespace DevTreks.Extensions.SB1Statistics
             newInds.Add(_score);
             sb1base._indicators = newInds.ToArray();
             //this assumes that corrs are only run and stored for scores
-            sb1base.CalculateIndicators(iIndNumber);
+            bool bHasCalculations = await sb1base.CalculateIndicators(iIndNumber);
             //but don't double display the ScoreMathResult
             sb1base.SB1ScoreMathResult = string.Empty;
             //4. use the indicators to set each indicator.QT in the new object from each row of R
@@ -1774,7 +1774,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 scores.Add(sb1base.SB1Score);
             }
             List<double> qTs = new List<double>();
-            Task<string> tsk = sb1base.SetAlgoPRAStats(_score, qTs, scores.ToArray());
+            string sAlgo = await sb1base.SetAlgoPRAStats(_score, qTs, scores.ToArray());
             string sScoreMathR = string.Concat(this.SB1ScoreMathResult, sb1base.SB1ScoreMathResult);
             //5. 204: reset the indicator.QTs to mean of random sample columns 
             //rather than last row of of randoms
@@ -7116,8 +7116,10 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return sa;
         }
-        private void SetSA1AlgoRanges(string label, DevTreks.Extensions.Algorithms.SimulatedAnnealing1 sa)
+        private async Task<bool> SetSA1AlgoRanges(string label, DevTreks.Extensions.Algorithms.SimulatedAnnealing1 sa)
         {
+            bool bHasSet = false;
+            string sAlgo = string.Empty;
             string[] colNames = new List<string>().ToArray();
             List<double> qTs = new List<double>();
             if (label == this.SB1Label1)
@@ -7125,7 +7127,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 this.SB1TAmount1 = sa.BestEnergy;
                 this.SB1TMAmount1 = sa.BestEnergy;
                 //regular high and low estimation
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 //SetTotalRange1();
                 //no condition on type of result yet KISS for now
                 this.SB1MathResult1 += sa.MathResult;
@@ -7134,139 +7136,141 @@ namespace DevTreks.Extensions.SB1Statistics
             {
                 this.SB1TAmount2 = sa.BestEnergy;
                 this.SB1TMAmount2 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult2 += sa.MathResult;
             }
             else if (label == this.SB1Label3)
             {
                 this.SB1TAmount3 = sa.BestEnergy;
                 this.SB1TMAmount3 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult3 += sa.MathResult;
             }
             else if (label == this.SB1Label4)
             {
                 this.SB1TAmount4 = sa.BestEnergy;
                 this.SB1TMAmount4 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult4 += sa.MathResult;
             }
             else if (label == this.SB1Label5)
             {
                 this.SB1TAmount5 = sa.BestEnergy;
                 this.SB1TMAmount5 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult5 += sa.MathResult;
             }
             else if (label == this.SB1Label6)
             {
                 this.SB1TAmount6 = sa.BestEnergy;
                 this.SB1TMAmount6 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult6 += sa.MathResult;
             }
             else if (label == this.SB1Label7)
             {
                 this.SB1TAmount7 = sa.BestEnergy;
                 this.SB1TMAmount7 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult7 += sa.MathResult;
             }
             else if (label == this.SB1Label8)
             {
                 this.SB1TAmount8 = sa.BestEnergy;
                 this.SB1TMAmount8 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult8 += sa.MathResult;
             }
             else if (label == this.SB1Label9)
             {
                 this.SB1TAmount9 = sa.BestEnergy;
                 this.SB1TMAmount9 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult9 += sa.MathResult;
             }
             else if (label == this.SB1Label10)
             {
                 this.SB1TAmount10 = sa.BestEnergy;
                 this.SB1TMAmount10 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult10 += sa.MathResult;
             }
             else if (label == this.SB1Label11)
             {
                 this.SB1TAmount11 = sa.BestEnergy;
                 this.SB1TMAmount11 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult11 += sa.MathResult;
             }
             else if (label == this.SB1Label12)
             {
                 this.SB1TAmount12 = sa.BestEnergy;
                 this.SB1TMAmount12 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult12 += sa.MathResult;
             }
             else if (label == this.SB1Label13)
             {
                 this.SB1TAmount13 = sa.BestEnergy;
                 this.SB1TMAmount13 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult13 += sa.MathResult;
             }
             else if (label == this.SB1Label14)
             {
                 this.SB1TAmount14 = sa.BestEnergy;
                 this.SB1TMAmount14 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult14 += sa.MathResult;
             }
             else if (label == this.SB1Label15)
             {
                 this.SB1TAmount15 = sa.BestEnergy;
                 this.SB1TMAmount15 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult15 += sa.MathResult;
             }
             else if (label == this.SB1Label16)
             {
                 this.SB1TAmount16 = sa.BestEnergy;
                 this.SB1TMAmount16 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult16 += sa.MathResult;
             }
             else if (label == this.SB1Label17)
             {
                 this.SB1TAmount17 = sa.BestEnergy;
                 this.SB1TMAmount17 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult17 += sa.MathResult;
             }
             else if (label == this.SB1Label18)
             {
                 this.SB1TAmount18 = sa.BestEnergy;
                 this.SB1TMAmount18 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult18 += sa.MathResult;
             }
             else if (label == this.SB1Label19)
             {
                 this.SB1TAmount19 = sa.BestEnergy;
                 this.SB1TMAmount19 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult19 += sa.MathResult;
             }
             else if (label == this.SB1Label20)
             {
                 this.SB1TAmount20 = sa.BestEnergy;
                 this.SB1TMAmount20 = sa.BestEnergy;
-                SetPRAIndicatorStats(label, colNames, qTs);
+                sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 this.SB1MathResult20 += sa.MathResult;
             }
             else
             {
                 //ignore the row
             }
+            bHasSet = true;
+            return bHasSet;
         }
         private DevTreks.Extensions.Algorithms.NeuralNetwork1 InitNN1Algo(string label)
         {
@@ -7275,8 +7279,10 @@ namespace DevTreks.Extensions.SB1Statistics
                     = new Algorithms.NeuralNetwork1(qs, this.SB1Iterations, this.CalcParameters);
             return nn;
         }
-        private void SetNN1AlgoRanges(string label, DevTreks.Extensions.Algorithms.NeuralNetwork1 nn)
+        private async Task<bool> SetNN1AlgoRanges(string label, DevTreks.Extensions.Algorithms.NeuralNetwork1 nn)
         {
+            bool bHasSet = false;
+            string sAlgo = string.Empty;
             int iIndicator = GetNN1Index(label);
             string[] colNames = new List<string>().ToArray();
             List<double> qTs = new List<double>();
@@ -7290,7 +7296,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type1))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                     //SetTotalRange1();
                 }
                 //no condition on type of result yet KISS for now
@@ -7306,7 +7312,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type2))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult2 += nn.MathResult;
             }
@@ -7320,7 +7326,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type3))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult3 += nn.MathResult;
             }
@@ -7334,7 +7340,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type4))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult4 += nn.MathResult;
             }
@@ -7348,7 +7354,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type5))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult5 += nn.MathResult;
             }
@@ -7362,7 +7368,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type6))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult6 += nn.MathResult;
             }
@@ -7376,7 +7382,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type7))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult7 += nn.MathResult;
             }
@@ -7390,7 +7396,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type8))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult8 += nn.MathResult;
             }
@@ -7404,7 +7410,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type9))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult9 += nn.MathResult;
             }
@@ -7418,7 +7424,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type10))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult10 += nn.MathResult;
             }
@@ -7432,7 +7438,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type11))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult11 += nn.MathResult;
             }
@@ -7446,7 +7452,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type12))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult12 += nn.MathResult;
             }
@@ -7460,7 +7466,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type13))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult13 += nn.MathResult;
             }
@@ -7474,7 +7480,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type14))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult14 += nn.MathResult;
             }
@@ -7488,7 +7494,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type15))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult15 += nn.MathResult;
             }
@@ -7502,7 +7508,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type16))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult16 += nn.MathResult;
             }
@@ -7516,7 +7522,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type17))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult17 += nn.MathResult;
             }
@@ -7530,7 +7536,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type18))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult18 += nn.MathResult;
             }
@@ -7544,7 +7550,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type19))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult19 += nn.MathResult;
             }
@@ -7558,7 +7564,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && !string.IsNullOrEmpty(this.SB1Type20))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(label, colNames, qTs);
+                    sAlgo = await SetPRAIndicatorStats(label, colNames, qTs);
                 }
                 this.SB1MathResult20 += nn.MathResult;
             }
@@ -7566,6 +7572,8 @@ namespace DevTreks.Extensions.SB1Statistics
             {
                 //ignore the row
             }
+            bHasSet = true;
+            return bHasSet;
         }
         private int GetNN1Index(string label)
         {

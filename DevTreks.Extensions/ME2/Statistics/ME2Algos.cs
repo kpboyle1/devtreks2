@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.ME2Statistics
     ///<summary>
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2017, April
+    ///Date:		2017, September
     ///NOTES        These algorithm patterns derived directly from the equivalent code 
     ///             in the Resource Stock Calculator. They need to evolve to handle 
     ///             large numbers of algorithms.
@@ -160,6 +160,7 @@ namespace DevTreks.Extensions.ME2Statistics
         {
             //if the algo is used with the label, return it as affirmation
             int algoindicator = -1;
+            bool bHasSet = false;
             //init the algo using the new indicator
             if (this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5))
             {
@@ -171,7 +172,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     algoindicator = index;
                 }
                 //set the results
-                SetSA1AlgoRanges(index, sa);
+                bHasSet = await SetSA1AlgoRanges(index, sa);
                 //start with any error messages
                 this.ME2Indicators[0].IndMathResult += sa.ErrorMessage;
             }
@@ -185,7 +186,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     algoindicator = index;
                 }
                 //set the results
-                SetNN1AlgoRanges(index, nn);
+                bHasSet = await SetNN1AlgoRanges(index, nn);
                 //start with any error messages
                 this.ME2Indicators[0].IndMathResult += nn.ErrorMessage;
             }
@@ -1784,7 +1785,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 scores.Add(me2base.ME2Indicators[0].IndTAmount);
             }
             List<double> qTs = new List<double>();
-            Task<int> tsk = me2base.SetAlgoPRAStats(0, qTs, scores.ToArray());
+            int iResult = await me2base.SetAlgoPRAStats(0, qTs, scores.ToArray());
             string sScoreMathR = string.Concat(this.ME2Indicators[0].IndMathResult, me2base.ME2Indicators[0].IndMathResult);
             //5. 204: reset the indicator.QTs to mean of random sample columns 
             //rather than last row of of randoms
@@ -7238,16 +7239,18 @@ namespace DevTreks.Extensions.ME2Statistics
             }
             return sa;
         }
-        private void SetSA1AlgoRanges(int index, DevTreks.Extensions.Algorithms.SimulatedAnnealing1 sa)
+        private async Task<bool> SetSA1AlgoRanges(int index, DevTreks.Extensions.Algorithms.SimulatedAnnealing1 sa)
         {
+            bool bHasSet = false;
             string[] colNames = new List<string>().ToArray();
             List<double> qTs = new List<double>();
+            int iAlgo = -1;
             if (index == 0)
             {
                 this.ME2Indicators[0].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[0].IndTMAmount = sa.BestEnergy;
                 //regular high and low estimation
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 //SetTotalRange1();
                 //no condition on type of result yet KISS for now
                 this.ME2Indicators[0].IndMathResult += sa.MathResult;
@@ -7257,7 +7260,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 this.ME2Indicators[1].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[1].IndTMAmount = sa.BestEnergy;
                 //regular high and low estimation
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 //SetTotalRange1();
                 //no condition on type of result yet KISS for now
                 this.ME2Indicators[1].IndMathResult += sa.MathResult;
@@ -7266,139 +7269,141 @@ namespace DevTreks.Extensions.ME2Statistics
             {
                 this.ME2Indicators[2].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[2].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[2].IndMathResult += sa.MathResult;
             }
             else if (index == 3)
             {
                 this.ME2Indicators[3].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[3].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[3].IndMathResult += sa.MathResult;
             }
             else if (index == 4)
             {
                 this.ME2Indicators[4].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[4].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[4].IndMathResult += sa.MathResult;
             }
             else if (index == 5)
             {
                 this.ME2Indicators[5].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[5].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[5].IndMathResult += sa.MathResult;
             }
             else if (index == 6)
             {
                 this.ME2Indicators[6].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[6].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[6].IndMathResult += sa.MathResult;
             }
             else if (index == 7)
             {
                 this.ME2Indicators[7].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[7].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[7].IndMathResult += sa.MathResult;
             }
             else if (index == 8)
             {
                 this.ME2Indicators[8].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[8].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[8].IndMathResult += sa.MathResult;
             }
             else if (index == 9)
             {
                 this.ME2Indicators[9].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[9].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[9].IndMathResult += sa.MathResult;
             }
             else if (index == 10)
             {
                 this.ME2Indicators[10].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[10].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[10].IndMathResult += sa.MathResult;
             }
             else if (index == 11)
             {
                 this.ME2Indicators[11].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[11].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[11].IndMathResult += sa.MathResult;
             }
             else if (index == 12)
             {
                 this.ME2Indicators[12].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[12].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[12].IndMathResult += sa.MathResult;
             }
             else if (index == 13)
             {
                 this.ME2Indicators[13].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[13].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[13].IndMathResult += sa.MathResult;
             }
             else if (index == 14)
             {
                 this.ME2Indicators[14].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[14].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[14].IndMathResult += sa.MathResult;
             }
             else if (index == 15)
             {
                 this.ME2Indicators[15].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[15].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[15].IndMathResult += sa.MathResult;
             }
             else if (index == 16)
             {
                 this.ME2Indicators[16].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[16].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[16].IndMathResult += sa.MathResult;
             }
             else if (index == 17)
             {
                 this.ME2Indicators[17].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[17].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[17].IndMathResult += sa.MathResult;
             }
             else if (index == 18)
             {
                 this.ME2Indicators[18].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[18].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[18].IndMathResult += sa.MathResult;
             }
             else if (index == 19)
             {
                 this.ME2Indicators[19].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[19].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[19].IndMathResult += sa.MathResult;
             }
             else if (index == 20)
             {
                 this.ME2Indicators[20].IndTAmount = sa.BestEnergy;
                 this.ME2Indicators[20].IndTMAmount = sa.BestEnergy;
-                SetPRAIndicatorStats(index, colNames, qTs);
+                iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 this.ME2Indicators[20].IndMathResult += sa.MathResult;
             }
             else
             {
                 //ignore the row
             }
+            bHasSet = true;
+            return bHasSet;
         }
         private DevTreks.Extensions.Algorithms.NeuralNetwork1 InitNN1Algo(int index)
         {
@@ -7407,8 +7412,10 @@ namespace DevTreks.Extensions.ME2Statistics
                     = new Algorithms.NeuralNetwork1(qs, this.ME2Indicators[0].IndIterations, this.CalcParameters);
             return nn;
         }
-        private void SetNN1AlgoRanges(int index, DevTreks.Extensions.Algorithms.NeuralNetwork1 nn)
+        private async Task<bool> SetNN1AlgoRanges(int index, DevTreks.Extensions.Algorithms.NeuralNetwork1 nn)
         {
+            bool bHasSet = false;
+            int iAlgo = -1;
             int iIndicator = GetNN1Index(index);
             string[] colNames = new List<string>().ToArray();
             List<double> qTs = new List<double>();
@@ -7422,7 +7429,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[0].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                     //SetTotalRange1();
                 }
                 //no condition on type of result yet KISS for now
@@ -7438,7 +7445,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[1].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                     //SetTotalRange1();
                 }
                 //no condition on type of result yet KISS for now
@@ -7454,7 +7461,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[2].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[2].IndMathResult += nn.MathResult;
             }
@@ -7468,7 +7475,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[3].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[3].IndMathResult += nn.MathResult;
             }
@@ -7482,7 +7489,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[4].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[4].IndMathResult += nn.MathResult;
             }
@@ -7496,7 +7503,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[5].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[5].IndMathResult += nn.MathResult;
             }
@@ -7510,7 +7517,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[6].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[6].IndMathResult += nn.MathResult;
             }
@@ -7524,7 +7531,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[7].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[7].IndMathResult += nn.MathResult;
             }
@@ -7538,7 +7545,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[8].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[8].IndMathResult += nn.MathResult;
             }
@@ -7552,7 +7559,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[9].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[9].IndMathResult += nn.MathResult;
             }
@@ -7566,7 +7573,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[10].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[10].IndMathResult += nn.MathResult;
             }
@@ -7580,7 +7587,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[11].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[11].IndMathResult += nn.MathResult;
             }
@@ -7594,7 +7601,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[12].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[12].IndMathResult += nn.MathResult;
             }
@@ -7608,7 +7615,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[13].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[13].IndMathResult += nn.MathResult;
             }
@@ -7622,7 +7629,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[14].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[14].IndMathResult += nn.MathResult;
             }
@@ -7636,7 +7643,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[15].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[15].IndMathResult += nn.MathResult;
             }
@@ -7650,7 +7657,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[16].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[16].IndMathResult += nn.MathResult;
             }
@@ -7664,7 +7671,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[17].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[17].IndMathResult += nn.MathResult;
             }
@@ -7678,7 +7685,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[18].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[18].IndMathResult += nn.MathResult;
             }
@@ -7692,7 +7699,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[19].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[19].IndMathResult += nn.MathResult;
             }
@@ -7706,7 +7713,7 @@ namespace DevTreks.Extensions.ME2Statistics
                     && !string.IsNullOrEmpty(this.ME2Indicators[20].IndType))
                 {
                     //regular high and low estimation
-                    SetPRAIndicatorStats(index, colNames, qTs);
+                    iAlgo = await SetPRAIndicatorStats(index, colNames, qTs);
                 }
                 this.ME2Indicators[20].IndMathResult += nn.MathResult;
             }
@@ -7714,6 +7721,8 @@ namespace DevTreks.Extensions.ME2Statistics
             {
                 //ignore the row
             }
+            bHasSet = true;
+            return bHasSet;
         }
         private int GetNN1Index(int index)
         {
