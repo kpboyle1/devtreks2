@@ -13634,14 +13634,7 @@ namespace DevTreks.Extensions
         }
         #endregion
 
-        public bool RunSB1BaseCalculations(CalculatorParameters calcParameters, double multiplier)
-        {
-            bool bHasCalculations = false;
-            this.CalcParameters = calcParameters;
-            int iInd = 1;
-            bHasCalculations = SetSB1StockCalculationsAsync(iInd, multiplier).Result;
-            return bHasCalculations;
-        }
+   
         public async Task<bool> RunSB1BaseCalculationsAsync(CalculatorParameters calcParameters, double multiplier)
         {
             bool bHasCalculations = false;

@@ -75,6 +75,7 @@ namespace DevTreks.Extensions
                         XStreamingElement root = new XStreamingElement(Constants.ROOT_PATH,
                             from el in StreamRoot()
                             select el.FirstNode);
+                        //pre 210
                         //XStreamingElement root = new XStreamingElement(Constants.ROOT_PATH,
                         //    from el in StreamRoot()
                         //    select el);

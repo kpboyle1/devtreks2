@@ -1,18 +1,17 @@
-﻿using System;
-using System.Composition;
-using System.Composition.Hosting;
-using System.Reflection;
-using System.Composition.Convention;
-using System.Runtime.Loader;
+﻿using DevTreks.Data;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+using System.Composition;
+using System.Composition.Convention;
+using System.Composition.Hosting;
 using System.IO;
+using System.Linq;
+using System.Runtime.Loader;
 using System.Threading;
 using System.Threading.Tasks;
-using Errors = DevTreks.Exceptions.DevTreksErrors;
+using System.Xml.Linq;
 using DataHelpers = DevTreks.Data.Helpers;
-using DevTreks.Data;
+using Errors = DevTreks.Exceptions.DevTreksErrors;
 
 namespace DevTreks.Extensions
 {
@@ -23,9 +22,9 @@ namespace DevTreks.Extensions
     ///Date:		2017, September
     ///References:	refer to the Calculators and Analyzers tutorial
     ///NOTES        1. Version 2.1.0 completely refactored to a simpler netcore2.0 mef pattern
-    ///             See the CalculatorContracts.BaseModel folder.
+    ///            
     /// </summary>
-    
+
     public class DoStepsHost
     {
         private const string EXTENSIONS_NAMESPACE = "DevTreks.Extensions.";

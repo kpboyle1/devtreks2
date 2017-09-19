@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DevTreks.Extensions
 {
@@ -14,7 +8,7 @@ namespace DevTreks.Extensions
     ///Purpose:		Serialize and deserialize a Stock cost object.
     ///             This calculator is used with inputs to calculate costs.
     ///Author:		www.devtreks.org
-    ///Date:		2016, May
+    ///Date:		2017, September
     ///NOTES        1.  Extends the base object SB1Base object
     ///</summary>
     public class SBC1Calculator : SB1Base
@@ -111,7 +105,7 @@ namespace DevTreks.Extensions
                 calculator, currentElement);
             //set the calculator
             this.SetSB1C1Properties(calculator, currentElement);
-            bHasCalculations = RunSB1C1Calculations(calcParameters);
+            bHasCalculations = RunSB1C1CalculationsAsync(calcParameters).Result;
             //serialize object back to xml and fill in updates list
             if (calcParameters.SubApplicationType == Constants.SUBAPPLICATION_TYPES.inputprices)
             {
@@ -130,16 +124,7 @@ namespace DevTreks.Extensions
                 calculator, currentElement);
             return bHasCalculations;
         }
-        public bool RunSB1C1Calculations(CalculatorParameters calcParameters)
-        {
-            bool bHasCalculations = false;
-            //first figure quantities
-            UpdateBaseInputUnitAmount(calcParameters);
-            //output.amount, compositionamount and times calcd by stock.multiplier (in Totals)
-            double multiplier = 1;
-            bHasCalculations = this.RunSB1BaseCalculations(calcParameters, multiplier);
-            return bHasCalculations;
-        }
+ 
         public async Task<bool> SetSB1C1CalculationsAsync(
             SB1CalculatorHelper.CALCULATOR_TYPES calculatorType,
             CalculatorParameters calcParameters, XElement calculator,
@@ -173,8 +158,6 @@ namespace DevTreks.Extensions
         public async Task<bool> RunSB1C1CalculationsAsync(CalculatorParameters calcParameters)
         {
             bool bHasCalculations = false;
-            //first figure quantities
-            //UpdateBaseInputUnitAmount(calcParameters);
             //output.amount, compositionamount and times calcd by stock.multiplier (in Totals)
             double multiplier = 1;
             bHasCalculations = await this.RunSB1BaseCalculationsAsync(calcParameters, multiplier);
