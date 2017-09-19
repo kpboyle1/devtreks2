@@ -47,10 +47,6 @@ namespace DevTreks.Services
         Task<List<AccountToService>> GetSubscribedClubsByServiceAsync(ContentURI uri, int serviceId);
         //gatekeeper
         bool ContentCanBeSelectedAndEdited(ContentURI uri);
-        //deprecated in 2.0.0 in favor of uniform EF form edits
-        ////insert a new club for a given member
-        //Task<int> InsertNewClubForMemberAsync(ContentURI uri, IDictionary<string, string> updates);
-        //set uri.urimember.clubdefault (club displayed in members panel)
         Task<bool> SetMemberClubDefaultAsync(ContentURI uri, bool isInitView, int accountId);
         //simple list item linq to sql updates for commons apps
         Task<bool> UpdateAsync(ContentURI uri, StringDictionary colDeletes,

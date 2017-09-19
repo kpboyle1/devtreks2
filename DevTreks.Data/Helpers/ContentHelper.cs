@@ -683,58 +683,7 @@ namespace DevTreks.Data.Helpers
             }
             return sQry;
         }
-        //private static string GetQry(ContentURI uri)
-        //{
-        //    string sQry = string.Empty;
-        //    switch (uri.URIDataManager.AppType)
-        //    {
-        //        case GeneralHelpers.APPLICATION_TYPES.economics1:
-        //            if (uri.URIDataManager.SubAppType == GeneralHelpers.SUBAPPLICATION_TYPES.budgets)
-        //            {
-        //                sQry = "0GetAncestorNamesForBudgets";
-        //            }
-        //            else
-        //            {
-        //                sQry = "0GetAncestorNamesForInvestments";
-        //            }
-        //            break;
-        //        case GeneralHelpers.APPLICATION_TYPES.prices:
-        //            if (uri.URIDataManager.SubAppType == GeneralHelpers.SUBAPPLICATION_TYPES.inputprices)
-        //            {
-        //                sQry = "0GetAncestorNamesForInput";
-        //            }
-        //            else if (uri.URIDataManager.SubAppType == GeneralHelpers.SUBAPPLICATION_TYPES.outputprices)
-        //            {
-        //                sQry = "0GetAncestorNamesForOutput";
-        //            }
-        //            else if (uri.URIDataManager.SubAppType == GeneralHelpers.SUBAPPLICATION_TYPES.outcomeprices)
-        //            {
-        //                sQry = "0GetAncestorNamesForOutcome";
-        //            }
-        //            else if (uri.URIDataManager.SubAppType == GeneralHelpers.SUBAPPLICATION_TYPES.operationprices)
-        //            {
-        //                sQry = "0GetAncestorNamesForOperation";
-        //            }
-        //            else if (uri.URIDataManager.SubAppType == GeneralHelpers.SUBAPPLICATION_TYPES.componentprices)
-        //            {
-        //                sQry = "0GetAncestorNamesForComponent";
-        //            }
-        //            break;
-        //        case GeneralHelpers.APPLICATION_TYPES.devpacks:
-        //            sQry = "0GetAncestorNamesForDevPack";
-        //            break;
-        //        case GeneralHelpers.APPLICATION_TYPES.linkedviews:
-        //            sQry = "0GetAncestorNamesForLinkedView";
-        //            break;
-        //        case GeneralHelpers.APPLICATION_TYPES.resources:
-        //            sQry = "0GetAncestorNamesForResource";
-        //            break;
-        //        default:
-        //            sQry = "0GetAncestorNamesForLinkedView";
-        //            break;
-        //    }
-        //    return sQry;
-        //}
+        
 
         public async Task<SqlDataReader> GetURIChildrenAsync(SqlIOAsync sqlIO, ContentURI parentURI,
             ContentURI uri, ContentURI childrenParentURI)

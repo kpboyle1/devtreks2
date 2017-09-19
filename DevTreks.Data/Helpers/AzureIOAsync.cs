@@ -147,155 +147,7 @@ namespace DevTreks.Data.Helpers
             }
             return sResourceWebPath;
         }
-        //public string GetAndSaveResourceURLInCloud( 
-        //    ContentURI uri, string resourceURIPath)
-        //{
-        //    string sResourceWebPath = string.Empty;
-        //    //see if it can be retrieved from the db and stored in the proper blob
-        //    if (!string.IsNullOrEmpty(resourceURIPath))
-        //    {
-        //        bool bNeedsWebFullPath = true;
-        //        sResourceWebPath = AppHelpers.Resources.GetRootedResourcePath(uri,
-        //            resourceURIPath, bNeedsWebFullPath,
-        //            Helpers.GeneralHelpers.WEBFILE_PATH_DELIMITER);
-        //        if (Helpers.FileStorageIO.URIAbsoluteExists(uri,
-        //            sResourceWebPath) == false)
-        //        {
-        //            //store the resource in a blob
-        //            sResourceWebPath = SaveResourceURLInCloud(uri, sResourceWebPath);
-        //        }
-        //    }
-        //    return sResourceWebPath;
-        //}
-        //public string SaveResourceURLInCloud( 
-        //    ContentURI uri, string resourceURIPath)
-        //{
-        //    string sResourceWebPath = string.Empty;
-        //    //see if it can be retrieved from the db and stored in the proper blob
-        //    if (!string.IsNullOrEmpty(resourceURIPath))
-        //    {
-        //        bool bNeedsWebFullPath = true;
-        //        //this is needed because can call this method directly
-        //        sResourceWebPath = AppHelpers.Resources.GetRootedResourcePath(uri,
-        //            resourceURIPath, bNeedsWebFullPath,
-        //            Helpers.GeneralHelpers.WEBFILE_PATH_DELIMITER);
-        //        //get a reference to a blob
-        //        //blob is named resourceuripath: crops/resourcepack_123/resource_456/cloud.png
-        //        CloudBlockBlob blob = await GetBlobAsync(resourceURIPath);
-        //        if (blob != null)
-        //        {
-        //            //save the resource in the blob
-        //            StoreResourceInCloudBobById(blob, uri);
-        //            sResourceWebPath = blob.Uri.AbsoluteUri;
-        //        }
-        //    }
-        //    return sResourceWebPath;
-        //}
         
-      //  public void StoreResourceInCloudBobById(
-      //      CloudBlockBlob blob, ContentURI uri)
-      //  {
-      //      if (uri.URIName == Helpers.GeneralHelpers.GetResource("FILE_NONE")
-      //          || uri.URIName == Helpers.GeneralHelpers.NONE)
-      //      {
-      //          //don't run the query if no resource is on hand
-      //          return;
-      //      }
-      //      bool bIsXmlDoc = Helpers.GeneralHelpers.IsXmlFileExt(uri.URIName);
-      //      if (!bIsXmlDoc)
-      //          bIsXmlDoc = Helpers.GeneralHelpers.IsXmlFileExt(blob.Uri.AbsoluteUri);
-      //      Helpers.SqlIOAsync sqlIO = new Helpers.SqlIOAsync(uri);
-      //      SqlParameter[] oPrams =
-		    //{
-			   // sqlIO.MakeInParam("@PKId",              SqlDbType.Int, 4, uri.URIId),
-      //          sqlIO.MakeInParam("@IsXmlDoc",          SqlDbType.Bit, 1, bIsXmlDoc)
-		    //};
-      //      //don't run sequential in cloud - process all of the bytes at once
-      //      SqlDataReader oDataReader = sqlIO.RunProc("0GetResourceByResourceId", oPrams);
-      //      if (oDataReader != null && (!oDataReader.IsClosed))
-      //      {
-      //          SaveBitsInCloudBlob(oDataReader, blob);
-      //      }
-      //      sqlIO.Dispose();
-      //  }
-        //private async void SaveBitsInCloudBlob(SqlDataReader dataReader,
-        //    CloudBlockBlob blob)
-        //{
-        //    if (dataReader != null && (!dataReader.IsClosed))
-        //    {
-        //        using (dataReader)
-        //        {
-        //            //check whether the dataReader timed out (downloading video to localhost during debugging)
-        //            while (dataReader.Read())
-        //            {
-        //                string sResourceMimeType = string.Empty;
-        //                //sequential data has to be read in order (once an index is passed, can't return to it)
-        //                //get the media type
-        //                if (dataReader.IsDBNull(0) == false)
-        //                {
-        //                    sResourceMimeType = dataReader.GetString(0);
-        //                }
-        //                //update the filename
-        //                if (dataReader.IsDBNull(1) == false)
-        //                {
-        //                    string sFileName = dataReader.GetString(1);
-        //                    if (!string.IsNullOrEmpty(sFileName))
-        //                    {
-        //                        string sOldFileName = Helpers.GeneralHelpers.GetLastSubString(blob.Name,
-        //                            Helpers.GeneralHelpers.WEBFILE_PATH_DELIMITER);
-        //                        if (!sOldFileName.Equals(sFileName)
-        //                            && !string.IsNullOrEmpty(sOldFileName))
-        //                        {
-        //                            string sNewBlobName = blob.Name.Replace(sOldFileName, sFileName);
-        //                            blob = GetBlob(sNewBlobName);
-        //                        }
-        //                    }
-        //                }
-        //                if (dataReader.IsDBNull(2) == false)
-        //                {
-        //                    blob.Properties.ContentType = sResourceMimeType;
-        //                    bool bIsXmlDoc = Helpers.GeneralHelpers.IsXmlFileExt(blob.Name);
-        //                    if (!bIsXmlDoc)
-        //                        bIsXmlDoc = Helpers.GeneralHelpers.IsXmlFileExt(blob.Uri.AbsoluteUri);
-        //                    //these two methods could be wrapped in the pattern used in FileStorageIO
-        //                    if (bIsXmlDoc)
-        //                    {
-        //                        SqlXml oSqlXml = dataReader.GetSqlXml(2);
-        //                        if (oSqlXml.IsNull == false)
-        //                        {
-        //                            XmlReader oReader = oSqlXml.CreateReader();
-        //                            Helpers.XmlFileIO oXmlFileIO = new Helpers.XmlFileIO();
-        //                            using (oReader)
-        //                            {
-        //                                string sURIPath = await UploadXmlReaderBlobAsync(blob, oReader);
-        //                            }
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        string sURI = await UploadBinaryBlobStreamAsync(blob, dataReader, 2);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        //public async Task<string> UploadXmlReaderBlob(CloudBlockBlob blob,
-        //    XmlReader reader)
-        //{
-        //    string sURI = string.Empty;
-        //    //upload a reader as text
-        //    if (reader.NodeType != XmlNodeType.Element)
-        //    {
-        //        reader.MoveToContent();
-        //    }
-        //    if (reader.NodeType == XmlNodeType.Element)
-        //    {
-        //        await blob.UploadTextAsync(reader.ReadOuterXml());
-        //        sURI = blob.Uri.AbsoluteUri;
-        //    }
-        //    return sURI;
-        //}
         public async Task<string> UploadBinaryBlobStreamAsync(CloudBlockBlob blob,
             SqlDataReader sqlReader, int columnIndex)
         {
@@ -317,17 +169,7 @@ namespace DevTreks.Data.Helpers
             }
             return sURI;
         }
-        //public async Task<string> UploadBinaryBlobStream(CloudBlockBlob blob,
-        //    SqlDataReader sqlReader, int columnIndex)
-        //{
-        //    string sURI = string.Empty;
-        //    bool bIsSaved = await UploadBinaryBlobStream(blob, sqlReader.GetSqlBytes(columnIndex).Stream);
-        //    if (bIsSaved)
-        //    {
-        //        sURI = blob.Uri.AbsoluteUri;
-        //    }
-        //    return sURI;
-        //}
+        
         public async Task<string> SaveResourceURLInCloudAsync(string resourceURIPath, 
             Stream postedFileStream)
         {
@@ -369,73 +211,7 @@ namespace DevTreks.Data.Helpers
             }
             return sURIPath;
         }
-        //public string GetContentURIPath(ContentURI uri, string existingURIPath)
-        //{
-        //    string sURIPath = string.Empty;
-        //    FileStorageIO.PLATFORM_TYPES ePlatform
-        //            = uri.URIDataManager.PlatformType;
-        //    if (ePlatform == FileStorageIO.PLATFORM_TYPES.azure)
-        //    {
-        //        //try to get the blob out of storage
-        //        //blob is named either 
-        //        //contenturipath: club_148/economics/budgets/servicebase_1819 ...
-        //        //or a:/club_148/economics/budgets/servicebase_1819 ...
-        //        //or http://wwww.this.org/content/crops/...
-        //        CloudBlockBlob blob = GetBlob(existingURIPath);
-        //        if (blob != null)
-        //        {
-        //            sURIPath = blob.Uri.AbsoluteUri;
-        //        }
-        //        else
-        //        {
-        //            uri.ErrorMessage
-        //                = DevTreks.Exceptions.DevTreksErrors.MakeStandardErrorMsg(
-        //                string.Empty, "RESOURCES_NOBLOB");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (Helpers.FileStorageIO.URIAbsoluteExists(uri,
-        //            existingURIPath))
-        //        {
-        //            sURIPath = existingURIPath;
-        //        }
-        //        else
-        //        {
-        //            uri.ErrorMessage
-        //                = DevTreks.Exceptions.DevTreksErrors.MakeStandardErrorMsg(
-        //                string.Empty, "RESOURCES_NOFILE");
-        //        }
-        //    }
-        //    return sURIPath;
-        //}
-
-        //transition to async
-        //public bool BlobExists(string fullBlobURI)
-        //{
-        //    bool bBlobExists = false;
-        //    if (!string.IsNullOrEmpty(fullBlobURI))
-        //    {
-        //        //containername is always iindex = 4 (1-based) in http://hostname/containername
-        //        CloudBlobContainer container = GetContainer(fullBlobURI);
-        //        if (container != null)
-        //        {
-        //            //blobname is always the full string after container name
-        //            string sBlobName = GetBlobRelativeName(container.Name, fullBlobURI);
-        //            if (!string.IsNullOrEmpty(sBlobName))
-        //            {
-        //                //a references to the blob is not the blob itself
-        //                CloudBlockBlob blob = container.GetBlockBlobReference(sBlobName);
-        //                //this makes an http request and should be async
-        //                if (blob.Exists())
-        //                {
-        //                    return true;
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return bBlobExists;
-        //}
+        
         public async Task<bool> BlobExistsAsync(string fullBlobURI)
         {
             bool bBlobExists = false;
@@ -629,47 +405,7 @@ namespace DevTreks.Data.Helpers
         //    }
         //    return bHasClientSettings;
         //}
-        //2.0.0 deprecated: can use the same file system path on azure and filesystem
-        //as long as it references appsettings.DefaultRootFullFilePath
-        //public string GetLocalResourceDirectoryPath()
-        //{
-        //    string sLocalRootPath = string.Empty; 
-        //    //Azure App Service Local Cache
-        //    //https://azure.microsoft.com/en-us/documentation/articles/app-service-local-cache/
-        //    //use D:\Home on azure
-        //    //D:\Home will point to the local cache.D:\local will continue pointing to the temporary VM specific storage.
-
-
-        //    //deprecated: azure production gives resource too long message
-        //    //https://azure.microsoft.com/en-us/documentation/articles/best-practices-caching/
-        //    //Azure Websites also comes with a Temp folder. The path is defined in the environment variable %TEMP% and accessible using Path.GetTempPath
-        //    //remember to delete files and that other apps on same server could interfere
-        //    //string sLocalRootPath = Path.GetTempPath();
-
-        //    //documentation indicates azure cache could also be used
-        //    //LocalResource cache = RoleEnvironment.GetLocalResource("LocalDriveCache");
-        //    //string sLocalRootPath = cache.RootPath;
-        //    return sLocalRootPath;
-        //}
        
-        //copy an existing blob to a new blob
-        //public bool CopyBlob(ContentURI uri,
-        //    string fromURIPath, string toURIPath)
-        //{
-        //    bool bHasCopied = false;
-        //    if (FileStorageIO.URIAbsoluteExists(uri, fromURIPath))
-        //    {
-        //        CloudBlockBlob fromblob = GetBlob(fromURIPath);
-        //        CloudBlockBlob toblob = GetBlob(toURIPath);
-        //        if ((fromblob != null) && (toblob != null))
-        //        {
-        //            //2.0.0
-        //            string sResult = toblob.StartCopy(fromblob, null, null);
-        //            bHasCopied = true;
-        //        }
-        //    }
-        //    return bHasCopied;
-        //}
         public async Task<bool> CopyBlobAsync(ContentURI uri,
             string fromURIPath, string toURIPath)
         {
@@ -733,33 +469,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasSaved;
         }
-        //public bool SaveXmlInURI(XmlReader reader, string fullURIPath)
-        //{
-        //    bool bHasSaved = false;
-        //    if (!string.IsNullOrEmpty(fullURIPath))
-        //    {
-        //        CloudBlockBlob blob = GetBlob(fullURIPath);
-        //        if (blob != null)
-        //        {
-        //            UploadXmlReaderBlob(blob, reader);
-        //            bHasSaved = true;
-        //        }
-        //    }
-        //    return bHasSaved;
-        //}
-        //public bool SaveXmlWriterInURI(StringWriter writer, string fullURIPath)
-        //{
-        //    bool bHasSaved = false;
-        //    if (!string.IsNullOrEmpty(fullURIPath))
-        //    {
-        //        CloudBlockBlob blob = GetBlob(fullURIPath);
-        //        if (blob != null)
-        //        {
-        //            bHasSaved = UploadStringWriterBlob(blob, writer);
-        //        }
-        //    }
-        //    return bHasSaved;
-        //}
+        
         public async Task<bool> SaveXmlWriterInURIAsync(StringWriter writer, string fullURIPath)
         {
             bool bHasSaved = false;
@@ -814,19 +524,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasSaved;
         }
-        //public bool CopyFileToBlob(CloudBlockBlob blob,
-        //    string fullFilePath)
-        //{
-        //    bool bHasWrote = false;
-        //    using (var fileStream = File.OpenRead(fullFilePath))
-        //    {
-        //        blob.UploadFromStream(fileStream);
-        //    } 
-        //    //or
-        //    //blob.UploadFromFile(fullFilePath, FileMode.Read or Open, null, null, null);
-        //    bHasWrote = true;
-        //    return bHasWrote;
-        //}
+        
         public async Task<bool> CopyFileToBlobAsync(CloudBlockBlob blob,
             string fullFilePath)
         {
@@ -967,22 +665,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasWrote;
         }
-        //public async Task<bool> UploadStringWriterBlob(CloudBlockBlob blob,
-        //   StringWriter writer)
-        //{
-        //    bool bHasWrote = false;
-        //    if (blob == null)
-        //    {
-        //        return false;
-        //    }
-        //    //upload a writer containing html (avoid memory issues with html strings)
-        //    using (writer)
-        //    {
-        //        await blob.UploadTextAsync(writer.GetStringBuilder().ToString());
-        //        bHasWrote = true;
-        //    }
-        //    return bHasWrote;
-        //}
+        
         public async Task<bool> UploadStringWriterBlobAsync(CloudBlockBlob blob,
             StringWriter writer)
         {
@@ -1041,26 +724,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasWrote;
         }
-        //public bool UploadBinaryBlobStream(CloudBlockBlob blob,
-        //    Stream stream)
-        //{
-        //    bool bHasWrote = false;
-        //    if (stream == null)
-        //    {
-        //        return false;
-        //    }
-        //    if (blob == null)
-        //    {
-        //        return false;
-        //    }
-        //    //upload stream
-        //    using (stream)
-        //    {
-        //        blob.UploadFromStream(stream);
-        //        bHasWrote = true;
-        //    }
-        //    return bHasWrote;
-        //}
+        
         public async Task<bool> StoreResourceInCloudBobByIdAsync( 
             CloudBlockBlob blob, ContentURI uri)
         {
@@ -1270,25 +934,7 @@ namespace DevTreks.Data.Helpers
         //    }
         //    return bHasWrote;
         //}
-        //public void SaveCloudFile(string blobURIPath, string uploadFullFilePath,
-        //    out string blobFullURI)
-        //{
-        //    bool bHasSaved = false;
-        //    blobFullURI = blobURIPath;
-        //    if (!string.IsNullOrEmpty(blobURIPath))
-        //    {
-        //        CloudBlockBlob blob = GetBlob(blobURIPath);
-        //        if (blob != null)
-        //        {
-        //            bHasSaved = CopyFileToBlob(blob, uploadFullFilePath);
-        //            //System.Diagnostics.Trace.TraceInformation("Saved tempfile = '{0}' to blob storage as '{1}'", bHasSaved, blob.Name);
-        //            if (bHasSaved)
-        //            {
-        //                blobFullURI = blob.Uri.AbsoluteUri;
-        //            }
-        //        }
-        //    }
-        //}
+        
         public async Task<bool> SaveCloudFileAsync(string blobURIPath, string uploadFullFilePath)
         {
             bool bHasSaved = false;
@@ -1323,31 +969,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasSaved;
         }
-        //public void SaveCloudFileInFileSystem(string blobURIPath, string fullFilePath)
-        //{
-        //    //bool bHasSaved = false;
-        //    if (!string.IsNullOrEmpty(blobURIPath))
-        //    {
-        //        CloudBlockBlob blob = GetBlob(blobURIPath);
-        //        blob.DownloadToFile(fullFilePath, FileMode.Create);
-        //        //or
-        //        //// Save blob contents to a file.
-        //        //using (var fileStream = System.IO.File.OpenWrite(fullFilePath))
-        //        //{
-        //        //    blob.DownloadToStream(fileStream);
-        //        //} 
-        //        //or test download
-        //        //string text;
-        //        //using (var memoryStream = new MemoryStream())
-        //        //{
-        //        //    blockBlob2.DownloadToStream(memoryStream);
-        //        //    text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
-        //        //}
-        //        //if needed for larger blobs
-        //        //DownloadBlockBlobToFileSystem(resourcesURIPath, fullFilePath);
-        //        //System.Diagnostics.Trace.TraceInformation("Saved blobfile = '{0}' to file storage as '{1}'", bHasSaved, blob.Name);
-        //    }
-        //}
+       
         public async Task<bool> SaveCloudFileInFileSystemAsync(string blobURIPath, string fullFilePath)
         {
             bool bHasSaved = false;
@@ -1432,33 +1054,7 @@ namespace DevTreks.Data.Helpers
             return data;
         }
         
-        //public async List<string> ReadLines(string blobURIPath)
-        //{
-        //    List<string> lines = new List<string>();
-        //    if (!string.IsNullOrEmpty(blobURIPath))
-        //    {
-        //        CloudBlockBlob blob = await GetBlobAsync(blobURIPath);
-        //        if (blob != null)
-        //        {
-        //            using (Stream stream = blob.OpenRead())
-        //            {
-        //                //may also want to download whole blob and then manipulate using stream
-        //                //blob.DownloadToStream(stream);
-        //                if (stream.CanRead)
-        //                {
-        //                    using (StreamReader reader = new StreamReader(stream))
-        //                    {
-        //                        while (!reader.EndOfStream)
-        //                        {
-        //                            lines.Add(reader.ReadLine());
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return lines;
-        //}
+        
         public async Task<string> SaveCloudFileInStringAsync(string blobURIPath)
         {
             string sContent = string.Empty;
@@ -1473,28 +1069,7 @@ namespace DevTreks.Data.Helpers
             }
             return sContent;
         }
-        //public XmlReader GetXmlFromURI(string blobURIPath)
-        //{
-        //    XmlReader reader = null;
-        //    if (!string.IsNullOrEmpty(blobURIPath))
-        //    {
-        //        CloudBlockBlob blob = GetBlob(blobURIPath);
-        //        if (blob != null)
-        //        {
-        //            //do not use a using with the memory stream or it closes before it can be used in reader
-        //            //when reader closes it will dipose of the memory stream
-        //            var memoryStream = new MemoryStream();
-        //            blob.DownloadToStream(memoryStream);
-        //            memoryStream.Position = 0;
-        //            XmlReaderSettings oSettings = new XmlReaderSettings();
-        //            oSettings.ConformanceLevel = ConformanceLevel.Document;
-        //            oSettings.IgnoreWhitespace = true;
-        //            oSettings.IgnoreComments = true;
-        //            reader = XmlReader.Create(memoryStream, oSettings);
-        //        }
-        //    }
-        //    return reader;
-        //}
+       
         public async Task<XmlReader> GetXmlFromURIAsync(string blobURIPath)
         {
             XmlReader reader = null;
@@ -1524,25 +1099,7 @@ namespace DevTreks.Data.Helpers
             }
             return reader;
         }
-        //public void SaveCloudTempFile(string tempURIPath, string fullFilePath,
-        //    out string blobFullURI)
-        //{
-        //    bool bHasSaved = false;
-        //    blobFullURI = string.Empty;
-        //    if (!string.IsNullOrEmpty(tempURIPath))
-        //    {
-        //        CloudBlockBlob blob = GetBlob(tempURIPath);
-        //        if (blob == null)
-        //        {
-        //            return;
-        //        }
-        //        bHasSaved = CopyFileToBlob(blob, fullFilePath);
-        //        if (bHasSaved)
-        //        {
-        //            blobFullURI = blob.Uri.AbsoluteUri;
-        //        }
-        //    }
-        //}
+        
         public async Task<bool> DeleteBlobAsync(string fullURIPath)
         {
             bool bIsDeleted = false;
@@ -2055,64 +1612,7 @@ namespace DevTreks.Data.Helpers
             return sDirectory;
         }
         
-        //public void CopyDirectories(ContentURI uri,
-        //    string fromDirectory, string toDirectory, 
-        //    bool copySubDirs, bool needsNewSubDirectories)
-        //{
-        //    bool bIsFlat = (copySubDirs) ? false : true;
-        //    //get the blobs in from directory and the subdirs
-        //    IEnumerable<IListBlobItem> blobs = ListBlobs(fromDirectory, bIsFlat);
-        //    if (blobs != null)
-        //    {
-        //        CopyDirectories(uri, blobs, toDirectory, copySubDirs, needsNewSubDirectories);
-        //    }
-        //}
-        //public void CopyDirectories(ContentURI uri,
-        //    IEnumerable<IListBlobItem> blobs, string toDirectory, 
-        //    bool copySubDirs, bool needsNewSubDirectories)
-        //{
-        //    if (blobs != null)
-        //    {
-        //        //toDirectory has to end in a delimited file path or gets the wrong directory
-        //        string sToDirectory = FileStorageIO.GetDirectoryName(toDirectory);
-        //        FileStorageIO.DirectoryCreate(uri, sToDirectory);
-        //        string sFullFilePath = string.Empty;
-        //        foreach (var blobOrBlobDir in blobs)
-        //        {
-        //            if (Path.HasExtension(blobOrBlobDir.Uri.AbsoluteUri))
-        //            {
-        //                //create the path to the new copy of the file.
-        //                sFullFilePath = Path.Combine(sToDirectory,
-        //                    Path.GetFileName(blobOrBlobDir.Uri.AbsoluteUri));
-        //                //copy the file.
-        //                if (!FileStorageIO.URIAbsoluteExists(uri, 
-        //                    sFullFilePath))
-        //                {
-        //                    FileStorageIO.CopyURIs(uri,
-        //                        blobOrBlobDir.Uri.AbsoluteUri, sFullFilePath);
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (copySubDirs)
-        //                {
-        //                    string sFullDirectoryPath = sToDirectory;
-        //                    //packages generally don't want subdirectories because of 
-        //                    //need for consistent relpath to associated resources
-        //                    if (needsNewSubDirectories)
-        //                    {
-        //                        //add the subdirectory to the directory.
-        //                        sFullDirectoryPath = FileStorageIO.AddDirectoryToDirectoryPath(
-        //                            blobOrBlobDir.Uri.AbsoluteUri, sFullDirectoryPath);
-        //                    }
-        //                    //copy the subdirectories.
-        //                    CopyDirectories(uri, blobOrBlobDir.Uri.AbsoluteUri, sFullDirectoryPath,
-        //                        copySubDirs, needsNewSubDirectories);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        
         public async Task<bool> CopyDirectoriesAsync(
             ContentURI uri, string fromDirectory,
             string toDirectory, bool copySubDirs, bool needsNewSubDirectories)
@@ -2211,79 +1711,7 @@ namespace DevTreks.Data.Helpers
             bHasCompleted = true;
             return bHasCompleted;
         }
-        ////160 deprecated for async
-        //public bool CopyRelatedDataToCloudServerPackage(
-        //    ContentURI uri, string uriPath,
-        //    string packageName, string fileType, string newFilePath,
-        //    bool needsAllRelatedData, IDictionary<string, string> zipArgs)
-        //{
-        //    bool bHasCopied = false;
-        //    bool bIsFlat = false;
-        //    IEnumerable<IListBlobItem> blobs = ListBlobs(uriPath, bIsFlat);
-        //    if (blobs != null)
-        //    {
-        //        //filter the blobs by fileType (i.e. .xml) or directory name only blobs
-        //        IEnumerable<IListBlobItem> fileTypeBlobs = blobs.Where(b =>
-        //            (Path.GetExtension(b.Uri.AbsoluteUri) == fileType
-        //            || Path.GetFileName(b.Uri.AbsoluteUri) == string.Empty));
-        //        if (fileTypeBlobs != null)
-        //        {
-        //            FileStorageIO.DirectoryCreate(uri, newFilePath);
-        //            //add siblings for everything
-        //            AddSiblingFiles(uri, fileTypeBlobs, uriPath, packageName,
-        //                newFilePath, zipArgs);
-        //            bHasCopied = true;
-        //            if (needsAllRelatedData)
-        //            {
-        //                //copy children subfolder data 
-        //                //html subdirectories get put in root path so they can find resources
-        //                bool bNeedsNewSubDirectories =
-        //                    (fileType.EndsWith(AppHelpers.Resources.FILEEXTENSION_TYPES.xml.ToString()))
-        //                    ? true : false;
-        //                bool bCopySubDirectories = true;
-        //                //note azure uses filtered files while the web server copies everything
-        //                CopyDirectories(uri, fileTypeBlobs, newFilePath, bCopySubDirectories, bNeedsNewSubDirectories);
-        //                //add them to zipargs
-        //                PackageIO.AddChildrenFilesToZipArgsAsync(newFilePath, packageName, fileType, zipArgs);
-        //            }
-        //        }
-        //    }
-        //    return bHasCopied;
-        //}
-        ////160 deprecated for async
-        //private void AddSiblingFiles(ContentURI uri,
-        //    IEnumerable<IListBlobItem> blobs, string currentFilePath, 
-        //    string packageName, string newFilePath,
-        //    IDictionary<string, string> zipArgs)
-        //{
-        //    string sPackageFilePath = string.Empty;
-        //    if (blobs != null)
-        //    {
-        //        string sFileExtension = string.Empty;
-        //        //toDirectory has to end in a delimited file path or gets the wrong directory
-        //        string sToDirectory = FileStorageIO.GetDirectoryName(newFilePath);
-        //        foreach (var blob in blobs)
-        //        {
-        //            //current file is already in the package
-        //            if (!blob.Uri.AbsoluteUri.Contains(currentFilePath))
-        //            {
-        //                if (Path.HasExtension(blob.Uri.AbsoluteUri))
-        //                {
-        //                    sPackageFilePath = Path.Combine(sToDirectory, Path.GetFileName(blob.Uri.AbsoluteUri));
-        //                    FileStorageIO.CopyURIs(uri, blob.Uri.AbsoluteUri, sPackageFilePath);
-        //                    if (Helpers.FileStorageIO.URIAbsoluteExists(
-        //                        uri, sPackageFilePath))
-        //                    {
-        //                        if (!zipArgs.ContainsKey(sPackageFilePath))
-        //                        {
-        //                            zipArgs.Add(sPackageFilePath, packageName);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        
         public async Task<bool> CopyRelatedDataToCloudServerPackageAsync(
             ContentURI uri, string uriPath,
             string packageName, string fileType, string newFilePath,

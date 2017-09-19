@@ -1,7 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
@@ -13,7 +12,6 @@ namespace DevTreks.Data.Helpers
     ///Purpose:		General utilities storing files on cloud and web server file storage systems
     ///Author:		www.devtreks.org
     ///Date:		2017, September
-    ///References:	www.devtreks.org/helptreks/linkedviews/help/linkedview/HelpFile/148
     /// </summary>
     public class FileStorageIO
     {
@@ -359,41 +357,7 @@ namespace DevTreks.Data.Helpers
             }
             return sDescDir;
         }
-        //public static async void CopyDirectories(ContentURI uri, 
-        //    string fromDirectory, string toDirectory, 
-        //    bool copySubDirs, bool needsNewSubDirectories)
-        //{
-        //    PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //    if (Path.IsPathRooted(fromDirectory))
-        //    {
-        //        if (Path.IsPathRooted(toDirectory))
-        //        {
-        //            FileIO.CopyDirectories(fromDirectory, toDirectory, 
-        //                copySubDirs, needsNewSubDirectories);
-        //        }
-        //        else
-        //        {
-        //            if (ePlatform == PLATFORM_TYPES.azure)
-        //            {
-        //                AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //                await azureIO.CopyDirectoriesAsync(uri, 
-        //                    fromDirectory, toDirectory,
-        //                    copySubDirs, needsNewSubDirectories);
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (fromDirectory.StartsWith("http")
-        //            && ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            await azureIO.CopyDirectoriesAsync(uri, 
-        //                fromDirectory, toDirectory,
-        //                    copySubDirs, needsNewSubDirectories);
-        //        }
-        //    }
-        //}
+        
         public static async Task<bool> CopyDirectoriesAsync(ContentURI uri,
             string fromDirectory, string toDirectory, 
             bool copySubDirs, bool needsNewSubDirectories)
@@ -528,38 +492,7 @@ namespace DevTreks.Data.Helpers
             return bFileHasSaved;
         }
         
-        //public bool SaveXmlInURI(ContentURI uri, XmlReader reader,
-        //    string fullURIPath, out string errorMsg)
-        //{
-        //    bool bFileHasSaved = false;
-        //    errorMsg = string.Empty;
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        if (GeneralHelpers.IsXmlFileExt(fullURIPath))
-        //        {
-        //            XmlFileIO xmlIO = new XmlFileIO();
-        //            xmlIO.WriteFileXml(uri, reader, fullURIPath, out errorMsg);
-        //            if (string.IsNullOrEmpty(errorMsg))
-        //            {
-        //                bFileHasSaved = true;
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //        if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            bFileHasSaved = azureIO.SaveXmlInURI(reader, fullURIPath);
-        //        }
-        //    }
-        //    if (!bFileHasSaved)
-        //    {
-        //        errorMsg = DevTreks.Exceptions.DevTreksErrors.GetMessage("FILESTORAGE_FILENOSAVEXML");
-        //    }
-        //    return bFileHasSaved;
-        //}
+       
         public async Task<bool> SaveFilesAsync(ContentURI uri, XmlDocument doc,
             string fullURIPath, List<Stream> sourceStreams)
         {
@@ -604,36 +537,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasCompleted;
         }
-        //public bool SaveXmlInURI(ContentURI uri, XmlDocument doc,
-        //    string fullURIPath, out string errorMsg)
-        //{
-        //    bool bFileHasSaved = false;
-        //    errorMsg = string.Empty;
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        //the xml does not need to be .xml (it could be .opf)
-        //        XmlFileIO xmlIO = new XmlFileIO();
-        //        xmlIO.WriteFileXml(uri, doc, fullURIPath, out errorMsg);
-        //        if (string.IsNullOrEmpty(errorMsg))
-        //        {
-        //            bFileHasSaved = true;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //        if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            bFileHasSaved = azureIO.SaveStringInURI(doc.OuterXml, fullURIPath);
-        //        }
-        //    }
-        //    if (!bFileHasSaved)
-        //    {
-        //        errorMsg = DevTreks.Exceptions.DevTreksErrors.GetMessage("FILESTORAGE_FILENOSAVEXML");
-        //    }
-        //    return bFileHasSaved;
-        //}
+        
         public async Task<bool> SaveHtmlTextURIAsync(ContentURI uri, StringWriter writer,
             string fullURIPath)
         {
@@ -659,32 +563,7 @@ namespace DevTreks.Data.Helpers
             }
             return bFileHasSaved;
         }
-        //public string SaveTextURI(ContentURI uri, StringWriter writer,
-        //    string fullURIPath)
-        //{
-        //    bool bFileHasSaved = false;
-        //    string sErrorMsg = string.Empty;
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        FileIO fileIO = new FileIO();
-        //        bFileHasSaved = fileIO.WriteTextFile(fullURIPath, writer);
-        //    }
-        //    else
-        //    {
-        //        PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //        if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            //azure async not the same as filesystem
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            bFileHasSaved = azureIO.SaveXmlWriterInURI(writer, fullURIPath);
-        //        }
-        //    }
-        //    if (!bFileHasSaved)
-        //    {
-        //        sErrorMsg = DevTreks.Exceptions.DevTreksErrors.GetMessage("FILESTORAGE_FILENOSAVEHTMLORTEXT");
-        //    }
-        //    return sErrorMsg;
-        //}
+        
         public async Task<bool> SaveTextURIAsync(ContentURI uri,
             StringWriter writer, string fullURIPath)
         {
@@ -710,30 +589,7 @@ namespace DevTreks.Data.Helpers
             }
             return bFileHasSaved;
         }
-        //public bool SaveHtmlTextURI(ContentURI uri, StringWriter writer,
-        //    string fullURIPath)
-        //{
-        //    bool bFileHasSaved = false;
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        FileIO fileIO = new FileIO();
-        //        bFileHasSaved = fileIO.WriteHtmlTextFile(fullURIPath, writer);
-        //    }
-        //    else
-        //    {
-        //        PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //        if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            bFileHasSaved = azureIO.SaveHtmlWriterInURI(writer, fullURIPath);
-        //        }
-        //    }
-        //    if (!bFileHasSaved)
-        //    {
-        //        uri.ErrorMessage = DevTreks.Exceptions.DevTreksErrors.GetMessage("FILESTORAGE_FILENOSAVEHTMLORTEXT");
-        //    }
-        //    return bFileHasSaved;
-        //}
+        
 
         public async Task<bool> SaveTextURIAsync(ContentURI uri, string fullURIPath, string text)
         {
@@ -781,44 +637,7 @@ namespace DevTreks.Data.Helpers
             bHasCompleted = true;
             return bHasCompleted;
         }
-        //public void SaveHtmlURIToWriter(ContentURI uri,
-        //    StringWriter writer, string fullURIPath)
-        //{
-        //    //reduce memory use of html strings
-        //    string sErrorMsg = string.Empty;
-        //    writer.Write(ReadText(uri, fullURIPath, out sErrorMsg));
-        //    uri.ErrorMessage += sErrorMsg;
-        //}
-        //public string ReadText(ContentURI uri,
-        //    string fullURIPath, out string errorMsg)
-        //{
-        //    errorMsg = string.Empty;
-        //    string sTextString = string.Empty;
-        //    if (URIAbsoluteExists(uri, fullURIPath) == false)
-        //    {
-        //        return sTextString;
-        //    }
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        FileIO fileIO = new FileIO();
-        //        sTextString = fileIO.ReadText(uri, fullURIPath);
-        //    }
-        //    else
-        //    {
-        //        PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //        if (ePlatform == PLATFORM_TYPES.webserver)
-        //        {
-        //            WebServerFileIO webIO = new WebServerFileIO();
-        //            sTextString = webIO.ReadText(fullURIPath);
-        //        }
-        //        else if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            sTextString =  azureIO.SaveCloudFileInString(fullURIPath);
-        //        }
-        //    }
-        //    return sTextString;
-        //}
+        
         public async Task<List<string>> ReadLinesAsync(ContentURI uri, 
             string fullURIPath)
         {
@@ -940,37 +759,7 @@ namespace DevTreks.Data.Helpers
             }
             return sResponseMsg;
         }
-        //public List<string> ReadLines(ContentURI uri, 
-        //    string fullURIPath, out string errorMsg)
-        //{
-        //    errorMsg = string.Empty;
-        //    List<string> lines = new List<string>();
-        //    if (URIAbsoluteExists(uri, fullURIPath) == false)
-        //    {
-        //        return lines;
-        //    }
-        //    PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        FileIO fileIO = new FileIO();
-        //        lines = fileIO.ReadLines(fullURIPath);
-        //    }
-        //    else
-        //    {
-        //        //176 starting using dataurl prop on localhost
-        //        if (ePlatform == PLATFORM_TYPES.webserver)
-        //        {
-        //            WebServerFileIO wsfileIO = new WebServerFileIO();
-        //            lines = wsfileIO.ReadLines(fullURIPath);
-        //        }
-        //        else if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            lines = azureIO.ReadLines(fullURIPath);
-        //        }
-        //    }
-        //    return lines;
-        //}
+        
         public async Task<string> ReadTextAsync(ContentURI uri, 
             string fullURIPath)
         {
@@ -1016,30 +805,7 @@ namespace DevTreks.Data.Helpers
             }
             return el;
         }
-        //public static XmlReader GetXmlReader(ContentURI uri, string fullURIPath)
-        //{
-        //    XmlReader reader = null;
-        //    if (URIAbsoluteExists(uri, fullURIPath)
-        //        == false)
-        //    {
-        //        return reader;
-        //    }
-        //    if (Path.IsPathRooted(fullURIPath))
-        //    {
-        //        reader = XmlFileIO.GetXmlFromFile(fullURIPath);
-        //    }
-        //    else
-        //    {
-        //        PLATFORM_TYPES ePlatform = GetPlatformType(fullURIPath);
-        //        if (ePlatform == PLATFORM_TYPES.azure)
-        //        {
-        //            AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //            reader = azureIO.GetXmlFromURI(fullURIPath);
-        //        }
-        //    }
-        //    return reader;
-        //}
-
+        
         public static async Task<XmlReader> GetXmlReaderAsync(ContentURI uri, 
             string fullURIPath)
         {
@@ -1079,66 +845,7 @@ namespace DevTreks.Data.Helpers
             }
             return el;
         }
-        //deprecated in 160 in favor of async
-        //public static void CopyURIs(ContentURI uri, 
-        //    string fromURIPath, string toURIPath)
-        //{
-        //    //some files need to be copied from root web content
-        //    if (URIAbsoluteExists(uri, fromURIPath) == true
-        //        && fromURIPath.Equals(toURIPath) == false
-        //        && (!string.IsNullOrEmpty(toURIPath)))
-        //    {
-        //        PLATFORM_TYPES ePlatform = uri.URIDataManager.PlatformType;
-        //        if (Path.IsPathRooted(fromURIPath))
-        //        {
-        //            if (Path.IsPathRooted(toURIPath))
-        //            {
-        //                FileIO.CopyFiles(uri, fromURIPath, toURIPath);
-        //            }
-        //            else
-        //            {
-        //                if (ePlatform == PLATFORM_TYPES.azure)
-        //                {
-        //                    AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //                    string sBlobFullURI = string.Empty;
-        //                    azureIO.SaveCloudFile(toURIPath, fromURIPath, out sBlobFullURI);
-        //                }
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (Path.IsPathRooted(toURIPath))
-        //            {
-        //                if (ePlatform == PLATFORM_TYPES.azure)
-        //                {
-        //                    //2.0.0 debugs azure blob storage using localhost
-        //                    ePlatform = GetPlatformType(fromURIPath);
-        //                    if (ePlatform == PLATFORM_TYPES.azure)
-        //                    {
-        //                        AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //                        azureIO.SaveCloudFileInFileSystem(fromURIPath, toURIPath);
-        //                    }
-        //                    else
-        //                    {
-        //                        if (ePlatform == PLATFORM_TYPES.webserver)
-        //                        {
-        //                            WebServerFileIO webIO = new WebServerFileIO();
-        //                            webIO.CopyWebFileToFileSystemAsync(fromURIPath, toURIPath);
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (ePlatform == PLATFORM_TYPES.azure)
-        //                {
-        //                    AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //                    azureIO.CopyBlob(uri, fromURIPath, toURIPath);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        
         public static async Task<bool> CopyURIsAsync(ContentURI uri, 
             string fromURIPath, string toURIPath)
         {
@@ -1207,8 +914,13 @@ namespace DevTreks.Data.Helpers
                         }
                         else
                         {
-                            //web server doesn't handle https and should use filesystem
-
+                            //210: to debug using localhost:5000
+                            ePlatform = GetPlatformType(fromURIPath);
+                            if (ePlatform == PLATFORM_TYPES.webserver)
+                            {
+                                WebServerFileIO webIO = new WebServerFileIO();
+                                bHasCopied = await webIO.CopyWebFileToFileSystemAsync(fromURIPath, toURIPath);
+                            }
                         }
                     }
                     else
@@ -1222,6 +934,7 @@ namespace DevTreks.Data.Helpers
                         else
                         {
                             //web server doesn't handle https and should use filesystem
+                            
 
                         }
                     }
@@ -1444,30 +1157,6 @@ namespace DevTreks.Data.Helpers
             }
             return sURIPath;
         }
-        //public static string GetResourceURIPath(string existingURIPath, ref string errorMsg)
-        //{
-        //    string sURIPath = string.Empty;
-        //    PLATFORM_TYPES ePlatform
-        //            = GetPlatformType(existingURIPath);
-        //    if (ePlatform == PLATFORM_TYPES.azure)
-        //    {
-        //        AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //        sURIPath = azureIO.GetResourceURIPath(existingURIPath, ref errorMsg);
-        //    }
-        //    else
-        //    {
-        //        if (URIAbsoluteExists(existingURIPath))
-        //        {
-        //            sURIPath = existingURIPath;
-        //        }
-        //        else
-        //        {
-        //            errorMsg
-        //                = DevTreks.Exceptions.DevTreksErrors.MakeStandardErrorMsg(
-        //                string.Empty, "RESOURCES_NOFILE");
-        //        }
-        //    }
-        //    return sURIPath;
-        //}
+        
     }
 }

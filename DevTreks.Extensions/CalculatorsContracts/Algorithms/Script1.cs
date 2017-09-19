@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		Run scripting language algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2016, November
+    ///Date:		2017, September
     ///References:	CTA 1, 2, and 3 references
     ///</summary>
     public class Script1 : Calculator1
@@ -58,8 +58,7 @@ namespace DevTreks.Extensions.Algorithms
         //upper ci
         public double QTU { get; set; }
         public string QTUUnit { get; set; }
-
-        //running this truly async returns to UI w/o saving final calcs or an endless wait
+        
         public async Task<bool> RunAlgorithmAsync(string inputFilePath, string scriptFilePath, 
             System.Threading.CancellationToken ctk)
         {
@@ -96,17 +95,24 @@ namespace DevTreks.Extensions.Algorithms
                         //has to be done each time because can't be sure when scriptfile changed last
                         if (!scriptFilePath.EndsWith(".pyw"))
                         {
-                            string sPyScript = await CalculatorHelpers.ReadText(_params.ExtensionDocToCalcURI, scriptFilePath);
-                            if (!string.IsNullOrEmpty(sPyScript))
-                            {
-                                string sFileName = Path.GetFileName(scriptFilePath);
-                                string sPyScriptFileName = sFileName.Replace(".txt", ".pyw");
-                                bool bIsLocalCache = false;
-                                string sPyPath = CalculatorHelpers.GetTempDocsPath(_params.ExtensionDocToCalcURI, bIsLocalCache, sPyScriptFileName);
-                                bool bHasFile = await CalculatorHelpers.SaveTextInURI(
-                                    _params.ExtensionDocToCalcURI, sPyScript, sPyPath);
-                                scriptFilePath = sPyPath;
-                            }
+                            //210: deprecated bottom code in favor of moving it to temp docs path -overcomes localhost:5509 versus 5000 debugging
+                            string sFileName = Path.GetFileName(scriptFilePath);
+                            bool bIsLocalCache = false;
+                            string sTempPath = CalculatorHelpers.GetTempDocsPath(_params.ExtensionDocToCalcURI, bIsLocalCache, sFileName);
+                            bool bHasFile = await CalculatorHelpers.CopyFiles(
+                                _params.ExtensionDocToCalcURI, scriptFilePath, sTempPath);
+                            scriptFilePath = sTempPath;
+                            //string sPyScript = await CalculatorHelpers.ReadText(_params.ExtensionDocToCalcURI, scriptFilePath);
+                            //if (!string.IsNullOrEmpty(sPyScript))
+                            //{
+                            //    string sFileName = Path.GetFileName(scriptFilePath);
+                            //    string sPyScriptFileName = sFileName.Replace(".txt", ".pyw");
+                            //    bool bIsLocalCache = false;
+                            //    string sTempPath = CalculatorHelpers.GetTempDocsPath(_params.ExtensionDocToCalcURI, bIsLocalCache, sPyScriptFileName);
+                            //    bool bHasFile = await CalculatorHelpers.SaveTextInURI(
+                            //        _params.ExtensionDocToCalcURI, sPyScript, sTempPath);
+                            //    scriptFilePath = sTempPath;
+                            //}
                         }
                     }
                     sb.AppendLine("python results");
@@ -119,11 +125,18 @@ namespace DevTreks.Extensions.Algorithms
                         //rscript.exe can't run from a url 
                         if (scriptFilePath.StartsWith("http"))
                         {
-                            //convert it to a filesystem path
-                            //make sure that both localhost and localhost:44300 have a copy of the file 
-                            string sRFilePath = CalculatorHelpers.ConvertFullURIToFilePath(
-                                 this._params.ExtensionDocToCalcURI, scriptFilePath);
-                            scriptFilePath = sRFilePath;
+                            //210: deprecated bottom code in favor of moving it to temp docs path -overcomes localhost:5509 versus 5000 debugging
+                            string sFileName = Path.GetFileName(scriptFilePath);
+                            bool bIsLocalCache = false;
+                            string sTempPath = CalculatorHelpers.GetTempDocsPath(_params.ExtensionDocToCalcURI, bIsLocalCache, sFileName);
+                            bool bHasFile = await CalculatorHelpers.CopyFiles(
+                                _params.ExtensionDocToCalcURI, scriptFilePath, sTempPath);
+                            scriptFilePath = sTempPath;
+                            ////convert it to a filesystem path
+                            ////make sure that both localhost and localhost:44300 have a copy of the file 
+                            //string sRFilePath = CalculatorHelpers.ConvertFullURIToFilePath(
+                            //     this._params.ExtensionDocToCalcURI, scriptFilePath);
+                            //scriptFilePath = sRFilePath;
                         }
                     }
                     //r is default

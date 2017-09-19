@@ -9,7 +9,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Run general component and operation calculations
     ///Author:		www.devtreks.org
-    ///Date:		2014, May
+    ///Date:		2017, September
     ///References:	www.devtreks.org/helptreks/linkedviews/help/linkedview/HelpFile/148
     //NOTES         1. Carry out calculations by deserializing currentCalculationsElement 
     //              and currentElement into an AddInViews.BaseObject and using the object
@@ -335,14 +335,6 @@ namespace DevTreks.Extensions
                     if (input.XmlDocElement.HasElements)
                     {
                         string sCalculatorType = string.Empty;
-                        //Calculator1 calc = new Calculator1();
-                        //calc.InitCalculatorProperties();
-                        //calc.SetCalculatorProperties(input.XmlDocElement);
-                        //XElement oInputElement = new XElement(input.XmlDocElement);
-                        ////set the input atts
-                        //Input.SetInputAllAttributes(input, oInputElement);
-                        //string sCalculatorType
-                        //    = CalculatorHelpers.GetCalculatorType(oInputElement);
                         XElement oMachInputElement = GetMachineryCalculator(calcParameters,
                             sCalculatorType, input.XmlDocElement);
                         if (oMachInputElement != null)
@@ -431,53 +423,153 @@ namespace DevTreks.Extensions
                             sCalculatorType
                                 = CalculatorHelpers.GetCalculatorType(oFoodInputElement);
                             string sAttNameExtension = string.Empty;
-                            //if (sCalculatorType
-                            //    == FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString())
-                            //{
-                            //    FoodFactCalculator foodFactInput = new FoodFactCalculator();
-                            //    //serialize in same manner as IOFNStockCalculator
-                            //    foodFactInput.SetFoodFactProperties(calcParameters,
-                            //        oFoodInputElement, oInputElement);
-                            //    //foodFactInput.SetInputProperties(calcParameters,
-                            //    //    oFoodInputElement, oInputElement);
-                            //    //foodFactInput.SetFoodFactProperties(oFoodInputElement);
-                            //    IOFNStockCalculator fnCalculator = new IOFNStockCalculator();
-                            //    bHasThisCalculations = fnCalculator.RunFNStockCalculations(foodFactInput,
-                            //        calcParameters);
-                            //    //store the new calculations
-                            //    foodFactInput.XmlDocElement = oFoodInputElement;
-                            //    calcParameters.ErrorMessage = sErrorMsg;
-                            //    //they need to find one another when serializing
-                            //    input.CalculatorId = foodFactInput.CalculatorId;
-                            //    foodInputs.Add(foodFactInput);
-                            //}
-                            //else if (sCalculatorType
-                            //    == FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString())
-                            //{
-                            //    FNSR01Calculator srInput = new FNSR01Calculator();
-                            //    //serialize in same manner as IOFNStockCalculator
-                            //    srInput.SetFNSR01Properties(calcParameters,
-                            //        oFoodInputElement, oInputElement);
-                            //    //srInput.SetInputProperties(calcParameters,
-                            //    //    oFoodInputElement, oInputElement);
-                            //    //srInput.SetFNSR01Properties(oFoodInputElement);
-                            //    IOFNSR01StockCalculator fnCalculator = new IOFNSR01StockCalculator();
-                            //    bHasThisCalculations = fnCalculator.RunFNSR01StockCalculations(srInput,
-                            //        calcParameters);
-                            //    //store the new calculations
-                            //    srInput.XmlDocElement = oFoodInputElement;
-                            //    calcParameters.ErrorMessage = sErrorMsg;
-                            //    //they need to find one another when serializing
-                            //    input.CalculatorId = srInput.CalculatorId;
-                            //    foodInputs.Add(srInput);
-                            //}
+                            if (sCalculatorType
+                                == FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString())
+                            {
+                                FoodFactCalculator foodFactInput = new FoodFactCalculator();
+                                //serialize in same manner as IOFNStockCalculator
+                                foodFactInput.SetFoodFactProperties(calcParameters,
+                                    oFoodInputElement, oInputElement);
+                                //foodFactInput.SetInputProperties(calcParameters,
+                                //    oFoodInputElement, oInputElement);
+                                //foodFactInput.SetFoodFactProperties(oFoodInputElement);
+                                IOFNStockCalculator fnCalculator = new IOFNStockCalculator();
+                                bHasThisCalculations = fnCalculator.RunFNStockCalculations(foodFactInput,
+                                    calcParameters);
+                                //store the new calculations
+                                foodFactInput.XmlDocElement = oFoodInputElement;
+                                calcParameters.ErrorMessage = sErrorMsg;
+                                //they need to find one another when serializing
+                                input.CalculatorId = foodFactInput.CalculatorId;
+                                foodInputs.Add(foodFactInput);
+                            }
+                            else if (sCalculatorType
+                                == FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString())
+                            {
+                                FNSR01Calculator srInput = new FNSR01Calculator();
+                                //serialize in same manner as IOFNStockCalculator
+                                srInput.SetFNSR01Properties(calcParameters,
+                                    oFoodInputElement, oInputElement);
+                                //srInput.SetInputProperties(calcParameters,
+                                //    oFoodInputElement, oInputElement);
+                                //srInput.SetFNSR01Properties(oFoodInputElement);
+                                IOFNSR01StockCalculator fnCalculator = new IOFNSR01StockCalculator();
+                                bHasThisCalculations = fnCalculator.RunFNSR01StockCalculations(srInput,
+                                    calcParameters);
+                                //store the new calculations
+                                srInput.XmlDocElement = oFoodInputElement;
+                                calcParameters.ErrorMessage = sErrorMsg;
+                                //they need to find one another when serializing
+                                input.CalculatorId = srInput.CalculatorId;
+                                foodInputs.Add(srInput);
+                            }
                         }
                     }
                 }
             }
             return foodInputs;
         }
-        
+        //retain in case hc calcors change amounts (prices and units only in v1.1)
+        //private List<HealthCareCost1Calculator> GetHealthCareInputs(CalculatorParameters calcParameters)
+        //{
+        //    List<HealthCareCost1Calculator> hcInputs = new List<HealthCareCost1Calculator>();
+        //    foreach (Input input in calcParameters.ParentOperationComponent.Inputs)
+        //    {
+        //        if (input.AnnuityType == TimePeriod.ANNUITY_TYPES.none
+        //            && input.XmlDocElement != null)
+        //        {
+        //            //0.9.0 stays consistent across all apps by using standard calc patterns
+        //            if (input.XmlDocElement.HasElements)
+        //            {
+        //                XElement oInputElement = new XElement(input.XmlDocElement);
+        //                //set the input atts
+        //                Input.SetInputAllAttributes(input, ref oInputElement);
+        //                string sCalculatorType
+        //                    = CalculatorHelpers.GetCalculatorType(oInputElement);
+        //                XElement oHealthCareInputElement = GetHealthCareCalculator(calcParameters,
+        //                    sCalculatorType, oInputElement);
+        //                if (oHealthCareInputElement != null && oInputElement != null)
+        //                {
+        //                    string sErrorMsg = string.Empty;
+        //                    bool bHasThisCalculations = false;
+        //                    sCalculatorType
+        //                        = CalculatorHelpers.GetCalculatorType(oHealthCareInputElement);
+        //                    if (sCalculatorType
+        //                        == HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString())
+        //                    {
+        //                        string sAttNameExtension = string.Empty;
+        //                        HealthCareCost1Calculator hcInput = new HealthCareCost1Calculator();
+        //                        //serialize in same manner as InputHCStockCalculator
+        //                        hcInput.SetInputProperties(calcParameters,
+        //                            oHealthCareInputElement, oInputElement);
+        //                        hcInput.SetHealthCareCost1Properties(oHealthCareInputElement);
+        //                        InputHCStockCalculator hcCalculator = new InputHCStockCalculator();
+        //                        bHasThisCalculations = hcCalculator.RunHCStockCalculations(hcInput,
+        //                            calcParameters);
+        //                        //store the new calculations
+        //                        hcInput.XmlDocElement = oHealthCareInputElement;
+        //                        calcParameters.ErrorMessage = sErrorMsg;
+        //                        //they need to find one another when serializing
+        //                        input.CalculatorId = hcInput.CalculatorId;
+        //                        hcInputs.Add(hcInput);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return hcInputs;
+        //}
+
+        //retain in case lcc calcors change amounts (prices only in v1.1)
+        //private List<LCC1Calculator> GetLifeCycleInputs(CalculatorParameters calcParameters)
+        //{
+        //    List<LCC1Calculator> lcInputs = new List<LCC1Calculator>();
+        //    foreach (Input input in calcParameters.ParentOperationComponent.Inputs)
+        //    {
+        //        if (input.AnnuityType == TimePeriod.ANNUITY_TYPES.none
+        //            && input.XmlDocElement != null)
+        //        {
+        //            //0.9.0 stays consistent across all apps by using standard calc patterns
+        //            if (input.XmlDocElement.HasElements)
+        //            {
+        //                XElement oInputElement = new XElement(input.XmlDocElement);
+        //                //set the input atts
+        //                Input.SetInputAllAttributes(input, ref oInputElement);
+        //                string sCalculatorType
+        //                    = CalculatorHelpers.GetCalculatorType(oInputElement);
+        //                XElement oLifeCycleInputElement = GetLifeCycleCalculator(calcParameters,
+        //                    sCalculatorType, oInputElement);
+        //                if (oLifeCycleInputElement != null && oInputElement != null)
+        //                {
+        //                    string sErrorMsg = string.Empty;
+        //                    bool bHasThisCalculations = false;
+        //                    sCalculatorType
+        //                        = CalculatorHelpers.GetCalculatorType(oLifeCycleInputElement);
+        //                    if (sCalculatorType
+        //                        == HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString())
+        //                    {
+        //                        string sAttNameExtension = string.Empty;
+        //                        LCC1Calculator lcInput = new LCC1Calculator();
+        //                        //serialize in same manner as InputHCStockCalculator
+        //                        lcInput.SetInputProperties(calcParameters,
+        //                            oLifeCycleInputElement, oInputElement);
+        //                        lcInput.SetLCC1CalculatorProperties(oLifeCycleInputElement);
+        //                        InputBuildStockCalculator lcCalculator = new InputBuildStockCalculator();
+        //                        bHasThisCalculations = lcCalculator.RunBuildStockCalculations(lcInput,
+        //                            calcParameters);
+        //                        //store the new calculations
+        //                        lcInput.XmlDocElement = oLifeCycleInputElement;
+        //                        calcParameters.ErrorMessage = sErrorMsg;
+        //                        //they need to find one another when serializing
+        //                        input.CalculatorId = lcInput.CalculatorId;
+        //                        lcInputs.Add(lcInput);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return lcInputs;
+        //}
         private XElement GetMachineryCalculator(CalculatorParameters calcParameters, 
             string calculatorType, XElement inputElement)
         {
@@ -531,26 +623,26 @@ namespace DevTreks.Extensions
             if (inputElement.Name.LocalName
                     == Constants.LINKEDVIEWS_TYPES.linkedview.ToString())
             {
-                //if (calculatorType
-                //    == FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString())
-                //{
-                //    oCalculationsElement = inputElement;
-                //}
-                //else if (calculatorType
-                //    == FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString())
-                //{
-                //    oCalculationsElement = inputElement;
-                //}
+                if (calculatorType
+                    == FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString())
+                {
+                    oCalculationsElement = inputElement;
+                }
+                else if (calculatorType
+                    == FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString())
+                {
+                    oCalculationsElement = inputElement;
+                }
             }
             else
             {
-                //oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(inputElement,
-                //    Calculator1.cCalculatorType, FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString());
-                //if (oCalculationsElement == null)
-                //{
-                //    oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(inputElement,
-                //    Calculator1.cCalculatorType, FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString());
-                //}
+                oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(inputElement,
+                    Calculator1.cCalculatorType, FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString());
+                if (oCalculationsElement == null)
+                {
+                    oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(inputElement,
+                    Calculator1.cCalculatorType, FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString());
+                }
             }
             return oCalculationsElement;
         }
@@ -561,19 +653,19 @@ namespace DevTreks.Extensions
             if (inputElement.Name.LocalName
                     == Constants.LINKEDVIEWS_TYPES.linkedview.ToString())
             {
-                //if (calculatorType
-                //    == HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString())
-                //{
-                //    oCalculationsElement = inputElement;
-                //}
+                if (calculatorType
+                    == HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString())
+                {
+                    oCalculationsElement = inputElement;
+                }
             }
             else
             {
-                //oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(inputElement,
-                //    Calculator1.cCalculatorType, HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString());
-                //if (oCalculationsElement == null)
-                //{
-                //}
+                oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(inputElement,
+                    Calculator1.cCalculatorType, HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString());
+                if (oCalculationsElement == null)
+                {
+                }
             }
             return oCalculationsElement;
         }
@@ -656,123 +748,123 @@ namespace DevTreks.Extensions
                 }
             }
         }
-        //private void SerializeFamilyBudgetInputCalculations(CalculatorParameters calcParameters,
-        //    List<Input> foodInputs)
-        //{
-        //    if (calcParameters.ParentOperationComponent.Inputs != null
-        //        && foodInputs != null)
-        //    {
-        //        foreach (Input input in calcParameters.ParentOperationComponent.Inputs)
-        //        {
-        //            if (input.AnnuityType == TimePeriod.ANNUITY_TYPES.none
-        //                && input.XmlDocElement != null)
-        //            {
-        //                //this was set up when serialized
-        //                Input foodInput = foodInputs.FirstOrDefault(
-        //                    f => f.CalculatorId == input.CalculatorId);
-        //                if (foodInput != null)
-        //                {
-        //                    if (foodInput.XmlDocElement != null)
-        //                    {
-        //                        XElement oFoodInputElement = new XElement(foodInput.XmlDocElement);
-        //                        XElement oInputElement = new XElement(input.XmlDocElement);
-        //                        //serialize object back to xml using standard MachCalc1 pattern
-        //                        string sAttNameExtension = string.Empty;
-        //                        foodInput.SetAndRemoveCalculatorAttributes(sAttNameExtension,
-        //                            oFoodInputElement);
-        //                        foodInput.SetNewInputAttributes(calcParameters, oFoodInputElement);
-        //                        if (foodInput.CalculatorType
-        //                            == FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString())
-        //                        {
-        //                            FoodFactCalculator ffInput = (FoodFactCalculator)foodInput;
-        //                            ffInput.SetFoodFactAttributes(sAttNameExtension,
-        //                                oFoodInputElement);
-        //                        }
-        //                        else if (foodInput.CalculatorType
-        //                            == FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString())
-        //                        {
-        //                            FNSR01Calculator srInput = (FNSR01Calculator)foodInput;
-        //                            srInput.SetFNSR01Attributes(sAttNameExtension,
-        //                                oFoodInputElement);
-        //                        }
-        //                        //mark this linkedview as edited (GetCalculator uses it later)
-        //                        oFoodInputElement.SetAttributeValue(CostBenefitStatistic01.TYPE_NEWCALCS,
-        //                            "true");
-        //                        //update input agmach linkedview with new calcs
-        //                        oInputElement = new XElement(input.XmlDocElement);
-        //                        CalculatorHelpers.ReplaceElementInDocument(oFoodInputElement,
-        //                            oInputElement);
-        //                        //update input with new prices and amounts
-        //                        input.XmlDocElement = oInputElement;
-        //                        input.OCPrice = foodInput.OCPrice;
-        //                        input.OCAmount = foodInput.OCAmount;
-        //                        if (!string.IsNullOrEmpty(foodInput.OCUnit))
-        //                        {
-        //                            input.OCUnit = foodInput.OCUnit;
-        //                        }
-        //                        //no aoh changes yet in food calculators
-        //                        input.CAPPrice = foodInput.CAPPrice;
-        //                        //tells calculators to swap out input being calculated with this one
-        //                        input.Type = CostBenefitCalculator.TYPE_NEWCALCS;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        //private void SerializeHealthCareInputCalculations(CalculatorParameters calcParameters,
-        //    List<HealthCareCost1Calculator> hcInputs)
-        //{
-        //    if (calcParameters.ParentOperationComponent.Inputs != null
-        //        && hcInputs != null)
-        //    {
-        //        foreach (Input input in calcParameters.ParentOperationComponent.Inputs)
-        //        {
-        //            if (input.AnnuityType == TimePeriod.ANNUITY_TYPES.none
-        //                && input.XmlDocElement != null)
-        //            {
-        //                //this was set up when serialized
-        //                HealthCareCost1Calculator hcInput = hcInputs.FirstOrDefault(
-        //                    f => f.CalculatorId == input.CalculatorId);
-        //                if (hcInput != null)
-        //                {
-        //                    if (hcInput.XmlDocElement != null)
-        //                    {
-        //                        XElement oHealtCareInputElement = new XElement(hcInput.XmlDocElement);
-        //                        XElement oInputElement = new XElement(input.XmlDocElement);
-        //                        //serialize object back to xml using standard MachCalc1 pattern
-        //                        if (hcInput.CalculatorType
-        //                            == HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString())
-        //                        {
-        //                            string sAttNameExtension = string.Empty;
-        //                            hcInput.SetAndRemoveCalculatorAttributes(sAttNameExtension,
-        //                                oHealtCareInputElement);
-        //                            hcInput.SetNewInputAttributes(calcParameters, oHealtCareInputElement);
-        //                            hcInput.SetHealthCareCost1Attributes(sAttNameExtension,
-        //                                oHealtCareInputElement);
-        //                        }
-        //                        //mark this linkedview as edited (GetCalculator uses it later)
-        //                        oHealtCareInputElement.SetAttributeValue(CostBenefitStatistic01.TYPE_NEWCALCS,
-        //                            "true");
-        //                        //update input agmach linkedview with new calcs
-        //                        oInputElement = new XElement(input.XmlDocElement);
-        //                        CalculatorHelpers.ReplaceElementInDocument(oHealtCareInputElement,
-        //                            oInputElement);
-        //                        //update input with new prices and amounts
-        //                        input.XmlDocElement = oInputElement;
-        //                        input.OCPrice = hcInput.OCPrice;
-        //                        input.OCAmount = hcInput.OCAmount;
-        //                        //no aoh changes yet in food calculators
-        //                        input.CAPPrice = hcInput.CAPPrice;
-        //                        //tells calculators to swap out input being calculated with this one
-        //                        input.Type = CostBenefitCalculator.TYPE_NEWCALCS;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
- 
+        private void SerializeFamilyBudgetInputCalculations(CalculatorParameters calcParameters,
+            List<Input> foodInputs)
+        {
+            if (calcParameters.ParentOperationComponent.Inputs != null
+                && foodInputs != null)
+            {
+                foreach (Input input in calcParameters.ParentOperationComponent.Inputs)
+                {
+                    if (input.AnnuityType == TimePeriod.ANNUITY_TYPES.none
+                        && input.XmlDocElement != null)
+                    {
+                        //this was set up when serialized
+                        Input foodInput = foodInputs.FirstOrDefault(
+                            f => f.CalculatorId == input.CalculatorId);
+                        if (foodInput != null)
+                        {
+                            if (foodInput.XmlDocElement != null)
+                            {
+                                XElement oFoodInputElement = new XElement(foodInput.XmlDocElement);
+                                XElement oInputElement = new XElement(input.XmlDocElement);
+                                //serialize object back to xml using standard MachCalc1 pattern
+                                string sAttNameExtension = string.Empty;
+                                foodInput.SetAndRemoveCalculatorAttributes(sAttNameExtension,
+                                    oFoodInputElement);
+                                foodInput.SetNewInputAttributes(calcParameters, oFoodInputElement);
+                                if (foodInput.CalculatorType
+                                    == FNCalculatorHelper.CALCULATOR_TYPES.foodfactUSA1.ToString())
+                                {
+                                    FoodFactCalculator ffInput = (FoodFactCalculator)foodInput;
+                                    ffInput.SetFoodFactAttributes(sAttNameExtension,
+                                        oFoodInputElement);
+                                }
+                                else if (foodInput.CalculatorType
+                                    == FNCalculatorHelper.CALCULATOR_TYPES.foodnutSR01.ToString())
+                                {
+                                    FNSR01Calculator srInput = (FNSR01Calculator)foodInput;
+                                    srInput.SetFNSR01Attributes(sAttNameExtension,
+                                        oFoodInputElement);
+                                }
+                                //mark this linkedview as edited (GetCalculator uses it later)
+                                oFoodInputElement.SetAttributeValue(CostBenefitStatistic01.TYPE_NEWCALCS,
+                                    "true");
+                                //update input agmach linkedview with new calcs
+                                oInputElement = new XElement(input.XmlDocElement);
+                                CalculatorHelpers.ReplaceElementInDocument(oFoodInputElement,
+                                    oInputElement);
+                                //update input with new prices and amounts
+                                input.XmlDocElement = oInputElement;
+                                input.OCPrice = foodInput.OCPrice;
+                                input.OCAmount = foodInput.OCAmount;
+                                if (!string.IsNullOrEmpty(foodInput.OCUnit))
+                                {
+                                    input.OCUnit = foodInput.OCUnit;
+                                }
+                                //no aoh changes yet in food calculators
+                                input.CAPPrice = foodInput.CAPPrice;
+                                //tells calculators to swap out input being calculated with this one
+                                input.Type = CostBenefitCalculator.TYPE_NEWCALCS;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void SerializeHealthCareInputCalculations(CalculatorParameters calcParameters,
+            List<HealthCareCost1Calculator> hcInputs)
+        {
+            if (calcParameters.ParentOperationComponent.Inputs != null
+                && hcInputs != null)
+            {
+                foreach (Input input in calcParameters.ParentOperationComponent.Inputs)
+                {
+                    if (input.AnnuityType == TimePeriod.ANNUITY_TYPES.none
+                        && input.XmlDocElement != null)
+                    {
+                        //this was set up when serialized
+                        HealthCareCost1Calculator hcInput = hcInputs.FirstOrDefault(
+                            f => f.CalculatorId == input.CalculatorId);
+                        if (hcInput != null)
+                        {
+                            if (hcInput.XmlDocElement != null)
+                            {
+                                XElement oHealtCareInputElement = new XElement(hcInput.XmlDocElement);
+                                XElement oInputElement = new XElement(input.XmlDocElement);
+                                //serialize object back to xml using standard MachCalc1 pattern
+                                if (hcInput.CalculatorType
+                                    == HCCalculatorHelper.CALCULATOR_TYPES.healthcost1.ToString())
+                                {
+                                    string sAttNameExtension = string.Empty;
+                                    hcInput.SetAndRemoveCalculatorAttributes(sAttNameExtension,
+                                        oHealtCareInputElement);
+                                    hcInput.SetNewInputAttributes(calcParameters, oHealtCareInputElement);
+                                    hcInput.SetHealthCareCost1Attributes(sAttNameExtension,
+                                        oHealtCareInputElement);
+                                }
+                                //mark this linkedview as edited (GetCalculator uses it later)
+                                oHealtCareInputElement.SetAttributeValue(CostBenefitStatistic01.TYPE_NEWCALCS,
+                                    "true");
+                                //update input agmach linkedview with new calcs
+                                oInputElement = new XElement(input.XmlDocElement);
+                                CalculatorHelpers.ReplaceElementInDocument(oHealtCareInputElement,
+                                    oInputElement);
+                                //update input with new prices and amounts
+                                input.XmlDocElement = oInputElement;
+                                input.OCPrice = hcInput.OCPrice;
+                                input.OCAmount = hcInput.OCAmount;
+                                //no aoh changes yet in food calculators
+                                input.CAPPrice = hcInput.CAPPrice;
+                                //tells calculators to swap out input being calculated with this one
+                                input.Type = CostBenefitCalculator.TYPE_NEWCALCS;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         //mach selection and scheduling analyzers use this section
         public void SetJointInputCalculations(List<Machinery1Input> machineryInputs)
         {

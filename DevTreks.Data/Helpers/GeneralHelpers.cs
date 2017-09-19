@@ -2149,38 +2149,7 @@ namespace DevTreks.Data.Helpers
             sFullURI = oStrBldr.ToString();
             return sFullURI;
         }
-        //public static string GetContentURIPatternFromFullURI(
-        //    ContentURI uri, string fullURIPath)
-        //{
-        //    string sContentURIPattern = string.Empty;
-        //    if (!string.IsNullOrEmpty(fullURIPath))
-        //    {
-        //        sContentURIPattern = fullURIPath.Replace(GetWWWDEVTREKS(uri), string.Empty);
-        //        if (sContentURIPattern.StartsWith(WEBFILE_PATH_DELIMITER))
-        //        {
-        //            sContentURIPattern 
-        //                = sContentURIPattern.TrimStart(WEBFILE_PATH_DELIMITERS);
-        //        }
-        //    }
-        //    return sContentURIPattern;
-        //}
         
-        //public static void ReplaceCommonNameWithRandomName(string uriorfilePattern, 
-        //    ref string filePathName)
-        //{
-        //    ContentURI uri = ContentURI.ConvertShortURIPattern(uriorfilePattern);
-        //    int iIndex = uriorfilePattern.IndexOf(WEBFILE_PATH_DELIMITER);
-        //    if (iIndex == -1)
-        //    {
-        //        //filename to convert to typical uripattern
-        //        uri.ChangeURIPatternFromFileName(uriorfilePattern);
-        //    }
-        //    if (uri.URIName != string.Empty)
-        //    {
-        //        filePathName = filePathName.Replace(uri.URIName, 
-        //            string.Concat(uri.URIName, GetRandomInteger(0).ToString()));
-        //    }
-        //}
         
         public static void GetDefaultNetworkSettings(out int networkId,
             out string networkName, out string networkPartName,

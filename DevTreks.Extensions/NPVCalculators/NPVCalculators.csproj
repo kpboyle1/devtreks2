@@ -12,6 +12,8 @@
   <ItemGroup>
     <ProjectReference Include="..\AgBudgetingCalculators\AgBudgetingCalculators.csproj" />
     <ProjectReference Include="..\CalculatorsContracts\CalculatorsContracts.csproj" />
+    <ProjectReference Include="..\FoodNutrition\FoodNutrition.csproj" />
+    <ProjectReference Include="..\HealthCare\HealthCare.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

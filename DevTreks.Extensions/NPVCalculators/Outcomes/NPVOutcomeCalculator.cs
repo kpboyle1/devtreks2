@@ -9,7 +9,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Run general outcome calculations
     ///Author:		www.devtreks.org
-    ///Date:		2012, July
+    ///Date:		2017, September
     ///References:	www.devtreks.org/helptreks/linkedviews/help/linkedview/HelpFile/148
     //NOTES         1. Carry out calculations by deserializing currentCalculationsElement 
     //              and currentElement into an AddInViews.BaseObject and using the object
@@ -157,142 +157,142 @@ namespace DevTreks.Extensions
             //this is called during the SetAncestors event on opcomps
             if (calcParameters.ParentOutcome.Outputs != null)
             {
-                ////run any health care cost calculators
-                //List<HealthBenefit1Calculator> hcOutputs
-                //    = GetHealthCareOutputs(calcParameters);
-                //if (hcOutputs != null)
-                //{
-                //    if (hcOutputs.Count > 0)
-                //    {
-                //        //set any joint calculations needed
-                //        //none needed yet
+                //run any health care cost calculators
+                List<HealthBenefit1Calculator> hcOutputs
+                    = GetHealthCareOutputs(calcParameters);
+                if (hcOutputs != null)
+                {
+                    if (hcOutputs.Count > 0)
+                    {
+                        //set any joint calculations needed
+                        //none needed yet
 
-                //        //serialize all the new calculations
-                //        SerializeHealthCareOutputCalculations(calcParameters, hcOutputs);
-                //    }
-                //}
+                        //serialize all the new calculations
+                        SerializeHealthCareOutputCalculations(calcParameters, hcOutputs);
+                    }
+                }
             }
         }
-        //private List<HealthBenefit1Calculator> GetHealthCareOutputs(CalculatorParameters calcParameters)
-        //{
-        //    List<HealthBenefit1Calculator> hcOutputs = new List<HealthBenefit1Calculator>();
-        //    foreach (Output output in calcParameters.ParentOutcome.Outputs)
-        //    {
-        //        if (output.AnnuityType == TimePeriod.ANNUITY_TYPES.none
-        //            && output.XmlDocElement != null)
-        //        {
-        //            //0.9.0 stays consistent across all apps by using standard calc patterns
-        //            if (output.XmlDocElement.HasElements)
-        //            {
-        //                XElement oOutputElement = new XElement(output.XmlDocElement);
-        //                //set the output atts
-        //                Output.SetOutputAllAttributes(output, oOutputElement);
-        //                string sCalculatorType
-        //                    = CalculatorHelpers.GetCalculatorType(oOutputElement);
-        //                XElement oHealthCareOutputElement = GetHealthCareCalculator(calcParameters,
-        //                    sCalculatorType, oOutputElement);
-        //                if (oHealthCareOutputElement != null && oOutputElement != null)
-        //                {
-        //                    string sErrorMsg = string.Empty;
-        //                    bool bHasThisCalculations = false;
-        //                    sCalculatorType
-        //                        = CalculatorHelpers.GetCalculatorType(oHealthCareOutputElement);
-        //                    if (sCalculatorType
-        //                        == HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString())
-        //                    {
-        //                        string sAttNameExtension = string.Empty;
-        //                        HealthBenefit1Calculator hcOutput = new HealthBenefit1Calculator();
-        //                        //serialize in same manner as OutputHCStockCalculator
-        //                        hcOutput.SetOutputProperties(calcParameters,
-        //                            oHealthCareOutputElement, oOutputElement);
-        //                        hcOutput.SetHealthBenefit1Properties(oHealthCareOutputElement);
-        //                        OutputHCStockCalculator hcCalculator = new OutputHCStockCalculator();
-        //                        bHasThisCalculations = hcCalculator.RunHCStockCalculations(hcOutput,
-        //                            calcParameters);
-        //                        //store the new calculations
-        //                        hcOutput.XmlDocElement = oHealthCareOutputElement;
-        //                        calcParameters.ErrorMessage = sErrorMsg;
-        //                        //they need to find one another when serializing
-        //                        output.CalculatorId = hcOutput.CalculatorId;
-        //                        hcOutputs.Add(hcOutput);
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return hcOutputs;
-        //}
-        //private XElement GetHealthCareCalculator(CalculatorParameters calcParameters,
-        //     string calculatorType, XElement outputElement)
-        //{
-        //    XElement oCalculationsElement = null;
-        //    if (outputElement.Name.LocalName
-        //            == Constants.LINKEDVIEWS_TYPES.linkedview.ToString())
-        //    {
-        //        if (calculatorType
-        //            == HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString())
-        //        {
-        //            oCalculationsElement = outputElement;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(outputElement,
-        //            Calculator1.cCalculatorType, HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString());
-        //        if (oCalculationsElement == null)
-        //        {
-        //        }
-        //    }
-        //    return oCalculationsElement;
-        //}
-        //private void SerializeHealthCareOutputCalculations(CalculatorParameters calcParameters,
-        //    List<HealthBenefit1Calculator> hcOutputs)
-        //{
-        //    if (calcParameters.ParentOutcome.Outputs != null
-        //        && hcOutputs != null)
-        //    {
-        //        foreach (Output output in calcParameters.ParentOutcome.Outputs)
-        //        {
-        //            if (output.AnnuityType == TimePeriod.ANNUITY_TYPES.none
-        //                && output.XmlDocElement != null)
-        //            {
-        //                //this was set up when serialized
-        //                HealthBenefit1Calculator hcOutput = hcOutputs.FirstOrDefault(
-        //                    f => f.CalculatorId == output.CalculatorId);
-        //                if (hcOutput != null)
-        //                {
-        //                    if (hcOutput.XmlDocElement != null)
-        //                    {
-        //                        XElement oHealtCareOutputElement = new XElement(hcOutput.XmlDocElement);
-        //                        XElement oOutputElement = new XElement(output.XmlDocElement);
-        //                        //serialize object back to xml using standard MachCalc1 pattern
-        //                        if (hcOutput.CalculatorType
-        //                            == HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString())
-        //                        {
-        //                            string sAttNameExtension = string.Empty;
-        //                            hcOutput.SetAndRemoveCalculatorAttributes(sAttNameExtension,
-        //                                oHealtCareOutputElement);
-        //                            hcOutput.SetNewOutputAttributes(calcParameters, oHealtCareOutputElement);
-        //                            hcOutput.SetHealthBenefit1Attributes(sAttNameExtension,
-        //                                oHealtCareOutputElement);
-        //                        }
-        //                        //mark this linkedview as edited (GetCalculator uses it later)
-        //                        oHealtCareOutputElement.SetAttributeValue(CostBenefitStatistic01.TYPE_NEWCALCS,
-        //                            "true");
-        //                        //update output agmach linkedview with new calcs
-        //                        oOutputElement = new XElement(output.XmlDocElement);
-        //                        CalculatorHelpers.ReplaceElementInDocument(oHealtCareOutputElement,
-        //                            oOutputElement);
-        //                        //update output with new prices and amounts
-        //                        output.XmlDocElement = oOutputElement;
-        //                        output.Price = hcOutput.Price;
-        //                        //tells calculators to swap out output being calculated with this one
-        //                        output.Type = CostBenefitCalculator.TYPE_NEWCALCS;
-        //                    }
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
+        private List<HealthBenefit1Calculator> GetHealthCareOutputs(CalculatorParameters calcParameters)
+        {
+            List<HealthBenefit1Calculator> hcOutputs = new List<HealthBenefit1Calculator>();
+            foreach (Output output in calcParameters.ParentOutcome.Outputs)
+            {
+                if (output.AnnuityType == TimePeriod.ANNUITY_TYPES.none
+                    && output.XmlDocElement != null)
+                {
+                    //0.9.0 stays consistent across all apps by using standard calc patterns
+                    if (output.XmlDocElement.HasElements)
+                    {
+                        XElement oOutputElement = new XElement(output.XmlDocElement);
+                        //set the output atts
+                        Output.SetOutputAllAttributes(output, oOutputElement);
+                        string sCalculatorType
+                            = CalculatorHelpers.GetCalculatorType(oOutputElement);
+                        XElement oHealthCareOutputElement = GetHealthCareCalculator(calcParameters,
+                            sCalculatorType, oOutputElement);
+                        if (oHealthCareOutputElement != null && oOutputElement != null)
+                        {
+                            string sErrorMsg = string.Empty;
+                            bool bHasThisCalculations = false;
+                            sCalculatorType
+                                = CalculatorHelpers.GetCalculatorType(oHealthCareOutputElement);
+                            if (sCalculatorType
+                                == HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString())
+                            {
+                                string sAttNameExtension = string.Empty;
+                                HealthBenefit1Calculator hcOutput = new HealthBenefit1Calculator();
+                                //serialize in same manner as OutputHCStockCalculator
+                                hcOutput.SetOutputProperties(calcParameters,
+                                    oHealthCareOutputElement, oOutputElement);
+                                hcOutput.SetHealthBenefit1Properties(oHealthCareOutputElement);
+                                OutputHCStockCalculator hcCalculator = new OutputHCStockCalculator();
+                                bHasThisCalculations = hcCalculator.RunHCStockCalculations(hcOutput,
+                                    calcParameters);
+                                //store the new calculations
+                                hcOutput.XmlDocElement = oHealthCareOutputElement;
+                                calcParameters.ErrorMessage = sErrorMsg;
+                                //they need to find one another when serializing
+                                output.CalculatorId = hcOutput.CalculatorId;
+                                hcOutputs.Add(hcOutput);
+                            }
+                        }
+                    }
+                }
+            }
+            return hcOutputs;
+        }
+        private XElement GetHealthCareCalculator(CalculatorParameters calcParameters,
+             string calculatorType, XElement outputElement)
+        {
+            XElement oCalculationsElement = null;
+            if (outputElement.Name.LocalName
+                    == Constants.LINKEDVIEWS_TYPES.linkedview.ToString())
+            {
+                if (calculatorType
+                    == HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString())
+                {
+                    oCalculationsElement = outputElement;
+                }
+            }
+            else
+            {
+                oCalculationsElement = CalculatorHelpers.GetChildLinkedViewUsingAttribute(outputElement,
+                    Calculator1.cCalculatorType, HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString());
+                if (oCalculationsElement == null)
+                {
+                }
+            }
+            return oCalculationsElement;
+        }
+        private void SerializeHealthCareOutputCalculations(CalculatorParameters calcParameters,
+            List<HealthBenefit1Calculator> hcOutputs)
+        {
+            if (calcParameters.ParentOutcome.Outputs != null
+                && hcOutputs != null)
+            {
+                foreach (Output output in calcParameters.ParentOutcome.Outputs)
+                {
+                    if (output.AnnuityType == TimePeriod.ANNUITY_TYPES.none
+                        && output.XmlDocElement != null)
+                    {
+                        //this was set up when serialized
+                        HealthBenefit1Calculator hcOutput = hcOutputs.FirstOrDefault(
+                            f => f.CalculatorId == output.CalculatorId);
+                        if (hcOutput != null)
+                        {
+                            if (hcOutput.XmlDocElement != null)
+                            {
+                                XElement oHealtCareOutputElement = new XElement(hcOutput.XmlDocElement);
+                                XElement oOutputElement = new XElement(output.XmlDocElement);
+                                //serialize object back to xml using standard MachCalc1 pattern
+                                if (hcOutput.CalculatorType
+                                    == HCCalculatorHelper.CALCULATOR_TYPES.hcbenefit1.ToString())
+                                {
+                                    string sAttNameExtension = string.Empty;
+                                    hcOutput.SetAndRemoveCalculatorAttributes(sAttNameExtension,
+                                        oHealtCareOutputElement);
+                                    hcOutput.SetNewOutputAttributes(calcParameters, oHealtCareOutputElement);
+                                    hcOutput.SetHealthBenefit1Attributes(sAttNameExtension,
+                                        oHealtCareOutputElement);
+                                }
+                                //mark this linkedview as edited (GetCalculator uses it later)
+                                oHealtCareOutputElement.SetAttributeValue(CostBenefitStatistic01.TYPE_NEWCALCS,
+                                    "true");
+                                //update output agmach linkedview with new calcs
+                                oOutputElement = new XElement(output.XmlDocElement);
+                                CalculatorHelpers.ReplaceElementInDocument(oHealtCareOutputElement,
+                                    oOutputElement);
+                                //update output with new prices and amounts
+                                output.XmlDocElement = oOutputElement;
+                                output.Price = hcOutput.Price;
+                                //tells calculators to swap out output being calculated with this one
+                                output.Type = CostBenefitCalculator.TYPE_NEWCALCS;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -1053,22 +1053,6 @@ namespace DevTreks.Data.EditHelpers
                         oUpdateElWriter.WriteEndElement();
                     }
                 }
-                //        XmlWriter oUpdateElWriter = null;
-                //foreach (KeyValuePair<string, string> kvp in lstUpdates)
-                //{
-                //    oUpdateElWriter = navDoc.AppendChild();
-                //    oUpdateElWriter.WriteStartElement(nodeName);
-                //    oUpdateElWriter.WriteAttributeString(AppHelpers.Calculator.cId,
-                //        kvp.Key);
-                //    oUpdateElWriter.WriteAttributeString(Helpers.GeneralHelpers.VALUE,
-                //        kvp.Value);
-                //    oUpdateElWriter.WriteEndElement();
-                //    oUpdateElWriter.Dispose();
-                //    //210: moved below
-                //    //Helpers.FileStorageIO fileStorageIO = new Helpers.FileStorageIO();
-                //    //bHasCompleted
-                //    //    = await fileStorageIO.SaveXmlInURIAsync(uri, new XmlTextReader(oUpdatesDoc.OuterXml), docPath);
-                //}
                 if (oUpdatesDoc != null)
                 {
                     XmlTextReader xmlUpdates = XmlIO.ConvertStringToReader(oUpdatesDoc.OuterXml);

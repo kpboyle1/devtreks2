@@ -6,7 +6,7 @@ namespace DevTreks.Data.Helpers
     /// <summary>
     ///Purpose:		General path functions
     ///Author:		www.devtreks.org
-    ///Date:		2016, September
+    ///Date:		2017, September
     ///References:	2.0.0 moved all path construction
     ///             into this class. These reduce the construction 
     ///             down to a small number of transparent, easy-to-understand, methods.
@@ -545,38 +545,7 @@ namespace DevTreks.Data.Helpers
                 GeneralHelpers.FILE_PATH_DELIMITER);
             return sPathToTempContent;
         }
-        //2.0.0 deprecated: azure and localhost can both use filesystem 
-        //by using appsettings.DefaultRootFullFilePath
-        //public static string GetTempCacheRootPath(ContentURI uri)
-        //{
-        //    string sPathToTempContent = string.Empty;
-        //    FileStorageIO.PLATFORM_TYPES ePlatform = FileStorageIO.GetPlatformType(uri);
-        //    if (ePlatform == FileStorageIO.PLATFORM_TYPES.webserver)
-        //    {
-        //        //store in temp subfolder of resources directory (set permissions once)
-        //        bool bIsAzureStorage = false;
-        //        string sRoot = GetResourceRootPath(uri, bIsAzureStorage);
-        //        if (!sRoot.EndsWith(GeneralHelpers.FILE_PATH_DELIMITER)
-        //            && (!string.IsNullOrEmpty(sRoot)))
-        //        {
-        //            sRoot = string.Concat(sRoot, GeneralHelpers.FILE_PATH_DELIMITER);
-        //        }
-        //        sPathToTempContent = string.Format("{0}{1}{2}",
-        //            sRoot, uri.URIDataManager.TempDocsURIName,
-        //            GeneralHelpers.FILE_PATH_DELIMITER);
-        //    }
-        //    else if (ePlatform == FileStorageIO.PLATFORM_TYPES.azure)
-        //    {
-        //        AzureIOAsync azureIO = new AzureIOAsync(uri);
-        //        //store in local temp cache (file system relative to root of virual server)
-        //        //note: needs a file path delimiter
-        //        sPathToTempContent = string.Format("{0}{1}{2}",
-        //            azureIO.GetLocalResourceDirectoryPath(),
-        //            uri.URIDataManager.TempDocsURIName,
-        //            GeneralHelpers.FILE_PATH_DELIMITER);
-        //    }
-        //    return sPathToTempContent;
-        //}
+        
         //used to build the download package zip file on azure
         public static string GetCloudTempBlobURI(ContentURI uri, string fileName)
         {
@@ -818,6 +787,30 @@ namespace DevTreks.Data.Helpers
             uri.URIDataManager.TempDocPath = sTempURIPath;
             uri.URIClub.ClubDocFullPath = sTempURIPath;
             uri.URIMember.MemberDocFullPath = sTempURIPath;
+        }
+        public static string GetTempDocsPathToNewFileSystemPath(ContentURI uri, bool isLocalCacheDirectory,
+            string newFileName)
+        {
+            //210 added specifically for script file handling (http to file server path conversions)
+            string sTempDocPath = string.Empty;
+            if (!string.IsNullOrEmpty(uri.URIDataManager.TempDocPath))
+            {
+                string sOldTempFileName = Path.GetFileName(uri.URIDataManager.TempDocPath);
+                sTempDocPath = uri.URIDataManager.TempDocPath.Replace(sOldTempFileName, newFileName);
+            }
+            else
+            {
+                //make a new temp doc path for temp storage of script file
+                string sDirectoryPath = GetTempWebDirectory(uri,
+                        isLocalCacheDirectory, GeneralHelpers.Get2RandomInteger());
+                string sDelimiter = FileStorageIO.GetDelimiterForFileStorage(sDirectoryPath);
+                //make the tempdocpath
+                string sTempDocPath2 = string.Concat(sDirectoryPath, sDelimiter, newFileName);
+                //return sTempDocPath;
+                bool bHasDirectory = FileStorageIO.DirectoryCreate(
+                   uri, sTempDocPath2);
+            }
+            return sTempDocPath;
         }
         public static void GetTempDocURIPattern(ContentURI uri,
             out string tempURIPattern)

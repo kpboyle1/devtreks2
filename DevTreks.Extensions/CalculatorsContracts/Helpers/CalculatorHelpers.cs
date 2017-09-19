@@ -445,14 +445,8 @@ namespace DevTreks.Extensions
             string fileName)
         {
             string sTempDocPath = string.Empty;
-            string sDirectoryPath = DevTreksHelpers.AppSettings.GetTempWebDirectory(extURI.URIDataManager.InitialDocToCalcURI,
-                isLocalCacheDirectory, DevTreksHelpers.GeneralHelpers.Get2RandomInteger());
-            string sDelimiter = DevTreksHelpers.FileStorageIO.GetDelimiterForFileStorage(sDirectoryPath);
-            //make the tempdocpath
-            sTempDocPath = string.Concat(sDirectoryPath, sDelimiter, fileName);
-            //return sTempDocPath;
-            bool bHasDirectory = DevTreksHelpers.FileStorageIO.DirectoryCreate(
-                extURI.URIDataManager.InitialDocToCalcURI, sTempDocPath);
+            sTempDocPath = DevTreksHelpers.AppSettings.GetTempDocsPathToNewFileSystemPath(
+                extURI.URIDataManager.InitialDocToCalcURI, isLocalCacheDirectory, fileName);
             return sTempDocPath;
         }
         public static string ConvertFullURIToFilePath(ExtensionContentURI extURI, string url)
@@ -516,31 +510,7 @@ namespace DevTreks.Extensions
 
         #region "set calculator state"
 
-        //set basic calculator state
-        //public static bool SetCalculatorsState(
-        //    ExtensionContentURI extDocToCalcURI, ExtensionContentURI extCalcDocURI,
-        //    XElement linkedViewsDocument,
-        //    XElement linkedViewsElement, ref string tempCalcPath,
-        //    ref string tempDocToCalcPath, ref string docToCalcURIPattern,
-        //    ref string docToCalcNodeName)
-        //{
-        //    bool bHasState = false;
-        //    //set calcdoc state
-        //    List<XElement> linkedViewsDocuments = new List<XElement>();
-        //    List<XElement> linkedViewsElements = new List<XElement>();
-        //    SetCalculatorsState(extDocToCalcURI, extCalcDocURI,
-        //        linkedViewsDocuments, linkedViewsElements);
-        //    tempCalcPath = extCalcDocURI.URIDataManager.TempDocPath;
-        //    tempDocToCalcPath = extDocToCalcURI.URIDataManager.TempDocPath;
-        //    docToCalcURIPattern = extDocToCalcURI.URIPattern;
-        //    docToCalcNodeName = DevTreks.Data.ContentURI.GetURIPatternPart(docToCalcURIPattern,
-        //        Data.ContentURI.URIPATTERNPART.node);
-        //    if (linkedViewsElement != null)
-        //    {
-        //        bHasState = true;
-        //    }
-        //    return bHasState;
-        //}
+        
         public static async Task<bool> RefreshUpdatesUsingDocToCalc(CalculatorParameters calcParams,
             string stepNumber, IDictionary<string, string> updates)
         {
@@ -1532,57 +1502,6 @@ namespace DevTreks.Extensions
                 calculatorParams.ErrorMessage = sErrorMessage;
             }
         }
-        //public static void SetXmlDocUpdates(CalculatorParameters calculatorParams,
-        //    XElement currentLinkedViewElement, XElement currentElement,
-        //    IDictionary<string, string> updates)
-        //{
-        //    if (currentLinkedViewElement != null)
-        //    {
-        //        string sErrorMessage = calculatorParams.ErrorMessage;
-        //        string sDocToCalcURIPattern
-        //            = calculatorParams.CurrentElementURIPattern;
-        //        bool bNeedsDBUpdate = NeedsUpdateList(calculatorParams);
-        //        SetCustomDocXmlDocUpdates(calculatorParams,
-        //            ref bNeedsDBUpdate, ref sDocToCalcURIPattern);
-        //        string sLinkedViewId = Data.EditHelpers.XmlLinq.GetAttributeValue(
-        //            currentLinkedViewElement, Calculator1.cId);
-        //        if (calculatorParams.NeedsCalculators
-        //            || calculatorParams.ExtensionDocToCalcURI.URIPattern
-        //            == sDocToCalcURIPattern)
-        //        {
-        //            //can be set for both starting doctocalc and descendants
-        //            //needing calculators
-        //            SetFileExtensionType(calculatorParams,
-        //                calculatorParams.FileExtensionType.ToString(),
-        //                ref currentLinkedViewElement);
-        //        }
-        //        ////.NeedsXmlDocOnly is set with .GetCalculator()
-        //        if (!calculatorParams.NeedsXmlDocOnly)
-        //        {
-        //            if ((calculatorParams.ExtensionDocToCalcURI.URIPattern
-        //                != sDocToCalcURIPattern)
-        //                || calculatorParams.IsCustomDoc)
-        //            {
-        //                //this will only insert linked views for descendant nodes; note this must come before
-        //                //SetXmlDocAttributes in order for descendant insertions to work reasonably
-        //                AddXmlDocIds(bNeedsDBUpdate, calculatorParams.ExtensionDocToCalcURI,
-        //                    calculatorParams.ExtensionCalcDocURI,
-        //                    currentLinkedViewElement, currentElement,
-        //                    sDocToCalcURIPattern, calculatorParams.LinkedViewElement,
-        //                    calculatorParams.StepNumber, sLinkedViewId,
-        //                    updates, ref sErrorMessage);
-        //            }
-        //        }
-        //        //replace the linkedview (this is the only place where the linkedview is replaced)
-        //        SetXmlDocAttributes(bNeedsDBUpdate, calculatorParams.ExtensionDocToCalcURI,
-        //            calculatorParams.ExtensionCalcDocURI,
-        //            currentLinkedViewElement, currentElement,
-        //            sDocToCalcURIPattern, calculatorParams.LinkedViewElement,
-        //            calculatorParams.StepNumber, sLinkedViewId,
-        //            updates, ref sErrorMessage);
-        //        calculatorParams.ErrorMessage = sErrorMessage;
-        //    }
-        //}
         
         public static bool NeedsUpdateAttribute(CalculatorParameters calculatorParams)
         {

@@ -285,11 +285,6 @@ namespace DevTreks.Data.Helpers
             {
                 return data;
             }
-            //if (Helpers.FileStorageIO.URIAbsoluteExists(
-            //    uri, fullURIPath) == false)
-            //{
-            //    return data;
-            //}
             data = Encoding.UTF8.GetBytes(ReadText(uri, fullURIPath));
             return data;
         }
@@ -385,60 +380,7 @@ namespace DevTreks.Data.Helpers
         //        }
         //    }
         //}
-        //184 deprecated: GetBytes left out final byte which caused script file errors
-        //public bool WriteBinaryBlobFile(string fullPathToFile, SqlDataReader sqlReader, int columnIndex)
-        //{
-        //    bool bHasWrote = false;
-        //    //always create a new file (existing file should have been archived)
-        //    string sToDirectory = Path.GetDirectoryName(fullPathToFile);
-        //    if (!Directory.Exists(sToDirectory))
-        //    {
-        //        Directory.CreateDirectory(sToDirectory);
-        //    }
-        //    //note the stream is closed by the calling procedure
-        //    FileStream oFileStream = new FileStream(fullPathToFile, FileMode.Create, FileAccess.Write, FileShare.None,
-        //        8192, true);
-        //    if (oFileStream != null)
-        //    {
-        //        using (oFileStream)
-        //        {
-        //            //create the writer for data.
-        //            using (BinaryWriter oBinaryWriter = new BinaryWriter(oFileStream))
-        //            {
-        //                //size of the buffer.
-        //                int iBufferSize = 100;
-        //                //blob byte[] buffer to be filled by GetBytes.
-        //                byte[] outBytes = new byte[iBufferSize];
-        //                //the bytes returned from GetBytes.
-        //                long lRetVal;
-        //                //the starting position in the BLOB output.
-        //                long lStartIndex = 0;
-        //                //read bytes into outByte[] and retain the number of bytes returned.
-        //                lRetVal = sqlReader.GetBytes(columnIndex, lStartIndex, outBytes, 0, iBufferSize);
-        //                //continue while there are bytes beyond the size of the buffer.
-        //                while (lRetVal == iBufferSize)
-        //                {
-        //                    oBinaryWriter.Write(outBytes);
-        //                    //reposition start index to end of last buffer and fill buffer.
-        //                    lStartIndex += iBufferSize;
-        //                    lRetVal = sqlReader.GetBytes(columnIndex, lStartIndex, outBytes, 0, iBufferSize);
-        //                }
-        //                if (lRetVal > 0)
-        //                {
-        //                    //write the remaining buffer.
-        //                    oBinaryWriter.Write(outBytes, 0, (int)lRetVal);
-        //                    //184: deprecated because it left out last byte
-        //                    //not so: problem is with Sequential access in SqlDataReader
-        //                    //oBinaryWriter.Write(outBytes, 0, (int)lRetVal - 1);
-        //                }
-        //                bHasWrote = true;
-        //            }
-        //        }
-        //    }
-        //    return bHasWrote;
-        //}
-
-
+        
         public static string GetDirectoryName(string existingDirectoryName)
         {
             string sToDirectory = existingDirectoryName;
@@ -475,19 +417,6 @@ namespace DevTreks.Data.Helpers
                 File.Copy(fromFile, toFile, true);
                 bHasCopied = true;
             }
-            //if (Helpers.FileStorageIO.URIAbsoluteExists(uri, fromFile) == true
-            //    && fromFile.Equals(toFile) == false
-            //    && (!string.IsNullOrEmpty(toFile)))
-            //{
-            //    string sDirectory = Path.GetDirectoryName(toFile);
-            //    if (!Directory.Exists(sDirectory))
-            //    {
-            //        Directory.CreateDirectory(sDirectory);
-            //    }
-            //    //and overwrite existing file
-            //    File.Copy(fromFile, toFile, true);
-            //    bHasCopied = true;
-            //}
             return bHasCopied;
         }
         public static async Task<bool> CopyFilesAsync(ContentURI uri, 
@@ -569,23 +498,6 @@ namespace DevTreks.Data.Helpers
                 //move
                 File.Move(fromFile, toFile);
             }
-            //if (Helpers.FileStorageIO.URIAbsoluteExists(uri, fromFile) == true
-            //    && fromFile.Equals(toFile) == false
-            //    && (!string.IsNullOrEmpty(fromFile))
-            //    && (!string.IsNullOrEmpty(toFile)))
-            //{
-            //    string sDirectory = Path.GetDirectoryName(toFile);
-            //    if (!Directory.Exists(sDirectory))
-            //    {
-            //        Directory.CreateDirectory(sDirectory);
-            //    }
-            //    if (Helpers.FileStorageIO.URIAbsoluteExists(uri, toFile))
-            //    {
-            //        File.Delete(toFile);
-            //    }
-            //    //move
-            //    File.Move(fromFile, toFile);
-            //}
         }
         public static void CopyDirectories(string fromDirectory, 
             string toDirectory, bool copySubDirs, bool needsNewSubDirectories)
@@ -705,11 +617,6 @@ namespace DevTreks.Data.Helpers
             {
                 File.Delete(filetoDelete);
             }
-            //if (Helpers.FileStorageIO.URIAbsoluteExists(uri, 
-            //    filetoDelete))
-            //{
-            //    File.Delete(filetoDelete);
-            //}
         }
         
         public static bool DeleteDirectoryFilesContainingSubstring(
@@ -936,44 +843,7 @@ namespace DevTreks.Data.Helpers
             }
             return bHasWrote;
         }
-        //this works but the former method has better async methods
-        //public static async Task<bool> WriteBinaryBlobFileAsync(string fullPathToFile, Stream source)
-        //{
-        //    //stay consistent with azure syntax
-        //    bool bHasWrote = false;
-        //    //always create a new file (existing file should have been archived)
-        //    string sToDirectory = Path.GetDirectoryName(fullPathToFile);
-        //    if (!Directory.Exists(sToDirectory))
-        //    {
-        //        Directory.CreateDirectory(sToDirectory);
-        //    }
-        //    //always create a new file (existing file should have been archived)
-        //    //note the stream is closed by the calling procedure
-        //    try
-        //    {
-        //        //read the stream into a byte array
-        //        int iStreamLength = (int)source.Length;
-        //        byte[] arrFileBytes = new byte[iStreamLength];
-        //        //async did not work
-        //        source.Read(arrFileBytes, 0, iStreamLength);
-        //        //UnicodeEncoding uniencoding = new UnicodeEncoding();
-        //        //string filename = @"c:\Users\exampleuser\Documents\userinputlog.txt";
-        //        //byte[] result = uniencoding.GetBytes(source);
-        //        //the filemode.create will replace any existing file
-        //        using (FileStream SourceStream = File.Open(fullPathToFile, FileMode.Create))
-        //        {
-        //            SourceStream.Seek(0, SeekOrigin.End);
-        //            await SourceStream.WriteAsync(arrFileBytes, 0, arrFileBytes.Length);
-        //        }
-        //        bHasWrote = true;
-        //    }
-        //    catch (Exception x)
-        //    {
-        //        return false;
-        //    }
-
-        //    return bHasWrote;
-        //}
+        
         //both streams should be wrapped in a using clause that disposes of them
         public static async Task<bool> CopyStreamAsync(Stream source, Stream destination)
         {
