@@ -1,5 +1,7 @@
 Appendix B. ReadMe.txt
-Version: 2.1.0, PREVIEW September 11, 2017
+
+Version: 2.1.0, September 20, 2017
+
 Introduction
 DevTreks is a multitier ASP.NET Core 2 database 
 application. The web project, DevTreks, uses an 
@@ -29,16 +31,17 @@ home site
 https://www.devtreks.org
 
 source code sites
-https://github.com/kpboyle1/devtreks2 (under development to .NET Core 2.0)
-https://github.com/kpboyle1/devtreks (full but netframework 4.6.1)
+https://github.com/kpboyle1/devtreks2 (.NET Core 2.0)
+https://github.com/kpboyle1/devtreks (pre-version 2.1.0: netframework 4.6.1)
 
-database.zip site
-https://devtreks.codeplex.com/
+database.zip file
+https://devtreks1.blob.core.windows.net/resources/db.zip
 
 What's New in Version 2.1.0
 1. .NET Core 2.0 Refactor: Version 2.1.0 runs the ASPNET web project using .NET Core 2.0 and the class libraries using .NET Standard 2.0. Although the software should be cross platform, running on Linux, Mac, and Windows, testing to date has only used Windows servers.
 2. Social Performance Analysis Tools: This release includes 4 upgraded algorithms designed to measure Social Performance. The Social Performance Analysis tutorial documents how these algorithms work. The reference can be found in the Performance Analysis tutorial. 
 Database Connections
+
 Server version: Sql Server 2016 Express, RTM
 
 connection string

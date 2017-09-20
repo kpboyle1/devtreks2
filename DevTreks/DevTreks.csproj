@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\Extensions\" />
     <Folder Include="wwwroot\resources\" />
   </ItemGroup>
 

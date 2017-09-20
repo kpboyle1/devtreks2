@@ -236,11 +236,6 @@ namespace DevTreks.Data.Helpers
                 sAppSettingValue = uri.URIDataManager.ResourceURIName;
             }
             else if (appSetting
-                == APPSETTING_TYPES.rexecutable.ToString())
-            {
-                sAppSettingValue = uri.URIDataManager.RExecutable;
-            }
-            else if (appSetting
                 == APPSETTING_TYPES.pagesizeedits.ToString())
             {
                 sAppSettingValue = uri.URIDataManager.PageSizeEdits;

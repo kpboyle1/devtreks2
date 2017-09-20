@@ -125,7 +125,7 @@ namespace DevTreks
                 ContentURI.URIDataManager.DefaultWebDomain = path;
                 //210 changed to Extensions subfolder in devtreks.exe path
                 ContentURI.URIDataManager.ExtensionsPath
-                    = ContentURI.URIDataManager.DefaultRootFullFilePath.Replace("wwwroot\\", "Extensions");
+                    = ContentURI.URIDataManager.DefaultRootFullFilePath.Replace("wwwroot\\", "wwwroot\\Extensions");
                 //ContentURI.URIDataManager.ExtensionsPath
                 //    = string.Concat(ContentURI.URIDataManager.DefaultRootFullFilePath, "Extensions\\");
                 //2.0.2 added appsetting to eliminate calls to GetPlatformType()
@@ -213,7 +213,7 @@ namespace DevTreks
                 path = Configuration["ReleasePaths:DefaultWebDomain"];
                 ContentURI.URIDataManager.DefaultWebDomain = path;
                 ContentURI.URIDataManager.ExtensionsPath
-                    = ContentURI.URIDataManager.DefaultRootFullFilePath.Replace("DevTreks\\wwwroot", "Extensions");
+                    = ContentURI.URIDataManager.DefaultRootFullFilePath.Replace("DevTreks\\wwwroot", "wwwroot\\Extensions");
                 //2.0.2 added appsetting to eliminate calls to GetPlatformType()
                 ContentURI.URIDataManager.PlatformType
                     = Data.Helpers.FileStorageIO.GetPlatformType(ContentURI.URIDataManager.DefaultRootWebStoragePath);

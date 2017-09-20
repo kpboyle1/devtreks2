@@ -84,8 +84,8 @@ namespace DevTreks.Controllers
                 //update the payment info -use a new memberservice because of previous query/datacontext issues
                 //if not successful, generates an error message and redirects back to same Payments view
                 string sErrorMessage = string.Empty;
-                sErrorMessage = await vwMemberViewModel.UpdatePaymentHandling(this.Request.HttpContext,
-                    _memberService, vwMemberViewModel.Member);
+                //sErrorMessage = await vwMemberViewModel.UpdatePaymentHandling(this.Request.HttpContext,
+                //    _memberService, vwMemberViewModel.Member);
                 vwMemberViewModel.ErrorMessage = sErrorMessage;
                 if (string.IsNullOrEmpty(vwMemberViewModel.ErrorMessage))
                 {

@@ -13,7 +13,7 @@ namespace DevTreks.Models
     /// </summary>
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        private static bool _created = false;
+        //private static bool _created = false;
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

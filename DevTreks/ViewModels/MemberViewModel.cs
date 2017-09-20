@@ -46,15 +46,15 @@ namespace DevTreks.ViewModels
             }
             return bHasSet;
         }
-
-        public async Task<string> UpdatePaymentHandling(HttpContext context, IMemberService memberService,
-            AccountToMember loggedInMember)
-        {
-            string sError = Exceptions.DevTreksErrors.MakeStandardErrorMsg(
-                 string.Empty, "MEMBERVIEW_NOPAYS");
-            //await memberService.UpdatePaymentHandlingAsync(loggedInMember);
-            return sError;
-        }
+        //210: when markets for data services are built
+        //public async Task<string> UpdatePaymentHandling(HttpContext context, IMemberService memberService,
+        //    AccountToMember loggedInMember)
+        //{
+        //    string sError = Exceptions.DevTreksErrors.MakeStandardErrorMsg(
+        //         string.Empty, "MEMBERVIEW_NOPAYS");
+        //    //await memberService.UpdatePaymentHandlingAsync(loggedInMember);
+        //    return sError;
+        //}
    
     }
 }

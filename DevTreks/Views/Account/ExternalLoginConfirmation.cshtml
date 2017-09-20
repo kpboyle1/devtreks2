@@ -1,5 +1,5 @@
-﻿@using DevTreks.DisplayHelpers;
-@model DevTreks.Models.ExternalLoginConfirmationViewModel
+﻿@using DevTreks.Helpers;
+@model DevTreks.ViewModels.Account.ExternalLoginConfirmationViewModel
 @{
     ViewBag.Title = "Register";
 }
@@ -8,7 +8,7 @@
 <h2>@ViewBag.Title.</h2>
 <h3>Associate your @ViewBag.LoginProvider account.</h3>
 
-@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@using (Html.BeginForm("ExternalLoginConfirmation", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, false, new { @class = "form-horizontal", role = "form" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -21,10 +21,10 @@
      <ul data-role="listview" data-inset="true">
         <li data-role="list-divider">Association Form</li>
         <li class="ui-field-contain">
-            @Html.LabelFor(m => m.UserName)
-            @Html.PasswordFor(m => m.UserName)            
+            @Html.LabelFor(m => m.Email)
+            @Html.PasswordFor(m => m.Email)            
         </li>
-        @Html.HiddenFor(m => m.UserName)
+        @Html.HiddenFor(m => m.Email)
         <li class="ui-field-contain">
             <button type="submit">Register</button>
         </li>
