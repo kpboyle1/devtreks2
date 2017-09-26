@@ -2877,6 +2877,18 @@ namespace DevTreks.Extensions
                 linkedViewsElement, docToCalcElement);
             return bHasReplacedElement;
         }
+        public static bool ReplaceOrInsertLinkedViewElement(XElement linkedViewsElement,
+            XElement docToCalcElement)
+        {
+            bool bHasReplacedElement = false;
+            if (linkedViewsElement != null && docToCalcElement != null)
+            {
+                bHasReplacedElement = DevTreksEditHelpers.XmlLinq
+                    .ReplaceOrInsertChildLinkedViewElement(
+                    linkedViewsElement, docToCalcElement);
+            }
+            return bHasReplacedElement;
+        }
         public static bool ReplaceElementInDocument(XElement linkedViewsElement,
             XElement linkedViewsDocument)
         {

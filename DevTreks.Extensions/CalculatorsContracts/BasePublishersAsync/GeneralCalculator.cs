@@ -120,6 +120,13 @@ namespace DevTreks.Extensions
                     CalculatorHelpers.SetXmlDocUpdates(this.GCCalculatorParams,
                         linkedViewElement, currentElement,
                         this.GCCalculatorParams.Updates);
+                    //9. 210 new rule: replace calcs when they've changed but no db work (210 stopped working because of byref changes)
+                    if ((!bHasReplacedCalculator) && bHasCalculations)
+                    {
+                        bHasReplacedCalculator = CalculatorHelpers.ReplaceOrInsertLinkedViewElement(
+                            linkedViewElement, currentElement);
+                    }
+
                 }
             }
             else
@@ -174,6 +181,12 @@ namespace DevTreks.Extensions
                     CalculatorHelpers.SetXmlDocUpdates(this.GCCalculatorParams,
                         linkedViewElement, currentElement,
                         this.GCCalculatorParams.Updates);
+                    //9. 210 new rule: replace calcs when they've changed but no db work (210 stopped working because of byref changes)
+                    if ((!bHasReplacedCalculator) && bHasCalculations)
+                    {
+                        bHasReplacedCalculator = CalculatorHelpers.ReplaceOrInsertLinkedViewElement(
+                            linkedViewElement, currentElement);
+                    }
                 }
             }
             else
@@ -245,13 +258,14 @@ namespace DevTreks.Extensions
                 //note that the base npvcalculator does not always adjust  
                 //resource calculator amounts, such as fuel and labor, when 
                 //Input.Times change (if it did, the following would not be needed).
+                bool bHasReplacedCalculator = false;
                 if (CalculatorHelpers.IsLinkedViewXmlDoc(
                     this.GCCalculatorParams.CurrentElementURIPattern,
                     this.GCCalculatorParams.ExtensionDocToCalcURI))
                 {
                     //7. replace the this.GCCalculatorParams.CalculationsElement when 
                     //the originating doctocalcuri node is processed
-                    bool bHasReplacedCalculator = CalculatorHelpers.ReplaceCalculations(
+                    bHasReplacedCalculator = CalculatorHelpers.ReplaceCalculations(
                         this.GCCalculatorParams, currentElement,
                         linkedViewElement);
                     //8. this pattern combines analyzer and calculator patterns
@@ -262,6 +276,12 @@ namespace DevTreks.Extensions
                 CalculatorHelpers.SetXmlDocUpdates(this.GCCalculatorParams,
                     linkedViewElement, currentElement,
                     this.GCCalculatorParams.Updates);
+                //10. 210 new rule: replace calcs when they've changed but no db work (210 stopped working because of byref changes)
+                if ((!bHasReplacedCalculator) && bHasCalculations)
+                {
+                    bHasReplacedCalculator = CalculatorHelpers.ReplaceOrInsertLinkedViewElement(
+                        linkedViewElement, currentElement);
+                }
             }
             else
             {

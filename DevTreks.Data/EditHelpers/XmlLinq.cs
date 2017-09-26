@@ -3025,14 +3025,6 @@ namespace DevTreks.Data.EditHelpers
                                     AddLinkedViewToNullElement(replacementLinkedView,
                                         out replacedLinkedView);
                                     bIsReplaced = true;
-                                    //v136 fixed this
-                                    ////add the new linkedview to the first position
-                                    //insertToEl
-                                    //    .Element(Helpers.GeneralHelpers.ROOT_PATH)
-                                    //    .AddFirst(replacementLinkedView);
-                                    //AddLinkedViewToNullElement(replacementLinkedView,
-                                    //    out replacedLinkedView);
-                                    //bIsReplaced = true;
                                 }
                                 else if (replacementLinkedView.Name.LocalName
                                     == Helpers.GeneralHelpers.ROOT_PATH)
