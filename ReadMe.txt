@@ -1,6 +1,6 @@
 Appendix B. ReadMe.txt
 
-Version: 2.1.0, September 20, 2017
+Version: 2.1.0, September 27, 2017
 
 Introduction
 DevTreks is a multitier ASP.NET Core 2 database 
@@ -41,6 +41,7 @@ What's New in Version 2.1.0
 1. .NET Core 2.0 Refactor: Version 2.1.0 runs the ASPNET web project using .NET Core 2.0 and the class libraries using .NET Standard 2.0. Although the software should be cross platform, running on Linux, Mac, and Windows, testing to date has only used Windows servers.
 2. Social Performance Analysis Tools: This release includes 4 upgraded algorithms designed to measure Social Performance. The Social Performance Analysis tutorial documents how these algorithms work. The reference can be found in the Performance Analysis tutorial. 
 Database Connections
+3. The Sept 27 release is a bug fix.
 
 Server version: Sql Server 2016 Express, RTM
 

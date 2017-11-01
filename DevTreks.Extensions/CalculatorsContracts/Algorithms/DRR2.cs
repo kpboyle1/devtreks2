@@ -12,7 +12,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		DRR2 algorithm
     ///Author:		www.devtreks.org
-    ///Date:		2017, August
+    ///Date:		2017, November
     ///References:	CTA algo1, CTAP subalgo 9, 10, 11, 12, RCA subalgo 13, 14, 15, 16
     ///</summary>
     public class DRR2 : DRR1
@@ -121,7 +121,8 @@ namespace DevTreks.Extensions.Algorithms
                 //need time trends plus QTMs, QTLs, and QTUs
                 iColCount = data[0].Count + 4;
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
             {
                 //need QTMs, QTLs, and QTUs, but no units
                 //qtm == colindex = 11
@@ -496,6 +497,9 @@ namespace DevTreks.Extensions.Algorithms
         private void FillIndicatorDistributionForRCA3(List<List<string>> data, List<List<string>> rowNames,
             int r, PRA1 pra1)
         {
+            string sCatIndexLabel
+                = CalculatorHelpers.GetParsedString(0, Constants.FILENAME_DELIMITERS, rowNames[r][0]);
+            bool bIsCatIndex = IsCategoricalIndex(sCatIndexLabel);
             //iterate through columns
             for (int c = 0; c < data[r].Count; c++)
             {
@@ -519,37 +523,102 @@ namespace DevTreks.Extensions.Algorithms
                 }
                 else if (c == 4)
                 {
-                    pra1.IndicatorQT.Q2 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    pra1.IndicatorQT.QDistributionType = data[r][c];
+                    if (pra1.IndicatorQT.QDistributionType != Constants.NONE)
+                    {
+                        //need to run a PRA1
+                        pra1.IndicatorQT.QT = pra1.IndicatorQT.QTM;
+                        pra1.IndicatorQT.QTD1 = pra1.IndicatorQT.QTL;
+                        pra1.IndicatorQT.QTD2 = pra1.IndicatorQT.QTU;
+                    }
+                    //pra1.IndicatorQT.Q2 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
                 }
                 else if (c == 5)
                 {
-                    pra1.IndicatorQT.Q3 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    if (!bIsCatIndex)
+                    {
+                        //factor6 = multiplier 1
+                        pra1.IndicatorQT.Q1 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    }
+                    else 
+                    {
+                        //life cycle label
+                        pra1.IndicatorQT.Q1Unit = data[r][c];
+                    }
+
+                    //pra1.IndicatorQT.Q3 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
                 }
                 else if (c == 6)
                 {
-                    pra1.IndicatorQT.Q3Unit = data[r][c];
+                    if (!bIsCatIndex)
+                    {
+                        pra1.IndicatorQT.Q1Unit = data[r][c];
+                    }
+                    else
+                    {
+                        //life cycle label
+                        pra1.IndicatorQT.Q2Unit = data[r][c];
+                    }
+                    //pra1.1.IndicatorQT.Q3Unit = data[r][c];
                 }
                 else if (c == 7)
                 {
+                    if (!bIsCatIndex)
+                    {
+                        //factor8 = multiplier 2
+                        pra1.IndicatorQT.Q2 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    }
+                    else
+                    {
+                        //certainty1 
+                        pra1.IndicatorQT.Q1 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    }
                     //q4 stores cf
-                    pra1.IndicatorQT.Q4 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    //pra1.IndicatorQT.Q4 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
                 }
                 else if (c == 8)
                 {
+                    if (!bIsCatIndex)
+                    {
+                        pra1.IndicatorQT.Q2Unit = data[r][c];
+                    }
+                    else
+                    {
+                        //certainty2 
+                        pra1.IndicatorQT.Q2 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    }
                     //q4unit stores cf unit
-                    pra1.IndicatorQT.Q4Unit = data[r][c];
+                    //pra1.IndicatorQT.Q4Unit = data[r][c];
                 }
                 else if (c == 9)
                 {
-                    //same convention
-                    //q1unit stores normalization type 
-                    pra1.IndicatorQT.Q1Unit = data[r][c];
+                    if (!bIsCatIndex)
+                    {
+                        //factor10 = multiplier 3
+                        pra1.IndicatorQT.Q3 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    }
+                    else
+                    {
+                        //norm
+                        pra1.IndicatorQT.Q3Unit = data[r][c];
+                    }
+                    ////same convention
+                    ////q1unit stores normalization type 
+                    //pra1.IndicatorQT.Q1Unit = data[r][c];
                 }
                 else if (c == 10)
                 {
-                    //q1 stores weight
-                    pra1.IndicatorQT.Q1
-                        = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    if (!bIsCatIndex)
+                    {
+                        pra1.IndicatorQT.Q3Unit = data[r][c];
+                    }
+                    else
+                    {
+                        //weight
+                        pra1.IndicatorQT.Q3 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                    }
+                    ////q1 stores weight
+                    //pra1.IndicatorQT.Q1 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
                 }
             }
         }
@@ -1393,10 +1462,38 @@ namespace DevTreks.Extensions.Algorithms
             }
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
             {
-                //q2 = factor; q3 unitfactor; q4 cf
-                pra1.IndicatorQT.QTM = pra1.IndicatorQT.QTM * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3 * pra1.IndicatorQT.Q4;
-                pra1.IndicatorQT.QTL = pra1.IndicatorQT.QTL * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3 * pra1.IndicatorQT.Q4;
-                pra1.IndicatorQT.QTU = pra1.IndicatorQT.QTU * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3 * pra1.IndicatorQT.Q4;
+                //2.1.2 supports pra for the Indicators
+                if (pra1.IndicatorQT.QDistributionType != Constants.NONE)
+                {
+                    //coming in from Indicator
+                    await pra1.RunAlgorithmAsync();
+                }
+                pra1.IndicatorQT.QTM = pra1.IndicatorQT.QTM * pra1.IndicatorQT.Q1 * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3;
+                pra1.IndicatorQT.QTL = pra1.IndicatorQT.QTL * pra1.IndicatorQT.Q1 * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3;
+                pra1.IndicatorQT.QTU = pra1.IndicatorQT.QTU * pra1.IndicatorQT.Q1 * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3;
+                //sum them in catindex
+                catIndexPRA.IndicatorQT.QTM += pra1.IndicatorQT.QTM;
+                catIndexPRA.IndicatorQT.QTL += pra1.IndicatorQT.QTL;
+                catIndexPRA.IndicatorQT.QTU += pra1.IndicatorQT.QTU;
+                if (catIndexPRA.IndicatorQT.QDistributionType != Constants.NONE)
+                {
+                    double dbQTM = catIndexPRA.IndicatorQT.QTM;
+                    double dbQTL = catIndexPRA.IndicatorQT.QTL;
+                    double dbQTU = catIndexPRA.IndicatorQT.QTU;
+                    //coming in from cat index (cf) 
+                    await catIndexPRA.RunAlgorithmAsync();
+                    //multiply sum of Ind.QTM by catIndex.QTM
+                    catIndexPRA.IndicatorQT.QTM = catIndexPRA.IndicatorQT.QTM * dbQTM;
+                    catIndexPRA.IndicatorQT.QTL = catIndexPRA.IndicatorQT.QTL * dbQTL;
+                    catIndexPRA.IndicatorQT.QTU = catIndexPRA.IndicatorQT.QTU * dbQTU;
+                    //then locational idex will sum, norm, and weight catindexes 
+                }
+
+                //deprecated
+                ////q2 = factor; q3 unitfactor; q4 cf
+                //pra1.IndicatorQT.QTM = pra1.IndicatorQT.QTM * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3 * pra1.IndicatorQT.Q4;
+                //pra1.IndicatorQT.QTL = pra1.IndicatorQT.QTL * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3 * pra1.IndicatorQT.Q4;
+                //pra1.IndicatorQT.QTU = pra1.IndicatorQT.QTU * pra1.IndicatorQT.Q2 * pra1.IndicatorQT.Q3 * pra1.IndicatorQT.Q4;
             }
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
             {
