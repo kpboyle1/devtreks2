@@ -1556,6 +1556,15 @@ namespace DevTreks.Data.Helpers
                 //use numbers like .05000000001
                 stringNumber = dbNumber.ToString("f4");
                 double.TryParse(stringNumber, out dbNumber);
+
+
+                //if stringNumber is scientific notation:
+                //https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings
+                //if (stringNumber.ToLower().Contains("e"))
+                //{
+                //    dbNumber = Double.Parse(stringNumber, System.Globalization.NumberStyles.Float);
+                //}
+                
                 //NumberFormatInfo nfi = new NumberFormatInfo();
                 //nfi.NumberDecimalDigits = 4;
                 //double.TryParse(stringNumber, NumberStyles.Any, nfi, 
