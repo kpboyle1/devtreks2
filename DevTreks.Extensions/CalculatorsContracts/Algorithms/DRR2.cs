@@ -116,13 +116,14 @@ namespace DevTreks.Extensions.Algorithms
             bool bHasCalculations = false;
             //make a new list with same matrix, to be replaced with results
             int iColCount = data[0].Count;
-            if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+            if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
             {
-                //need time trends plus QTMs, QTLs, and QTUs
+                //subalgorithm14 needs time trends plus QTMs, QTLs, and QTUs
+                //subalgo15 needs qtm. qtl, qtu, and percentqtm
                 iColCount = data[0].Count + 4;
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
-                || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
             {
                 //need new QTMs, QTLs, and QTUs, columns but no units
                 //qtm == colindex = 11
@@ -541,7 +542,8 @@ namespace DevTreks.Extensions.Algorithms
                 else if (c == 4)
                 {
                     pra1.IndicatorQT.QDistributionType = data[r][c];
-                    if (pra1.IndicatorQT.QDistributionType != Constants.NONE)
+                    if (!string.IsNullOrEmpty(pra1.IndicatorQT.QDistributionType)
+                        && pra1.IndicatorQT.QDistributionType != Constants.NONE)
                     {
                         //need to run a PRA1
                         pra1.IndicatorQT.QT = pra1.IndicatorQT.QTM;
@@ -1464,7 +1466,8 @@ namespace DevTreks.Extensions.Algorithms
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
             {
                 //2.1.2 supports pra for each Indicator and catindex as well (catindex run later)
-                if (pra1.IndicatorQT.QDistributionType != Constants.NONE)
+                if (!string.IsNullOrEmpty(pra1.IndicatorQT.QDistributionType)
+                    && pra1.IndicatorQT.QDistributionType != Constants.NONE)
                 {
                     //coming in from Indicator
                     await pra1.RunAlgorithmAsync();
@@ -1551,140 +1554,148 @@ namespace DevTreks.Extensions.Algorithms
             bool bHasCompleted = false;
             //init vars
             List<List<double>> trends = new List<List<double>>();
+
             double[] arr = new double[] { 0, 0, 0, 0, 0 };
-            Vector<double> nQTMs
-                    = Vector<double>.Build.Dense(arr.ToArray());
-            Vector<double> nQTLs
-                = Vector<double>.Build.Dense(arr.ToArray());
-            Vector<double> nQTUs
-                = Vector<double>.Build.Dense(arr.ToArray());
+            List<double> nQTMs = new List<double>();
+            List<double> nQTLs = new List<double>();
+            List<double> nQTUs = new List<double>();
+            //List<double> nQTUs
+            //    = Vector<double>.Build.Dense(arr.ToArray());
             //208
             //weights
             List<double> qtWts = new List<double>();
-            bool bNeedsWeight = true;
-            if (_subalgorithm != MATH_SUBTYPES.subalgorithm16.ToString())
-            {
-                List<double> qtMs = new List<double>();
-                List<double> qtLs = new List<double>();
-                List<double> qtUs = new List<double>();
-                
-                string sNormType = string.Empty;
-                //get normalization vector for qts
-                foreach (var catpra in locationIndexes)
-                {
-                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
-                    {
-                        //use only the catindexes, not the final locindex
-                        if (catpra.Value.Count != 0)
-                        {
-                            //2.1.2 sum the children indicators into catindex prior to norm and wt
-                            double dbQTM = 0;
-                            double dbQTL = 0;
-                            double dbQTU = 0;
-                            foreach (var subpra in catpra.Value)
-                            {
-                                dbQTM += subpra.IndicatorQT.QTM;
-                                dbQTL += subpra.IndicatorQT.QTL;
-                                dbQTU += subpra.IndicatorQT.QTU;
-                            }
-                            //run the catindex pra
-                            if (catpra.Key.IndicatorQT.QDistributionType != Constants.NONE)
-                            {
-                                await catpra.Key.RunAlgorithmAsync();
-                            }
-                            //set the calculated catindex qts
-                            catpra.Key.IndicatorQT.QTM = catpra.Key.IndicatorQT.QTM * dbQTM;
-                            catpra.Key.IndicatorQT.QTL = catpra.Key.IndicatorQT.QTL * dbQTL;
-                            catpra.Key.IndicatorQT.QTU = catpra.Key.IndicatorQT.QTU * dbQTU;
-                            //normalize, weight, and sum catindexes
-                            //first legit norm type sets value for whole vector
-                            if (string.IsNullOrEmpty(sNormType)
-                                || sNormType == Constants.NONE)
-                            {
-                                sNormType = catpra.Key.IndicatorQT.Q3Unit;
-                            }
-                            qtMs.Add(catpra.Key.IndicatorQT.QTM);
-                            qtLs.Add(catpra.Key.IndicatorQT.QTL);
-                            qtUs.Add(catpra.Key.IndicatorQT.QTU);
-                            //weights for normalizs
-                            qtWts.Add(catpra.Key.IndicatorQT.Q3);
-                        }
-                    }
-                    else
-                    {
-                        //normalize, weight, and sum indicators
-                        foreach (var subpra in catpra.Value)
-                        {
-                            //first legit norm type sets value for whole vector
-                            if (string.IsNullOrEmpty(sNormType)
-                                || sNormType == Constants.NONE)
-                            {
-                                sNormType = subpra.IndicatorQT.Q1Unit;
-                            }
-                            qtMs.Add(subpra.IndicatorQT.QTM);
-                            //add all of the vectors to 1 vector so that normaliz shows more differences in cis
-                            qtLs.Add(subpra.IndicatorQT.QTL);
-                            qtUs.Add(subpra.IndicatorQT.QTU);
-                            //weights for normalizs
-                            qtWts.Add(subpra.IndicatorQT.Q1);
-                            if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
-                            {
-                                //trends
-                                Shared.AddStringArrayToDoubleArray(subpra.IndicatorQT.Indicators, trends);
-                            }
-                        }
-                    }
-                }
-                //add all of the vectors to 1 vector so that normalized vector
-                //shows more differences in cis
-                List<double> qts = new List<double>();
-                qts.AddRange(qtMs);
-                qts.AddRange(qtLs);
-                qts.AddRange(qtUs);
-                //init vectors
-                Vector<double> nQTs
-                    = Vector<double>.Build.Dense(qts.ToArray());
-                nQTMs = Vector<double>.Build.Dense(qtMs.ToArray());
-                nQTLs = Vector<double>.Build.Dense(qtLs.ToArray());
-                nQTUs = Vector<double>.Build.Dense(qtUs.ToArray());
-                if ((!string.IsNullOrEmpty(sNormType)
-                    && sNormType != Constants.NONE))
-                {
-                    //no pnorm allowed yet
-                    double start = 0;
-                    if (sNormType == CalculatorHelpers.NORMALIZATION_TYPES.weights.ToString())
-                    {
-                        start = qtWts.Sum();
-                        //weights used with normvalue not separately
-                        bNeedsWeight = false;
-                    }
-                    //normalize the vectors but can't scale using Moncho equation data
-                    bool bScale = false;
-                    if (Shared.IsDouble(sNormType) == false)
-                    {
-                        nQTs = Shared.GetNormalizedVector(sNormType, start, bScale,
-                            qts.ToArray());
-                    }
-                    else
-                    {
-                        //208 allows LCA normalization as simple multiplier for LCA
-                        double dbNormFactor = CalculatorHelpers.ConvertStringToDouble(sNormType);
-                        for (int k = 0; k < nQTs.Count; k++)
-                        {
-                            nQTs[k] = nQTs[k] * dbNormFactor;
-                        }
-                    }
-                    int iCount = nQTs.Count / 3;
-                    nQTMs = nQTs.SubVector(0, iCount);
-                    nQTLs = nQTs.SubVector(iCount, iCount);
-                    nQTUs = nQTs.SubVector((iCount + iCount), iCount);
-                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
-                    {
-                        trends = Shared.GetNormalizedandWeightedLists(sNormType, start, bScale,
-                            qtWts, trends);
-                    }
-                }
-            }
+            bool bNeedsWeight = await SetNormalizations(trends, locationIndexes,
+               nQTMs, nQTLs, nQTUs, qtWts);
+
+
+
+
+
+
+            //bool bNeedsWeight = true;
+            //if (_subalgorithm != MATH_SUBTYPES.subalgorithm16.ToString())
+            //{
+            //    List<double> qtMs = new List<double>();
+            //    List<double> qtLs = new List<double>();
+            //    List<double> qtUs = new List<double>();
+
+            //    string sNormType = string.Empty;
+            //    //get normalization vector for qts
+            //    foreach (var catpra in locationIndexes)
+            //    {
+            //        if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
+            //        {
+            //            //use only the catindexes, not the final locindex
+            //            if (catpra.Value.Count != 0)
+            //            {
+            //                //2.1.2 sum the children indicators into catindex prior to norm and wt
+            //                double dbQTM = 0;
+            //                double dbQTL = 0;
+            //                double dbQTU = 0;
+            //                foreach (var subpra in catpra.Value)
+            //                {
+            //                    dbQTM += subpra.IndicatorQT.QTM;
+            //                    dbQTL += subpra.IndicatorQT.QTL;
+            //                    dbQTU += subpra.IndicatorQT.QTU;
+            //                }
+            //                //run the catindex pra
+            //                if (catpra.Key.IndicatorQT.QDistributionType != Constants.NONE)
+            //                {
+            //                    await catpra.Key.RunAlgorithmAsync();
+            //                }
+            //                //set the calculated catindex qts
+            //                catpra.Key.IndicatorQT.QTM = catpra.Key.IndicatorQT.QTM * dbQTM;
+            //                catpra.Key.IndicatorQT.QTL = catpra.Key.IndicatorQT.QTL * dbQTL;
+            //                catpra.Key.IndicatorQT.QTU = catpra.Key.IndicatorQT.QTU * dbQTU;
+            //                //normalize, weight, and sum catindexes
+            //                //first legit norm type sets value for whole vector
+            //                if (string.IsNullOrEmpty(sNormType)
+            //                    || sNormType == Constants.NONE)
+            //                {
+            //                    sNormType = catpra.Key.IndicatorQT.Q3Unit;
+            //                }
+            //                qtMs.Add(catpra.Key.IndicatorQT.QTM);
+            //                qtLs.Add(catpra.Key.IndicatorQT.QTL);
+            //                qtUs.Add(catpra.Key.IndicatorQT.QTU);
+            //                //weights for normalizs
+            //                qtWts.Add(catpra.Key.IndicatorQT.Q3);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            //normalize, weight, and sum indicators
+            //            foreach (var subpra in catpra.Value)
+            //            {
+            //                //first legit norm type sets value for whole vector
+            //                if (string.IsNullOrEmpty(sNormType)
+            //                    || sNormType == Constants.NONE)
+            //                {
+            //                    sNormType = subpra.IndicatorQT.Q1Unit;
+            //                }
+            //                qtMs.Add(subpra.IndicatorQT.QTM);
+            //                //add all of the vectors to 1 vector so that normaliz shows more differences in cis
+            //                qtLs.Add(subpra.IndicatorQT.QTL);
+            //                qtUs.Add(subpra.IndicatorQT.QTU);
+            //                //weights for normalizs
+            //                qtWts.Add(subpra.IndicatorQT.Q1);
+            //                if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+            //                {
+            //                    //trends
+            //                    Shared.AddStringArrayToDoubleArray(subpra.IndicatorQT.Indicators, trends);
+            //                }
+            //            }
+            //        }
+            //    }
+            //    //add all of the vectors to 1 vector so that normalized vector
+            //    //shows more differences in cis
+            //    List<double> qts = new List<double>();
+            //    qts.AddRange(qtMs);
+            //    qts.AddRange(qtLs);
+            //    qts.AddRange(qtUs);
+            //    //init vectors
+            //    Vector<double> nQTs
+            //        = Vector<double>.Build.Dense(qts.ToArray());
+            //    nQTMs = Vector<double>.Build.Dense(qtMs.ToArray());
+            //    nQTLs = Vector<double>.Build.Dense(qtLs.ToArray());
+            //    nQTUs = Vector<double>.Build.Dense(qtUs.ToArray());
+            //    if ((!string.IsNullOrEmpty(sNormType)
+            //        && sNormType != Constants.NONE))
+            //    {
+            //        //no pnorm allowed yet
+            //        double start = 0;
+            //        if (sNormType == CalculatorHelpers.NORMALIZATION_TYPES.weights.ToString())
+            //        {
+            //            start = qtWts.Sum();
+            //            //weights used with normvalue not separately
+            //            bNeedsWeight = false;
+            //        }
+            //        //normalize the vectors but can't scale using Moncho equation data
+            //        bool bScale = false;
+            //        if (Shared.IsDouble(sNormType) == false)
+            //        {
+            //            nQTs = Shared.GetNormalizedVector(sNormType, start, bScale,
+            //                qts.ToArray());
+            //        }
+            //        else
+            //        {
+            //            //208 allows LCA normalization as simple multiplier for LCA
+            //            double dbNormFactor = CalculatorHelpers.ConvertStringToDouble(sNormType);
+            //            for (int k = 0; k < nQTs.Count; k++)
+            //            {
+            //                nQTs[k] = nQTs[k] * dbNormFactor;
+            //            }
+            //        }
+            //        int iCount = nQTs.Count / 3;
+            //        nQTMs = nQTs.SubVector(0, iCount);
+            //        nQTLs = nQTs.SubVector(iCount, iCount);
+            //        nQTUs = nQTs.SubVector((iCount + iCount), iCount);
+            //        if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+            //        {
+            //            trends = Shared.GetNormalizedandWeightedLists(sNormType, start, bScale,
+            //                qtWts, trends);
+            //        }
+            //    }
+            //}
             int i = 0;
             int rStart = 0;
             //2.1.2: subalgo15 already summed inds into catindexes
@@ -1886,28 +1897,36 @@ namespace DevTreks.Extensions.Algorithms
                 //this method is run for each locationindex, not multiple -locationindex is last member of locationindexes
                 double dbCertainty1 = 0;
                 double dbCertainty2 = 0;
+                double dbQTM = 0;
+                double dbQTL = 0;
+                double dbQTU = 0;
                 foreach (var catpra in locationIndexes)
                 {
+                    //category index in norm vector
+                    int k = 0;
                     if (catpra.Value.Count == 0)
                     {
-                        //derives from locationindex.catindexes
-                        for (int k = 0; k < qtWts.Count; k++)
-                        {
-                            if (bNeedsWeight)
-                            {
-                                //note that the weight factor is used as a multiplier
-                                catpra.Key.IndicatorQT.QTM += nQTMs[k] * qtWts[k];
-                                catpra.Key.IndicatorQT.QTL += nQTLs[k] * qtWts[k];
-                                catpra.Key.IndicatorQT.QTU += nQTUs[k] * qtWts[k];
-                            }
-                            else
-                            {
-                                //weights used to normalize
-                                catpra.Key.IndicatorQT.QTM += nQTMs[k];
-                                catpra.Key.IndicatorQT.QTL += nQTLs[k];
-                                catpra.Key.IndicatorQT.QTU += nQTUs[k];
-                            }
-                        }
+                        ////derives from locationindex.catindexes
+                        //for (k = 0; k < qtWts.Count; k++)
+                        //{
+                        //    if (bNeedsWeight)
+                        //    {
+                        //        //note that the weight factor is used as a multiplier
+                        //        catpra.Key.IndicatorQT.QTM += nQTMs[k] * qtWts[k];
+                        //        catpra.Key.IndicatorQT.QTL += nQTLs[k] * qtWts[k];
+                        //        catpra.Key.IndicatorQT.QTU += nQTUs[k] * qtWts[k];
+                        //    }
+                        //    else
+                        //    {
+                        //        //weights used to normalize
+                        //        catpra.Key.IndicatorQT.QTM += nQTMs[k];
+                        //        catpra.Key.IndicatorQT.QTL += nQTLs[k];
+                        //        catpra.Key.IndicatorQT.QTU += nQTUs[k];
+                        //    }
+                        //}
+                        catpra.Key.IndicatorQT.QTM = dbQTM;
+                        catpra.Key.IndicatorQT.QTL = dbQTL;
+                        catpra.Key.IndicatorQT.QTU = dbQTU;
                         //certainty1
                         if (dbCertainty1 != 0)
                         {
@@ -1918,11 +1937,39 @@ namespace DevTreks.Extensions.Algorithms
                         {
                             catpra.Key.IndicatorQT.Q2 = dbCertainty2 / qtWts.Count;
                         }
+                        //now the percent contribution of each catindex in the locationalindex totals
+                        foreach (var catpra2 in locationIndexes)
+                        {
+                            if (catpra2.Value.Count != 0)
+                            {
+                                catpra2.Key.IndicatorQT.Q6 = (catpra2.Key.IndicatorQT.QTM / dbQTM) * 100;
+                            }
+                        }
                     }
                     else
                     {
                         dbCertainty1 += catpra.Key.IndicatorQT.Q1;
                         dbCertainty2 += catpra.Key.IndicatorQT.Q2;
+                        //replace each catindex with normalized and weighted result
+                        if (bNeedsWeight)
+                        {
+                            //note that the weight factor is used as a multiplier (1 / population)
+                            catpra.Key.IndicatorQT.QTM = nQTMs[k] * qtWts[k];
+                            catpra.Key.IndicatorQT.QTL = nQTLs[k] * qtWts[k];
+                            catpra.Key.IndicatorQT.QTU = nQTUs[k] * qtWts[k];
+                        }
+                        else
+                        {
+                            //weights used to normalize
+                            catpra.Key.IndicatorQT.QTM = nQTMs[k];
+                            catpra.Key.IndicatorQT.QTL = nQTLs[k];
+                            catpra.Key.IndicatorQT.QTU = nQTUs[k];
+                        }
+                        dbQTM += catpra.Key.IndicatorQT.QTM;
+                        dbQTL += catpra.Key.IndicatorQT.QTL;
+                        dbQTU += catpra.Key.IndicatorQT.QTU;
+                        //cat index
+                        k++;
                         //indicator count
                         rStart += catpra.Value.Count;
                     }
@@ -1957,10 +2004,267 @@ namespace DevTreks.Extensions.Algorithms
             bHasCompleted = true;
             return bHasCompleted;
         }
+        private async Task<bool> SetNormalizations(List<List<double>> trends, Dictionary<PRA1, List<PRA1>> locationIndexes,
+           List<double> nQTMs, List<double> nQTLs, List<double> nQTUs, List<double> qtWts)
+        {
+            bool bNeedsWeight = true;
+            if (_subalgorithm != MATH_SUBTYPES.subalgorithm16.ToString())
+            {
+                List<double> qtMs = new List<double>();
+                List<double> qtLs = new List<double>();
+                List<double> qtUs = new List<double>();
+
+                string sNormType = string.Empty;
+                //get normalization vector for qts
+                foreach (var catpra in locationIndexes)
+                {
+                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
+                    {
+                        //use only the catindexes, not the final locindex
+                        if (catpra.Value.Count != 0)
+                        {
+                            //2.1.2 sum the children indicators into catindex prior to norm and wt
+                            double dbQTM = 0;
+                            double dbQTL = 0;
+                            double dbQTU = 0;
+                            foreach (var subpra in catpra.Value)
+                            {
+                                dbQTM += subpra.IndicatorQT.QTM;
+                                dbQTL += subpra.IndicatorQT.QTL;
+                                dbQTU += subpra.IndicatorQT.QTU;
+                            }
+                            //run the catindex pra
+                            if (!string.IsNullOrEmpty(catpra.Key.IndicatorQT.QDistributionType)
+                                && catpra.Key.IndicatorQT.QDistributionType != Constants.NONE)
+                            {
+                                await catpra.Key.RunAlgorithmAsync();
+                            }
+                            //set the calculated catindex qts
+                            catpra.Key.IndicatorQT.QTM = catpra.Key.IndicatorQT.QTM * dbQTM;
+                            catpra.Key.IndicatorQT.QTL = catpra.Key.IndicatorQT.QTL * dbQTL;
+                            catpra.Key.IndicatorQT.QTU = catpra.Key.IndicatorQT.QTU * dbQTU;
+                            //normalize, weight, and sum catindexes
+                            //first legit norm type sets value for whole vector
+                            if (string.IsNullOrEmpty(sNormType)
+                                || sNormType == Constants.NONE)
+                            {
+                                sNormType = catpra.Key.IndicatorQT.Q3Unit;
+                            }
+                            qtMs.Add(catpra.Key.IndicatorQT.QTM);
+                            qtLs.Add(catpra.Key.IndicatorQT.QTL);
+                            qtUs.Add(catpra.Key.IndicatorQT.QTU);
+                            //weights for normalizs
+                            qtWts.Add(catpra.Key.IndicatorQT.Q3);
+                        }
+                    }
+                    else
+                    {
+                        //normalize, weight, and sum indicators
+                        foreach (var subpra in catpra.Value)
+                        {
+                            //first legit norm type sets value for whole vector
+                            if (string.IsNullOrEmpty(sNormType)
+                                || sNormType == Constants.NONE)
+                            {
+                                sNormType = subpra.IndicatorQT.Q1Unit;
+                            }
+                            qtMs.Add(subpra.IndicatorQT.QTM);
+                            //add all of the vectors to 1 vector so that normaliz shows more differences in cis
+                            qtLs.Add(subpra.IndicatorQT.QTL);
+                            qtUs.Add(subpra.IndicatorQT.QTU);
+                            //weights for normalizs
+                            qtWts.Add(subpra.IndicatorQT.Q1);
+                            if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+                            {
+                                //trends
+                                Shared.AddStringArrayToDoubleArray(subpra.IndicatorQT.Indicators, trends);
+                            }
+                        }
+                    }
+                }
+                //add all of the vectors to 1 vector so that normalized vector
+                //shows more differences in cis
+                List<double> qts = new List<double>();
+                qts.AddRange(qtMs);
+                qts.AddRange(qtLs);
+                qts.AddRange(qtUs);
+                //init vectors
+                Vector<double> nQTs
+                    = Vector<double>.Build.Dense(qts.ToArray());
+                if ((!string.IsNullOrEmpty(sNormType)
+                    && sNormType != Constants.NONE))
+                {
+                    //no pnorm allowed yet
+                    double start = 0;
+                    if (sNormType == CalculatorHelpers.NORMALIZATION_TYPES.weights.ToString())
+                    {
+                        start = qtWts.Sum();
+                        //weights used with normvalue not separately
+                        bNeedsWeight = false;
+                    }
+                    //normalize the vectors but can't scale using Moncho equation data
+                    bool bScale = false;
+                    if (Shared.IsDouble(sNormType) == false)
+                    {
+                        nQTs = Shared.GetNormalizedVector(sNormType, start, bScale,
+                            qts.ToArray());
+                    }
+                    else
+                    {
+                        //208 allows LCA normalization as simple multiplier for LCA
+                        double dbNormFactor = CalculatorHelpers.ConvertStringToDouble(sNormType);
+                        for (int k = 0; k < nQTs.Count; k++)
+                        {
+                            nQTs[k] = nQTs[k] * dbNormFactor;
+                        }
+                    }
+                    int iCount = nQTs.Count / 3;
+                    nQTMs.AddRange(nQTs.SubVector(0, iCount).ToList());
+                    nQTLs.AddRange(nQTs.SubVector(iCount, iCount).ToList());
+                    nQTUs.AddRange(nQTs.SubVector((iCount + iCount), iCount).ToList());
+                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+                    {
+                        trends = Shared.GetNormalizedandWeightedLists(sNormType, start, bScale,
+                            qtWts, trends);
+                    }
+                }
+            }
+            return bNeedsWeight;
+        }
+        //private async Task<bool> SetNormalizations(List<List<double>> trends, Dictionary<PRA1, List<PRA1>> locationIndexes,
+        //    Vector<double> nQTMs, Vector<double> nQTLs, Vector<double> nQTUs, List<double> qtWts)
+        //{
+        //    bool bNeedsWeight = true;
+        //    if (_subalgorithm != MATH_SUBTYPES.subalgorithm16.ToString())
+        //    {
+        //        List<double> qtMs = new List<double>();
+        //        List<double> qtLs = new List<double>();
+        //        List<double> qtUs = new List<double>();
+
+        //        string sNormType = string.Empty;
+        //        //get normalization vector for qts
+        //        foreach (var catpra in locationIndexes)
+        //        {
+        //            if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
+        //            {
+        //                //use only the catindexes, not the final locindex
+        //                if (catpra.Value.Count != 0)
+        //                {
+        //                    //2.1.2 sum the children indicators into catindex prior to norm and wt
+        //                    double dbQTM = 0;
+        //                    double dbQTL = 0;
+        //                    double dbQTU = 0;
+        //                    foreach (var subpra in catpra.Value)
+        //                    {
+        //                        dbQTM += subpra.IndicatorQT.QTM;
+        //                        dbQTL += subpra.IndicatorQT.QTL;
+        //                        dbQTU += subpra.IndicatorQT.QTU;
+        //                    }
+        //                    //run the catindex pra
+        //                    if (!string.IsNullOrEmpty(catpra.Key.IndicatorQT.QDistributionType)
+        //                        && catpra.Key.IndicatorQT.QDistributionType != Constants.NONE)
+        //                    {
+        //                        await catpra.Key.RunAlgorithmAsync();
+        //                    }
+        //                    //set the calculated catindex qts
+        //                    catpra.Key.IndicatorQT.QTM = catpra.Key.IndicatorQT.QTM * dbQTM;
+        //                    catpra.Key.IndicatorQT.QTL = catpra.Key.IndicatorQT.QTL * dbQTL;
+        //                    catpra.Key.IndicatorQT.QTU = catpra.Key.IndicatorQT.QTU * dbQTU;
+        //                    //normalize, weight, and sum catindexes
+        //                    //first legit norm type sets value for whole vector
+        //                    if (string.IsNullOrEmpty(sNormType)
+        //                        || sNormType == Constants.NONE)
+        //                    {
+        //                        sNormType = catpra.Key.IndicatorQT.Q3Unit;
+        //                    }
+        //                    qtMs.Add(catpra.Key.IndicatorQT.QTM);
+        //                    qtLs.Add(catpra.Key.IndicatorQT.QTL);
+        //                    qtUs.Add(catpra.Key.IndicatorQT.QTU);
+        //                    //weights for normalizs
+        //                    qtWts.Add(catpra.Key.IndicatorQT.Q3);
+        //                }
+        //            }
+        //            else
+        //            {
+        //                //normalize, weight, and sum indicators
+        //                foreach (var subpra in catpra.Value)
+        //                {
+        //                    //first legit norm type sets value for whole vector
+        //                    if (string.IsNullOrEmpty(sNormType)
+        //                        || sNormType == Constants.NONE)
+        //                    {
+        //                        sNormType = subpra.IndicatorQT.Q1Unit;
+        //                    }
+        //                    qtMs.Add(subpra.IndicatorQT.QTM);
+        //                    //add all of the vectors to 1 vector so that normaliz shows more differences in cis
+        //                    qtLs.Add(subpra.IndicatorQT.QTL);
+        //                    qtUs.Add(subpra.IndicatorQT.QTU);
+        //                    //weights for normalizs
+        //                    qtWts.Add(subpra.IndicatorQT.Q1);
+        //                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+        //                    {
+        //                        //trends
+        //                        Shared.AddStringArrayToDoubleArray(subpra.IndicatorQT.Indicators, trends);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        //add all of the vectors to 1 vector so that normalized vector
+        //        //shows more differences in cis
+        //        List<double> qts = new List<double>();
+        //        qts.AddRange(qtMs);
+        //        qts.AddRange(qtLs);
+        //        qts.AddRange(qtUs);
+        //        //init vectors
+        //        Vector<double> nQTs
+        //            = Vector<double>.Build.Dense(qts.ToArray());
+        //        nQTMs = Vector<double>.Build.Dense(qtMs.ToArray());
+        //        nQTLs = Vector<double>.Build.Dense(qtLs.ToArray());
+        //        nQTUs = Vector<double>.Build.Dense(qtUs.ToArray());
+        //        if ((!string.IsNullOrEmpty(sNormType)
+        //            && sNormType != Constants.NONE))
+        //        {
+        //            //no pnorm allowed yet
+        //            double start = 0;
+        //            if (sNormType == CalculatorHelpers.NORMALIZATION_TYPES.weights.ToString())
+        //            {
+        //                start = qtWts.Sum();
+        //                //weights used with normvalue not separately
+        //                bNeedsWeight = false;
+        //            }
+        //            //normalize the vectors but can't scale using Moncho equation data
+        //            bool bScale = false;
+        //            if (Shared.IsDouble(sNormType) == false)
+        //            {
+        //                nQTs = Shared.GetNormalizedVector(sNormType, start, bScale,
+        //                    qts.ToArray());
+        //            }
+        //            else
+        //            {
+        //                //208 allows LCA normalization as simple multiplier for LCA
+        //                double dbNormFactor = CalculatorHelpers.ConvertStringToDouble(sNormType);
+        //                for (int k = 0; k < nQTs.Count; k++)
+        //                {
+        //                    nQTs[k] = nQTs[k] * dbNormFactor;
+        //                }
+        //            }
+        //            int iCount = nQTs.Count / 3;
+        //            nQTMs = nQTs.SubVector(0, iCount);
+        //            nQTLs = nQTs.SubVector(iCount, iCount);
+        //            nQTUs = nQTs.SubVector((iCount + iCount), iCount);
+        //            if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
+        //            {
+        //                trends = Shared.GetNormalizedandWeightedLists(sNormType, start, bScale,
+        //                    qtWts, trends);
+        //            }
+        //        }
+        //    }
+        //    return bNeedsWeight;
+        //}
         private bool FillCatAndIndDataResult(
-            int locationIndex, Dictionary<PRA1, List<PRA1>> locationIndexes,
-            List<string> dataR, int r, IndicatorQT1 locationIndicator,
-            int rStart)
+        int locationIndex, Dictionary<PRA1, List<PRA1>> locationIndexes,
+        List<string> dataR, int r, IndicatorQT1 locationIndicator,
+        int rStart)
         {
             bool bHasCompleted = false;
             //fill in the dataresults
@@ -2602,8 +2906,8 @@ namespace DevTreks.Extensions.Algorithms
                             {
                                 //https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-numeric-format-strings
                                 DataResults[i][c + 11] = catpra.Key.IndicatorQT.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
-                                //also try "0.0##E+00"
-                                //DataResults[i][c] = catpra.Key.IndicatorQT.QTM.ToString("F4", CultureInfo.InvariantCulture);
+                                //percent contribution in parentindex total
+                                DataResults[i][c + 14] = catpra.Key.IndicatorQT.Q6.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                             }
                             else
                             {
@@ -2619,7 +2923,6 @@ namespace DevTreks.Extensions.Algorithms
                             if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                             {
                                 DataResults[i][c + 11] = catpra.Key.IndicatorQT.QTL.ToString("0.0##E+00", CultureInfo.InvariantCulture);
-                                //DataResults[i][c] = catpra.Key.IndicatorQT.QTL.ToString("F4", CultureInfo.InvariantCulture);
                             }
                             else
                             {
@@ -2772,6 +3075,8 @@ namespace DevTreks.Extensions.Algorithms
                             if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                             {
                                 DataResults[i][c + 11] = subpra.IndicatorQT.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                                //percent contribution in parentindex total
+                                DataResults[i][c + 14] = subpra.IndicatorQT.Q6.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                             }
                             else
                             {
@@ -3170,50 +3475,59 @@ namespace DevTreks.Extensions.Algorithms
         {
             IndicatorQT1 tr = new IndicatorQT1();
             double dbLocCount = 1;
-            bool bIsCEA = false;
+            bool bHasTotals = false;
             if (_subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
             {
                 //210 rule for cea vs cumulative sums (locational sum performance indicator, q3, and certainty, qt)
                 if (thirdIndicator.IndicatorQT1s[0].Q3 != 0 && thirdIndicator.IndicatorQT1s[0].QT != 0)
                 {
                     dbLocCount = thirdIndicator.IndicatorQT1s.Count;
-                    bIsCEA = true;
                     //clue in subsequent Score
                     tr.Option1 = "true";
                     locationIndicator.Option1 = "true";
                     CalculateTRCEA(tr, thirdIndicator, locationIndicator);
+                    bHasTotals = true;
                 }
             }
-            foreach (var rf in thirdIndicator.IndicatorQT1s)
+            if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
             {
-                //add it the locationsindicator for display of Qs
-                if (bIsCEA)
+                //212 supports separate norm and wt for locationindexes
+                CalculateTRLCA(tr, thirdIndicator, locationIndicator);
+                bHasTotals = true;
+            }
+            else
+            {
+                foreach (var rf in thirdIndicator.IndicatorQT1s)
                 {
-                    //already calculated
-                }
-                else
-                {
-                    tr.QTM += (rf.QTM / dbLocCount);
-                    tr.QTL += (rf.QTL / dbLocCount);
-                    tr.QTU += (rf.QTU / dbLocCount);
-                    //lcc displays averages
-                    tr.Q3 += (rf.Q3 / dbLocCount);
-                    tr.Q4 += (rf.Q4 / dbLocCount);
-                    tr.Q5 += (rf.Q5 / dbLocCount);
                     //add it the locationsindicator for display of Qs
-                    locationIndicator.QTM += (rf.QTM / dbLocCount);
-                    locationIndicator.QTL += (rf.QTL / dbLocCount);
-                    locationIndicator.QTU += (rf.QTU / dbLocCount);
-                    locationIndicator.Q3 += (rf.Q3 / dbLocCount);
-                    locationIndicator.Q4 += (rf.Q4 / dbLocCount);
-                    locationIndicator.Q5 += (rf.Q5 / dbLocCount);
+                    if (bHasTotals)
+                    {
+                        //already calculated
+                    }
+                    else
+                    {
+                        tr.QTM += (rf.QTM / dbLocCount);
+                        tr.QTL += (rf.QTL / dbLocCount);
+                        tr.QTU += (rf.QTU / dbLocCount);
+                        //lcc displays averages
+                        tr.Q3 += (rf.Q3 / dbLocCount);
+                        tr.Q4 += (rf.Q4 / dbLocCount);
+                        tr.Q5 += (rf.Q5 / dbLocCount);
+                        //add it the locationsindicator for display of Qs
+                        locationIndicator.QTM += (rf.QTM / dbLocCount);
+                        locationIndicator.QTL += (rf.QTL / dbLocCount);
+                        locationIndicator.QTU += (rf.QTU / dbLocCount);
+                        locationIndicator.Q3 += (rf.Q3 / dbLocCount);
+                        locationIndicator.Q4 += (rf.Q4 / dbLocCount);
+                        locationIndicator.Q5 += (rf.Q5 / dbLocCount);
+                    }
+                    tr.QT += (rf.QT / dbLocCount);
+                    tr.Q1 += (rf.Q1 / thirdIndicator.IndicatorQT1s.Count);
+                    tr.Q2 += (rf.Q2 / thirdIndicator.IndicatorQT1s.Count);
+                    locationIndicator.QT += (rf.QT / dbLocCount);
+                    locationIndicator.Q1 += (rf.Q1 / thirdIndicator.IndicatorQT1s.Count);
+                    locationIndicator.Q2 += (rf.Q2 / thirdIndicator.IndicatorQT1s.Count);
                 }
-                tr.QT += (rf.QT / dbLocCount);
-                tr.Q1 += (rf.Q1 / thirdIndicator.IndicatorQT1s.Count);
-                tr.Q2 += (rf.Q2 / thirdIndicator.IndicatorQT1s.Count);
-                locationIndicator.QT += (rf.QT / dbLocCount);
-                locationIndicator.Q1 += (rf.Q1 / thirdIndicator.IndicatorQT1s.Count);
-                locationIndicator.Q2 += (rf.Q2 / thirdIndicator.IndicatorQT1s.Count);
             }
             for (int c = 0; c < colCount; c++)
             {
@@ -3222,6 +3536,8 @@ namespace DevTreks.Extensions.Algorithms
                     if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                     {
                         DataResults[trIndex][c + 11] = tr.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        //percent contribution in parentindex total
+                        DataResults[trIndex][c + 14] = tr.Q6.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                     }
                     else
                     {
@@ -3346,6 +3662,103 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
+        }
+        private async Task<bool> CalculateTRLCA(IndicatorQT1 tr,
+            IndicatorQT1 thirdIndicator, IndicatorQT1 locationIndicator)
+        {
+            bool bHasCalculated = false;
+            List<List<double>> trends = new List<List<double>>();
+            double[] arr = new double[] { 0, 0, 0, 0, 0 };
+            List<double> nQTMs = new List<double>();
+            List<double> nQTLs = new List<double>();
+            List<double> nQTUs = new List<double>();
+            //208
+            //weights
+            List<double> qtWts = new List<double>();
+            //make a new index to pass to normal function
+            PRA1 trPRA = new PRA1();
+            //trs used as multiplier
+            if (tr.QTM == 0)
+                tr.QTM = 1;
+            if (tr.QTL == 0)
+                tr.QTL = 1;
+            if (tr.QTU == 0)
+                tr.QTU = 1;
+            trPRA.IndicatorQT = tr;
+            List<PRA1> lis = new List<PRA1>();
+            foreach (var rf in thirdIndicator.IndicatorQT1s)
+            {
+                PRA1 li = new PRA1();
+                li.IndicatorQT = rf;
+                lis.Add(li);
+            }
+            Dictionary<PRA1, List<PRA1>> trIndexes
+                = new Dictionary<PRA1, List<PRA1>>();
+            trIndexes.Add(trPRA, lis);
+            bool bNeedsWeight = await SetNormalizations(trends, trIndexes,
+               nQTMs, nQTLs, nQTUs, qtWts);
+
+            double dbCertainty1 = 0;
+            double dbCertainty2 = 0;
+            double dbQTM = 0;
+            double dbQTL = 0;
+            double dbQTU = 0;
+            foreach (var locpra in trIndexes)
+            {
+                //category index in norm vector
+                int k = 0;
+                if (locpra.Value.Count == 0)
+                {
+                    locpra.Key.IndicatorQT.QTM = dbQTM;
+                    locpra.Key.IndicatorQT.QTL = dbQTL;
+                    locpra.Key.IndicatorQT.QTU = dbQTU;
+                    //certainty1
+                    if (dbCertainty1 != 0)
+                    {
+                        locpra.Key.IndicatorQT.Q1 = dbCertainty1 / qtWts.Count;
+                    }
+                    //certainty2
+                    if (dbCertainty2 != 0)
+                    {
+                        locpra.Key.IndicatorQT.Q2 = dbCertainty2 / qtWts.Count;
+                    }
+                    //now the percent contribution of each catindex in the locationalindex totals
+                    foreach (var locpra2 in trIndexes)
+                    {
+                        if (locpra2.Value.Count != 0)
+                        {
+                            locpra2.Key.IndicatorQT.Q6 = (locpra2.Key.IndicatorQT.QTM / dbQTM) * 100;
+                        }
+                    }
+                }
+                else
+                {
+                    dbCertainty1 += locpra.Key.IndicatorQT.Q1;
+                    dbCertainty2 += locpra.Key.IndicatorQT.Q2;
+                    //replace each catindex with normalized and weighted result
+                    if (bNeedsWeight)
+                    {
+                        //note that the weight factor is used as a multiplier (1 / population)
+                        locpra.Key.IndicatorQT.QTM = nQTMs[k] * qtWts[k];
+                        locpra.Key.IndicatorQT.QTL = nQTLs[k] * qtWts[k];
+                        locpra.Key.IndicatorQT.QTU = nQTUs[k] * qtWts[k];
+                    }
+                    else
+                    {
+                        //weights used to normalize
+                        locpra.Key.IndicatorQT.QTM = nQTMs[k];
+                        locpra.Key.IndicatorQT.QTL = nQTLs[k];
+                        locpra.Key.IndicatorQT.QTU = nQTUs[k];
+                    }
+                    dbQTM += locpra.Key.IndicatorQT.QTM;
+                    dbQTL += locpra.Key.IndicatorQT.QTL;
+                    dbQTU += locpra.Key.IndicatorQT.QTU;
+                }
+            }
+            //return result byref to tr
+            tr = trPRA.IndicatorQT;
+            bHasCalculated = true;
+            return bHasCalculated;
         }
         private void CalculateTRCEA(IndicatorQT1 tr,
             IndicatorQT1 thirdIndicator, IndicatorQT1 locationIndicator)
@@ -3514,6 +3927,7 @@ namespace DevTreks.Extensions.Algorithms
                     if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                     {
                         DataResults[scoreIndex][c + 11] = scoreIndicator.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        DataResults[scoreIndex][c + 14] = scoreIndicator.Q6.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                     }
                     else
                     {
@@ -4058,8 +4472,8 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                     {
-                        DataResults[r][c] = locationIndicator.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
-                        //DataResults[r][c] = locationIndicator.QTM.ToString("F4", CultureInfo.InvariantCulture);
+                        DataResults[r][c + 11] = locationIndicator.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        DataResults[r][c + 14] = locationIndicator.Q6.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                     }
                     else
                     {
@@ -4070,7 +4484,7 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                     {
-                        DataResults[r][c] = locationIndicator.QTL.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        DataResults[r][c + 11] = locationIndicator.QTL.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                     }
                     else
                     {
@@ -4081,7 +4495,7 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                     {
-                        DataResults[r][c] = locationIndicator.QTU.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        DataResults[r][c + 11] = locationIndicator.QTU.ToString("0.0##E+00", CultureInfo.InvariantCulture);
                     }
                     else
                     {
@@ -4557,14 +4971,6 @@ namespace DevTreks.Extensions.Algorithms
                 newColNames[17] = "QTUpUnit";
                 ColNames = newColNames;
             }
-            //2.1.2 deprecated
-            //else if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
-            //{
-            //    ColNames[3] = "QTMost";
-            //    ColNames[4] = "QTLow";
-            //    ColNames[5] = "QTUp";
-            //    ColNames[6] = "QTMostUnit";
-            //}
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
                 || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
             {
@@ -4577,6 +4983,11 @@ namespace DevTreks.Extensions.Algorithms
                 newColNames[14] = "QTMost";
                 newColNames[15] = "QTLow";
                 newColNames[16] = "QTUp";
+                if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
+                {
+                    //percent index contribution to sum of indexes totals
+                    newColNames[17] = "percent";
+                }
                 ColNames = newColNames;
             }
             else
