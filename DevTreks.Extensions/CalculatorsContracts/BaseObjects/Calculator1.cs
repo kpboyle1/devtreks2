@@ -18,7 +18,7 @@ namespace DevTreks.Extensions
     ///             by most standard DevTreks calculators/analyzers to hold 
     ///             base properties, such as ids and names.
     ///Author:		www.devtreks.org
-    ///Date:		2017, May
+    ///Date:		2017, November
     ///References:	www.devtreks.org/helptreks/linkedviews/help/linkedview/HelpFile/148
     ///NOTES        1. All properties are stored in Data.Calculator class. 
     ///             Inheritance to Data.Calculator is undesirable because extension
@@ -100,6 +100,8 @@ namespace DevTreks.Extensions
         //188 allowed analyzers to statistically analyze the data in indiv calcors
         public IDictionary<string, List<List<double>>> DataToAnalyze { get; set; }
         public IDictionary<int, List<List<double>>> Data2ToAnalyze { get; set; }
+        //212 Scores use aggregated Indicator data
+        public IDictionary<string, List<IndicatorQT1>> Data3ToAnalyze { get; set; }
         //calculator can share with baseelement for some types of aggregations (where calc lists used)
         public string Label { get; set; }
         public string Label2 { get; set; }
@@ -574,6 +576,7 @@ namespace DevTreks.Extensions
             this.DataColNames = string.Empty;
             this.DataToAnalyze = new Dictionary<string, List<List<double>>>();
             this.Data2ToAnalyze = new Dictionary<int, List<List<double>>>();
+            this.Data3ToAnalyze = new Dictionary<string, List<IndicatorQT1>>();
         }
         public void InitSharedObjectProperties()
         {
@@ -727,6 +730,63 @@ namespace DevTreks.Extensions
                         this.Data2ToAnalyze.Add(d);
                     }
 
+                }
+            }
+        }
+        public void CopyData(IDictionary<string, List<IndicatorQT1>> data)
+        {
+            //data3ToAnalyze holds string vectors from each each ind.data3ToAnalyze
+            if (this.Data3ToAnalyze == null)
+            {
+                this.Data3ToAnalyze = new Dictionary<string, List<IndicatorQT1>>();
+            }
+            if (data != null)
+            {
+                foreach (var d in data)
+                {
+                    if (this.Data3ToAnalyze.ContainsKey(d.Key))
+                    {
+                        foreach (var db in this.Data3ToAnalyze)
+                        {
+                            if (db.Key == d.Key)
+                            {
+                                foreach (var v in d.Value)
+                                {
+                                    db.Value.Add(v);
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        this.Data3ToAnalyze.Add(d);
+                    }
+
+                }
+            }
+        }
+        public void CopyData(string key, List<IndicatorQT1> data)
+        {
+            //data3ToAnalyze holds string vectors from each each ind.data3ToAnalyze
+            if (this.Data3ToAnalyze == null)
+            {
+                this.Data3ToAnalyze = new Dictionary<string, List<IndicatorQT1>>();
+            }
+            if (data != null)
+            {
+                if (this.Data3ToAnalyze.ContainsKey(key))
+                {
+                    foreach (var db in this.Data3ToAnalyze)
+                    {
+                        if (db.Key == key)
+                        {
+                            db.Value.AddRange(data);
+                        }
+                    }
+                }
+                else
+                {
+                    this.Data3ToAnalyze.Add(key, data);
                 }
             }
         }
