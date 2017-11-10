@@ -13,7 +13,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Serialize and deserialize a Stock object with up to 20 indicators
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2017, November
     ///NOTES        1. These support unit input and output indicators. The Q must be set in 
     ///             the Op/Comp/Outcome.
     /// </summary>             
@@ -14896,7 +14896,16 @@ namespace DevTreks.Extensions
                         || HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                         || HasMathType(_score, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                     {
-                        sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.DataURL);
+                        //212 Score analysis
+                        if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+                        {
+                            List<List<string>> colData = IndicatorQT1.GetDefaultData();
+                            sAlgo = await SetAlgoStats4(_score, colData, colData, new List<string>());
+                        }
+                        else
+                        {
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, this.DataURL);
+                        }
                     }
                     else
                     {
@@ -20407,10 +20416,19 @@ namespace DevTreks.Extensions
             string sError = string.Empty;
             //init the algos using this
             SB1Statistics.SB1Algos algos = new SB1Statistics.SB1Algos(this);
+            //212 persistent data has to be copied separately
+            if (HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+            {
+                algos.CopyData(this.Data3ToAnalyze);
+            }
             string algindicator
                 = await algos.SetAlgoIndicatorStats4(label, data, colData, lines2, _colNames);
-            //copy all of the results back to this
+            //copy all of the results back to this (the inheritance handles copying Data3ToAnalyze)
             this.CopySB1BaseProperties(algos);
+            if (HasMathType(this.SB1Label1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+            {
+                this.CopyData(algos.Data3ToAnalyze);
+            }
             return algindicator;
         }
         private async Task<string> SetAlgoCalcs(string label, List<List<double>> data)

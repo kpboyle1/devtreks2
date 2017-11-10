@@ -23,7 +23,7 @@ namespace DevTreks.Extensions
         }
         public IndicatorQT1(string label, double qTM, double qTL, double qTU, double qT, double qTD1, double qTD2,
             string qTMUnit, string qTLUnit, string qTUUnit, string qTUnit, string qTD1Unit, string qTD2Unit,
-            string qMathType, string qMathSubType, string qDistributionType, 
+            string qMathType, string qMathSubType, string qDistributionType,
             string qMathExpression, string qMathResult,
             double q1, double q2, double q3, double q4, double q5,
             string q1Unit, string q2Unit, string q3Unit, string q4Unit, string q5Unit)
@@ -330,6 +330,22 @@ namespace DevTreks.Extensions
             indQ.MathResult = calculator.MathResult;
             if (indQ.Indicators == null)
                 indQ.Indicators = calculator.Indicators;
+        }
+        public static List<string> GetIndicatorColNames()
+        {
+            List<string> colNames = new List<string>();
+            for (int i = 0; i < 11; i++)
+            {
+                colNames.Add(string.Concat("factor", i.ToString()));
+            }
+            return colNames;
+        }
+        public static List<List<string>> GetDefaultData()
+        {
+            //just need to init data to get to Calc1.DataToAnalyze
+            List<List<string>> colData = new List<List<string>>();
+            colData.Add(GetIndicatorColNames());
+            return colData;
         }
     }
 }

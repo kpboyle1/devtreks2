@@ -714,22 +714,38 @@ namespace DevTreks.Extensions
                 {
                     if (this.Data2ToAnalyze.ContainsKey(d.Key))
                     {
-                        foreach (var db in this.Data2ToAnalyze)
-                        {
-                            if (db.Key == d.Key)
-                            {
-                                foreach (var v in d.Value)
-                                {
-                                    db.Value.Add(v);
-                                }
-                            }
-                        }
+                        //this copies the previously completed indicators, so skip
+                        //foreach (var db in this.Data2ToAnalyze)
+                        //{
+                        //    this.Data2ToAnalyze.FirstOrDefault(k => k.Key == d.Key).Value.AddRange(d.Value);
+                        //}
                     }
                     else
                     {
                         this.Data2ToAnalyze.Add(d);
                     }
 
+                }
+            }
+        }
+        public void CopyData(string key, IndicatorQT1 data)
+        {
+            //data3ToAnalyze holds string vectors from each each ind.data3ToAnalyze
+            if (this.Data3ToAnalyze == null)
+            {
+                this.Data3ToAnalyze = new Dictionary<string, List<IndicatorQT1>>();
+            }
+            if (data != null)
+            {
+                if (this.Data3ToAnalyze.ContainsKey(key))
+                {
+                    this.Data3ToAnalyze.FirstOrDefault(k => k.Key == key).Value.Add(data);
+                }
+                else
+                {
+                    List<IndicatorQT1> inds = new List<IndicatorQT1>();
+                    inds.Add(data);
+                    this.Data3ToAnalyze.Add(key, inds);
                 }
             }
         }
@@ -746,16 +762,8 @@ namespace DevTreks.Extensions
                 {
                     if (this.Data3ToAnalyze.ContainsKey(d.Key))
                     {
-                        foreach (var db in this.Data3ToAnalyze)
-                        {
-                            if (db.Key == d.Key)
-                            {
-                                foreach (var v in d.Value)
-                                {
-                                    db.Value.Add(v);
-                                }
-                            }
-                        }
+                        ////this copies the previously completed indicators, so skip
+                        //this.Data3ToAnalyze.FirstOrDefault(k => k.Key == d.Key).Value.AddRange(d.Value);
                     }
                     else
                     {
@@ -776,13 +784,7 @@ namespace DevTreks.Extensions
             {
                 if (this.Data3ToAnalyze.ContainsKey(key))
                 {
-                    foreach (var db in this.Data3ToAnalyze)
-                    {
-                        if (db.Key == key)
-                        {
-                            db.Value.AddRange(data);
-                        }
-                    }
+                    //this.Data3ToAnalyze.FirstOrDefault(k => k.Key == key).Value.AddRange(data);
                 }
                 else
                 {

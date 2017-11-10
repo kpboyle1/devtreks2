@@ -48,6 +48,28 @@ namespace DevTreks.Extensions.Algorithms
             bool bHasCalculations = false;
             try
             {
+                //212 hotspots analysis for scores
+                if (IndicatorIndex == 0 || IndicatorIndex == 20)
+                {
+                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
+                    {
+                        if (Data3ToAnalyze == null)
+                        {
+                            IndicatorQT.ErrorMessage = "Hotspots analysis requires at least 1 correctly completed Indicator.";
+                            return bHasCalculations;
+                        }
+                        if (Data3ToAnalyze.Count == 0)
+                        {
+                            IndicatorQT.ErrorMessage = "Hotspots analysis requires at least 1 correctly completed Indicator.";
+                            return bHasCalculations;
+                        }
+
+                        rowNames = SetScoreHotspotsDataResults();
+                        //put the results in MathResult
+                        await SetMathResult(rowNames);
+                        return bHasCalculations;
+                    }
+                }
                 //minimal data requirement is first five cols
                 if (ColNames.Count() < 5)
                 {
@@ -130,11 +152,6 @@ namespace DevTreks.Extensions.Algorithms
                 iColCount = data[0].Count + 3;
             }
             DataResults = CalculatorHelpers.GetList(data.Count, iColCount);
-
-            ////212 score aggregates ind data to conduct aggregated analysis (hotspots)
-            ////+3 because 3 rownames also added
-            //List<List<string>> Data3ToAnalyze = new List<List<string>>(iColCount + 3);
-
             string sCatIndexLabel = string.Empty;
             string sAlternative = string.Empty;
             int iLocationIndex = 0;
@@ -526,6 +543,8 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     //need label in rowNames
                     pra1.IndicatorQT.Label = rowNames[r][0];
+                    pra1.IndicatorQT.Label2 = rowNames[r][1];
+                    pra1.IndicatorQT.Name = rowNames[r][2];
                     pra1.IndicatorQT.QTM = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
                     //need original quantities in cols 0 to 2
                     DataResults[r][c] = data[r][c];
@@ -2042,10 +2061,14 @@ namespace DevTreks.Extensions.Algorithms
                                     dbQTL += subpra.IndicatorQT.QTL;
                                     dbQTU += subpra.IndicatorQT.QTU;
                                 }
+                                //the score hotspots analysis has to use non normd or wtd cis, so this was added
+                                catpra.Key.IndicatorQT.Q8 = dbQTM;
+                                catpra.Key.IndicatorQT.Q9 = dbQTL;
+                                catpra.Key.IndicatorQT.Q10 = dbQTU;
                                 //percent contribution of Indicator to catindex prior to further catindex calcs
                                 foreach (var subpra in catpra.Value)
                                 {
-                                    //q6 holds percents
+                                    //q6 holds percents (these follow EC, 2016 recommendations for hotspots)
                                     subpra.IndicatorQT.Q6 = (subpra.IndicatorQT.QTM / dbQTM) * 100;
                                 }
                                 //run the catindex pra
@@ -2917,11 +2940,6 @@ namespace DevTreks.Extensions.Algorithms
                     ////locational index row (may have to be updated is lis are separately normd and wtd)
                     //catpra.Key.IndicatorQT.GroupId = r;
                     SetScoreDataResult3(i, catpra.Key.IndicatorQT, locationIndicator);
-                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
-                    {
-                        //212 for score hotspots
-                        AddToData3ToAnalyze(locationIndexes);
-                    }
                     //if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
                     //{
                     //    //locational indexes can be weighted
@@ -2971,6 +2989,11 @@ namespace DevTreks.Extensions.Algorithms
                 }
                 else
                 {
+                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString())
+                    {
+                        //212 for score hotspots
+                        AddToData3ToAnalyze(catpra.Key.IndicatorQT);
+                    }
                     for (int c = 0; c < dataR.Count; c++)
                     {
                         if (c == 0)
@@ -5012,6 +5035,112 @@ namespace DevTreks.Extensions.Algorithms
             }
             return ratesandLifes;
         }
+        public void AddToData3ToAnalyze(IndicatorQT1 ci)
+        {
+            this.CopyData(Label, ci);
+        }
+        private List<List<string>> SetScoreHotspotsDataResults()
+        {
+            List<List<string>> rowNames = new List<List<string>>();
+            int iRowCount = 0;
+            foreach (var labelkey in this.Data3ToAnalyze)
+            {
+                //set totals for each damage category for all life cycle stages
+                foreach (var ci in labelkey.Value)
+                {
+                    iRowCount++;
+                }
+                //cis will be grouped by Indicator Label
+                iRowCount++;
+            }
+            DataResults = CalculatorHelpers.GetList(iRowCount, 15);
+            int iIndCount = 1;
+            int i = 0;
+            string sLabel = string.Empty;
+            string sName = string.Empty;
+            List<string> rns = new List<string>();
+            foreach (var labelkey in this.Data3ToAnalyze)
+            {
+                rns = new List<string>();
+                sLabel = labelkey.Key;
+                rns.Add(sLabel);
+                DataResults[i][0] = sLabel;
+                rns.Add("na");
+                DataResults[i][1] = "na";
+                sName = string.Concat("Indicator ", iIndCount.ToString());
+                DataResults[i][2] = sName;
+                rns.Add(sName);
+                rowNames.Add(rns);
+                iIndCount++;
+                i++;
+                foreach (var ci in labelkey.Value)
+                {
+                    rns = new List<string>();
+                    rns.Add(ci.Label);
+                    rns.Add(ci.Label2);
+                    rns.Add(ci.Name);
+                    rowNames.Add(rns);
+                    for (int c = 0; c < DataResults.Count; c++)
+                    {
+                        if (c == 0)
+                        {
+                            //this holds the sum of Indicators prior to norm, weight, and pra
+                            DataResults[i][c] = ci.Q8.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                            //normd
+                            DataResults[i][c + 11] = ci.QTM.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                            //percent contribution in parentindex normd and wtd total
+                            DataResults[i][c + 14] = ci.Q6.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        }
+                        else if (c == 1)
+                        {
+                            //this holds the sum of Indicators prior to norm, weight, and pra
+                            DataResults[i][c] = ci.Q9.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                            DataResults[i][c + 11] = ci.QTL.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        }
+                        else if (c == 2)
+                        {
+                            //this holds the sum of Indicators prior to norm, weight, and pra
+                            DataResults[i][c] = ci.Q10.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                            DataResults[i][c + 11] = ci.QTU.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        }
+                        else if (c == 3)
+                        {
+                            DataResults[i][c] = ci.QTMUnit;
+                        }
+                        else if (c == 4)
+                        {
+                            DataResults[i][c] = ci.QDistributionType;
+                        }
+                        else if (c == 5)
+                        {
+                            DataResults[i][c] = ci.Q1Unit;
+                        }
+                        else if (c == 6)
+                        {
+                            DataResults[i][c] = ci.Q2Unit;
+                        }
+                        else if (c == 7)
+                        {
+                            DataResults[i][c] = ci.Q1.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        }
+                        else if (c == 8)
+                        {
+                            DataResults[i][c] = ci.Q2.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        }
+                        else if (c == 9)
+                        {
+                            DataResults[i][c] = ci.Q3Unit;
+                        }
+                        else if (c == 10)
+                        {
+                            DataResults[i][c] = ci.Q3.ToString("0.0##E+00", CultureInfo.InvariantCulture);
+                        }
+                    }
+                    i++;
+                }
+            }
+            return rowNames;
+        }
         private async Task<bool> SetMathResult(List<List<string>> rowNames)
         {
             bool bHasSet = false;
@@ -5109,7 +5238,6 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     newColNames[i] = ColNames[i];
                 }
-                newColNames[7] = "QTMostUnit";
                 newColNames[14] = "QTMost";
                 newColNames[15] = "QTLow";
                 newColNames[16] = "QTUp";
@@ -5317,72 +5445,7 @@ namespace DevTreks.Extensions.Algorithms
             rb = rb.Remove(rb.Length - 1, 1);
             return rb.ToString();
         }
-        private void AddToData3ToAnalyze(Dictionary<PRA1, List<PRA1>> locationIndexes)
-        {
-            List<IndicatorQT1> inds = new List<IndicatorQT1>();
-            foreach (var catpra in locationIndexes)
-            {
-                if (catpra.Value.Count != 0)
-                {
-                    inds.Add(catpra.Key.IndicatorQT);
-                }
-            }
-            //copies to Data3ToAnalyze for score aggregation
-            if (inds.Count > 0)
-            {
-                this.CopyData(Label, inds);
-            }
-        }
-        private void SetScoreHotspotsResult()
-        {
-            if (this.Data3ToAnalyze == null)
-            {
-                return;
-            }
-            if (this.Data3ToAnalyze.Count == 0)
-            {
-                return;
-            }
-            Dictionary<string, double> totalQTMs = new Dictionary<string, double>();
-            double dbTotalQTM = 0;
-            bool bHasCITotal = true;
-            foreach (var labelkey in this.Data3ToAnalyze)
-            {
-                //set totals for each damage category for all life cycle stages
-                foreach (var ci in labelkey.Value)
-                {
-                    if (!totalQTMs.ContainsKey(ci.Label))
-                    {
-                        totalQTMs.Add(ci.Label, ci.QTM);
-                    }
-                    else
-                    {
-                        bHasCITotal = totalQTMs.TryGetValue(ci.Label, out dbTotalQTM);
-                        if (bHasCITotal)
-                        {
-                            dbTotalQTM += ci.QTM;
-                            totalQTMs.Remove(ci.Label);
-                            totalQTMs.Add(ci.Label, dbTotalQTM);
-                        }
-                    }
-                }
-            }
-            foreach (var labelkey in this.Data3ToAnalyze)
-            {
-                //set totals for each damage category for all life cycle stages
-                foreach (var ci in labelkey.Value)
-                {
-                    foreach (var kvp in totalQTMs)
-                    {
-                        if (ci.Label == kvp.Key)
-                        {
-                            ci.Q6 = (ci.QTM / kvp.Value) * 100;
-                        }
-                    }
-                }
-            }
-            //now fill in DataResults and add to MathResults
-        }
+        
 
         //198: deprecated but keep for reference; the WhenAll may still 
         //be required for large datasets

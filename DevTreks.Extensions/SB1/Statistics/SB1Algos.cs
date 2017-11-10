@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.SB1Statistics
     ///<summary>
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2017, November
     ///NOTES        1. 
     /// </summary> 
     public class SB1Algos : SB1Base
@@ -2991,6 +2991,11 @@ namespace DevTreks.Extensions.SB1Statistics
                     //this must to use a zero index
                     rmi = InitDRR2Algo(0, label, colNames, qt1, this.SB1ScoreMathExpression, this.SB1ScoreMathSubType,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
+                    if (this.SB1MathSubType1 == MATH_SUBTYPES.subalgorithm15.ToString())
+                    {
+                        //212 hotspots
+                        rmi.CopyData(this.Data3ToAnalyze);
+                    }
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
                     FillBaseIndicator(rmi.IndicatorQT, rmi.IndicatorQT.Label, sLowerCI, sUpperCI);
                 }
@@ -3201,9 +3206,25 @@ namespace DevTreks.Extensions.SB1Statistics
 
                 }
                 //188 assumes 1 analysis is run for analytic results and datasets
-                this.MathResult = rmi.ErrorMessage;
+                this.MathResult = string.Concat(rmi.ErrorMessage, rmi.IndicatorQT.ErrorMessage);
                 this.MathResult += rmi.MathResult;
-                this.DataToAnalyze = rmi.DataToAnalyze;
+                //212 conditions
+                if (rmi.Data3ToAnalyze != null)
+                {
+                    if (rmi.Data3ToAnalyze.Count > 0)
+                    {
+                        foreach (var kvp in rmi.Data3ToAnalyze)
+                        {
+                            string sLabel = kvp.Key;
+                            this.CopyData(sLabel, kvp.Value);
+                        }
+                    }
+                }
+                else if (rmi.DataToAnalyze != null)
+                {
+                    this.DataToAnalyze = rmi.DataToAnalyze;
+
+                }
             }
             return algoIndicator;
         }
