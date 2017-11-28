@@ -38,7 +38,7 @@ database.zip file
 https://devtreks1.blob.core.windows.net/resources/db.zip
 
 What's New in Version 2.1.2
-1. This release upgraded 4 algorithms documented in the Social Performance Analysis tutorial. Specifically, fuller sustainability assessment techniques, involving Product, Organization, and Social Life Cycle Assessment and Hotspots Analysis, are now supported.
+1. This release upgraded 4 algorithms documented in the Social Performance Analysis tutorial. Specifically, this release supports fuller sustainability assessment techniques, involving the integration of Product LCIA, Organization LCIA, Social LCA, and Hotspots Analyses, and Life Cycle Costs and Benefits.
 
 
 Server version: Sql Server 2016 Express, RTM
