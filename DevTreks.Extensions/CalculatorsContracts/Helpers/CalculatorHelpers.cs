@@ -486,6 +486,7 @@ namespace DevTreks.Extensions
             DevTreksHelpers.FileStorageIO fileStorageIO = new DevTreksHelpers.FileStorageIO();
             bFileHasSaved = await fileStorageIO.SaveXmlInURIAsync(
                 extURI.URIDataManager.InitialDocToCalcURI, reader, fullURIPath);
+            extURI.ErrorMessage += extURI.URIDataManager.InitialDocToCalcURI.ErrorMessage;
             return bFileHasSaved;
         }
         public static async Task<bool> SaveTextInURI(
@@ -496,6 +497,7 @@ namespace DevTreks.Extensions
             DevTreksHelpers.FileStorageIO fileStorageIO = new DevTreksHelpers.FileStorageIO();
             bFileHasSaved = await fileStorageIO.SaveTextURIAsync(extURI.URIDataManager.InitialDocToCalcURI,
                 fullURIPath, text);
+            extURI.ErrorMessage += extURI.URIDataManager.InitialDocToCalcURI.ErrorMessage;
             return bFileHasSaved;
         }
         public static async Task<bool> SaveTextInURI(DevTreks.Data.ContentURI uri, string text,

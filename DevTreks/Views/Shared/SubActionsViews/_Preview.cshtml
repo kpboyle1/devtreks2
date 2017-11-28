@@ -48,7 +48,7 @@
             @Html.DivEnd()
         }
         @Html.DivStart(string.Empty, string.Empty)
-        @HtmlHelperExtensions.DisplayLinkedView(Html, Model)
+        @await HtmlHelperExtensions.DisplayLinkedView(Html, Model)
         @Html.DivEnd()
     }
     else

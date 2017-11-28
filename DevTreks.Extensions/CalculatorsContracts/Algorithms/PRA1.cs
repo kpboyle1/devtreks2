@@ -274,6 +274,8 @@ namespace DevTreks.Extensions.Algorithms
                 if (!string.IsNullOrEmpty(Params.ExtensionDocToCalcURI.ErrorMessage))
                 {
                     this.IndicatorQT.MathResult += Params.ExtensionDocToCalcURI.ErrorMessage;
+                    //done with errormsg
+                    Params.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
                 }
             }
             else
@@ -554,6 +556,8 @@ namespace DevTreks.Extensions.Algorithms
                 if (!string.IsNullOrEmpty(Params.ExtensionDocToCalcURI.ErrorMessage))
                 {
                     this.IndicatorQT.MathResult += Params.ExtensionDocToCalcURI.ErrorMessage;
+                    //done with errormsg
+                    Params.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
                 }
             }
             else

@@ -886,7 +886,7 @@ namespace DevTreks.Helpers
             using (StringWriter result = new StringWriter())
             {
                 result.WriteLine(
-                    "Current version: DevTreks 2.1.0, September 27, 2017");
+                    "Current version: DevTreks 2.1.2, November 29, 2017");
                 return new HtmlString(result.ToString());
             }
         }
@@ -4034,7 +4034,7 @@ namespace DevTreks.Helpers
                 return new HtmlString(result.ToString());
             }
         }
-        public static HtmlString DisplayLinkedView(this IHtmlHelper helper,
+        public static async Task<HtmlString> DisplayLinkedView(this IHtmlHelper helper,
            ContentURI model)
         {
             using (StringWriter result = new StringWriter())
@@ -4057,6 +4057,11 @@ namespace DevTreks.Helpers
                                 result.WriteLine(helper.DivEnd());
                             }
                             result.WriteLine(helper.DivStart(string.Empty, "ui-body ui-body-a"));
+                            //2.0.2 : use MediaURL for displaying lv images (because doctocalc image is the same for whole list)
+                            //by using MediaURL to set lv.Resource.IsMainImage
+                            if (linkedview.URIDataManager.Resource == null)
+                                linkedview.URIDataManager.Resource = new List<ContentURI>();
+                            await DataAppHelpers.Resources.SetDefaultResourceURI(model, linkedview);
                             helper.DisplayLinkedViewCell(model, linkedview)
                                 .WriteTo(result, HtmlEncoder.Default);
                             result.WriteLine(helper.DivEnd());
@@ -4073,9 +4078,11 @@ namespace DevTreks.Helpers
         {
             using (StringWriter result = new StringWriter())
             {
-                //2.0.2 : use MediaURL for displaying lv images (because doctocalc image is the same for whole list)
-                //by using MediaURL to set lv.Resource.IsMainImage
-                DataAppHelpers.Resources.SetDefaultResourceURI(model, linkedview);
+                ////2.0.2 : use MediaURL for displaying lv images (because doctocalc image is the same for whole list)
+                ////by using MediaURL to set lv.Resource.IsMainImage
+                //if (linkedview.URIDataManager.Resource == null)
+                //    linkedview.URIDataManager.Resource = new List<ContentURI>();
+                //await DataAppHelpers.Resources.SetDefaultResourceURI(model, linkedview);
                 ContentURI resourceURI = LinqHelpers.GetContentURIListIsMainImage(
                     linkedview.URIDataManager.Resource);
                 string sMURI = string.Empty;
@@ -4093,9 +4100,6 @@ namespace DevTreks.Helpers
                     {
                         //2.0.2 changes
                         DisplayMedia(helper, result, sMURI, sMURIAlt, model);
-                        //result.Write(helper.Image(string.Concat("linkedviewimage_",
-                        //     linkedview.URIId.ToString()), resourceURI.URIDataManager.FileSystemPath,
-                        //     resourceURI.URIDataManager.Description, "50%", "50%", string.Empty));
                     }
                     else
                     {

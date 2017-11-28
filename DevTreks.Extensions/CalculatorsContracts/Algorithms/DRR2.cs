@@ -471,6 +471,9 @@ namespace DevTreks.Extensions.Algorithms
         private void FillIndicatorDistributionForRCA2(List<List<string>> data, List<List<string>> rowNames,
             int r, PRA1 pra1)
         {
+            string sLabel
+                = CalculatorHelpers.GetParsedString(0, Constants.FILENAME_DELIMITERS, rowNames[r][0]);
+            bool bIsIndicator = IsIndicator(sLabel);
             //iterate through columns, skipping y column
             for (int c = 0; c < data[r].Count; c++)
             {
@@ -481,30 +484,65 @@ namespace DevTreks.Extensions.Algorithms
                     //zero index holds trend period 
                     pra1.IndicatorQT.Indicators = new string[trendPeriods];
                     pra1.IndicatorQT.Indicators[0] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 1)
                 {
                     pra1.IndicatorQT.Indicators[1] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 2)
                 {
                     pra1.IndicatorQT.Indicators[2] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 3)
                 {
                     pra1.IndicatorQT.Indicators[3] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 4)
                 {
                     pra1.IndicatorQT.Indicators[4] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 5)
                 {
                     pra1.IndicatorQT.Indicators[5] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 6)
                 {
                     pra1.IndicatorQT.Indicators[6] = data[r][c];
+                    if (!bIsIndicator)
+                    {
+                        //need original dates in cols 0 to 6
+                        DataResults[r][c] = data[r][c];
+                    }
                 }
                 else if (c == 7)
                 {
@@ -1454,10 +1492,16 @@ namespace DevTreks.Extensions.Algorithms
             {
                 //qtm = avg of trends
                 List<double> trends = new List<double>();
+                double dbRating = 0;
                 for (int i = 0; i < pra1.IndicatorQT.Indicators.Count(); i++)
                 {
-                    trends.Add(CalculatorHelpers
-                        .ConvertStringToDouble(pra1.IndicatorQT.Indicators[i]));
+                    dbRating = CalculatorHelpers
+                        .ConvertStringToDouble(pra1.IndicatorQT.Indicators[i]);
+                    //212 condition added because not all trend periods need to be always rated
+                    if (dbRating != 0)
+                    {
+                        trends.Add(dbRating);
+                    }
                 }
                 var stats = new MathNet.Numerics.Statistics.DescriptiveStatistics(trends);
                 pra1.IndicatorQT.QTM = stats.Mean;
@@ -2541,9 +2585,10 @@ namespace DevTreks.Extensions.Algorithms
                     {
                         if (c == 0)
                         {
+                            //displays date_trendvalue
                             DataResults[i][c] 
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -2555,8 +2600,8 @@ namespace DevTreks.Extensions.Algorithms
                         else if (c == 1)
                         {
                             DataResults[i][c]
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -2565,8 +2610,8 @@ namespace DevTreks.Extensions.Algorithms
                         else if (c == 2)
                         {
                             DataResults[i][c]
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -2575,8 +2620,8 @@ namespace DevTreks.Extensions.Algorithms
                         else if (c == 3)
                         {
                             DataResults[i][c]
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -2585,8 +2630,8 @@ namespace DevTreks.Extensions.Algorithms
                         else if (c == 4)
                         {
                             DataResults[i][c]
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -2595,8 +2640,8 @@ namespace DevTreks.Extensions.Algorithms
                         else if (c == 5)
                         {
                             DataResults[i][c]
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -2605,8 +2650,8 @@ namespace DevTreks.Extensions.Algorithms
                         else if (c == 6)
                         {
                             DataResults[i][c]
-                                = Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
-                                    .ToString("F4", CultureInfo.InvariantCulture);
+                                += string.Concat(Constants.FILENAME_DELIMITER, Shared.GetDoubleValue(catpra.Key.IndicatorQT.Indicators, c)
+                                    .ToString("F4", CultureInfo.InvariantCulture));
                             //trends
                             ScoreIndicator.Indicators
                                     = Shared.AddStringArrayToStringArray(
@@ -5052,6 +5097,8 @@ namespace DevTreks.Extensions.Algorithms
                 if (!string.IsNullOrEmpty(Params.ExtensionDocToCalcURI.ErrorMessage))
                 {
                     IndicatorQT.MathResult += Params.ExtensionDocToCalcURI.ErrorMessage;
+                    //done with errormsg
+                    Params.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
                 }
             }
             else
