@@ -1511,6 +1511,7 @@ namespace DevTreks.Extensions.Algorithms
                 pra1.IndicatorQT.QTU = stats.Maximum;
                 pra1.IndicatorQT.QTUUnit = "highest score";
                 //2.0.8 only supports normal and triangle distribution
+                //this has nothing to do with normalization -the CI.Indicators will be normalized later
                 if (pra1.IndicatorQT.QDistributionType == Calculator1.RUC_TYPES.normal.ToString())
                 {
                     pra1.IndicatorQT.QT = stats.Mean;
@@ -2069,7 +2070,7 @@ namespace DevTreks.Extensions.Algorithms
                         foreach (var subpra in catpra.Value)
                         {
                             //set norm params
-                            sNormType = SetNormalizationType(catpra.Key.IndicatorQT.Q1Unit, sNormType, qtNs);
+                            sNormType = SetNormalizationType(subpra.IndicatorQT.Q1Unit, sNormType, qtNs);
                             qtMs.Add(subpra.IndicatorQT.QTM);
                             //add all of the vectors to 1 vector so that normaliz shows more differences in cis
                             qtLs.Add(subpra.IndicatorQT.QTL);
