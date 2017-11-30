@@ -17,7 +17,7 @@ namespace DevTreks.Extensions
     ///             Can be run stand alone, with normal stock totals, or as an 
     ///             analyzer step that keeps track of each meal Qs, or each 
     ///             household member Qs
-    ///Date:		2017, September
+    ///Date:		2017, November
     ///References:	Monitoring and Evaluation Tutorials
     ///NOTES:       Version 2.0.4 upgraded to similar properties and methods as 
     ///             the ResourceStockCalculator to promote consistency in the use 
@@ -2201,7 +2201,16 @@ namespace DevTreks.Extensions
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
                     {
-                        sAlgo = await ProcessAlgosAsync4(indicatorIndex, DataURL);
+                        //212 Score analysis
+                        if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+                        {
+                            List<List<string>> colData = IndicatorQT1.GetDefaultData();
+                            iAlgo = await SetAlgoStats4(indicatorIndex, colData, colData, new List<string>());
+                        }
+                        else
+                        {
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, DataURL);
+                        }
                     }
                     else
                     {
@@ -8051,10 +8060,19 @@ namespace DevTreks.Extensions
             string sError = string.Empty;
             //init the algos using this
             ME2Statistics.ME2Algos algos = new ME2Statistics.ME2Algos(this);
+            //212 persistent data has to be copied separately
+            if (HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+            {
+                algos.CopyData(this.Data3ToAnalyze);
+            }
             int iIndicatorIndex
                 = await algos.SetAlgoIndicatorStats4(index, data, colData, lines2, _colNames);
             //copy all of the results back to this
             CopyME2IndicatorsProperties(algos);
+            if (HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+            {
+                this.CopyData(algos.Data3ToAnalyze);
+            }
             return iIndicatorIndex;
         }
         private async Task<int> SetAlgoCalcs(int index, List<List<double>> data)

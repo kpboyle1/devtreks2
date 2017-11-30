@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.ME2Statistics
     ///<summary>
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2017, November
     ///NOTES        These algorithm patterns derived directly from the equivalent code 
     ///             in the Resource Stock Calculator. They need to evolve to handle 
     ///             large numbers of algorithms.
@@ -3043,6 +3043,11 @@ namespace DevTreks.Extensions.ME2Statistics
                     //this must to use a zero index
                     rmi = InitDRR2Algo(0, index, colNames, qt1, this.ME2Indicators[0].IndMathExpression, this.ME2Indicators[0].IndMathSubType,
                         this.ME2Indicators[0].IndCILevel, this.ME2Indicators[0].IndIterations, this.ME2Indicators[0].IndRandom, this.Observations);
+                    if (this.ME2Indicators[0].IndMathSubType == MATH_SUBTYPES.subalgorithm15.ToString())
+                    {
+                        //212 hotspots
+                        rmi.CopyData(this.Data3ToAnalyze);
+                    }
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
                     FillBaseIndicator(rmi.IndicatorQT, 0, sLowerCI, sUpperCI);
                 }
@@ -3255,7 +3260,24 @@ namespace DevTreks.Extensions.ME2Statistics
                 //188 assumes 1 analysis is run for analytic results and datasets
                 this.MathResult = rmi.ErrorMessage;
                 this.MathResult += rmi.MathResult;
-                this.DataToAnalyze = rmi.DataToAnalyze;
+                //212 conditions
+                if (rmi.Data3ToAnalyze != null)
+                {
+                    if (rmi.Data3ToAnalyze.Count > 0)
+                    {
+                        foreach (var kvp in rmi.Data3ToAnalyze)
+                        {
+                            string sLabel = kvp.Key;
+                            this.CopyData(sLabel, kvp.Value);
+                        }
+                    }
+                }
+                else if (rmi.DataToAnalyze != null)
+                {
+                    this.DataToAnalyze = rmi.DataToAnalyze;
+
+                }
+                //this.DataToAnalyze = rmi.DataToAnalyze;
             }
             return algoIndicator;
         }
