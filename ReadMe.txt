@@ -1,6 +1,6 @@
 Appendix B. ReadMe.txt
 
-Version: 2.1.2, November 29, 2017
+Version: 2.1.2, December 1, 2017
 
 Introduction
 DevTreks is a multitier ASP.NET Core 2 database 
@@ -35,10 +35,10 @@ https://github.com/kpboyle1/devtreks2 (.NET Core 2.0)
 https://github.com/kpboyle1/devtreks (pre-version 2.1.0: netframework 4.6.1)
 
 database.zip file
-https://devtreks1.blob.core.windows.net/resources/db.zip
+https://devtreks1.blob.core.windows.net/resources/db212.zip
 
 What's New in Version 2.1.2
-1. This release upgraded 4 algorithms documented in the Social Performance Analysis tutorial. Specifically, this release supports fuller sustainability assessment techniques, involving the integration of Product LCIA, Organization LCIA, Social LCA, and Hotspots Analyses, and Life Cycle Costs and Benefits.
+1. This release upgraded 4 algorithms documented in the Social Performance Analysis tutorial. Specifically, this release supports fuller sustainability assessments, involving the integration of Product LCIA, Organization LCIA, Social LCA, Hotspots Analyses, Life Cycle Costs and Benefits, and Cost Effectiveness Analysis.
 
 
 Server version: Sql Server 2016 Express, RTM
