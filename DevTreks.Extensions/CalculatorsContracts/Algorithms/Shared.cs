@@ -1111,80 +1111,35 @@ namespace DevTreks.Extensions.Algorithms
             dbAAC = amount / dbAvgAnnFactor;
             return dbAAC;
         }
+        public static List<List<string>> GetURLData(List<string> lines)
+        {
+            List<List<string>> urldata = new List<List<string>>();
+            foreach (var line in lines)
+            {
+                //skip the 3 colname columns
+                List<string> dataRow = line
+                    .Split(Constants.CSV_DELIMITERS)
+                    .Skip(3).ToList();
+                if (dataRow != null)
+                {
+                    urldata.Add(dataRow);
+                }
+            }
+            return urldata;
+        }
+        public static List<List<string>> CopyData(List<List<string>> fromData)
+        {
+            List<List<string>> todata = new List<List<string>>();
+            foreach(var row in fromData)
+            {
+                todata.Add(row);
+            }
+            return todata;
+            //int i = 0;
+            //for (i = 0; i < fromData.Count; i++)
+            //{
+            //    fromData[i].CopyTo(todata[i].ToArray());
+            //}
+        }
     }
-//infernet deprecated in favor of azure machine learning
-    //using MicrosoftResearch.Infer;
-//using MicrosoftResearch.Infer.Models;
-//using MicrosoftResearch.Infer.Maths;
-    //public static VariableArray2D<double> GetDoubleVariableArray2D(List<List<double>> data, string[] colNames,
-    //       string[] depColNames)
-    //    {
-    //        //convert data to a Math.Net Matrix
-    //        //positive definite matrix, or square 
-    //        Range N = new Range(data.Count()).Named("N");
-    //        Range T = new Range(depColNames.Count()).Named("T");
-    //        Matrix<double> M = GetDoubleMatrix(data, colNames, depColNames);
-    //        VariableArray2D<double> m = Variable.Observed<double>(M.ToArray()).Named("x");
-    //        return m;
-    //    }
-    //    public static VariableArray2D<double> GetDoubleVariableArray2D(List<List<string>> data, string[] colNames,
-    //        string[] depColNames)
-    //    {
-    //        //convert data to a Math.Net Matrix
-    //        //positive definite matrix, or square 
-    //        Range N = new Range(data.Count()).Named("N");
-    //        Range T = new Range(depColNames.Count()).Named("T");
-    //        Matrix<double> M = GetDoubleMatrix(data, colNames, depColNames);
-    //        VariableArray2D<double> m = Variable.Observed<double>(M.ToArray()).Named("x");
-    //        return m;
-    //    }
-    //    public static Vector[] GetDoubleVector(List<List<string>> data, string[] colNames,
-    //        string[] depColNames)
-    //    {
-    //        //convert data to a Math.Net Matrix
-    //        //positive definite matrix, or square 
-    //        Range N = new Range(data.Count()).Named("N");
-    //        Range T = new Range(depColNames.Count()).Named("T");
-    //        Matrix<double> M = GetDoubleMatrix(data, colNames, depColNames);
-    //        Vector[] x = new Vector[M.RowCount];
-    //        for (int i = 0; i < M.RowCount; i++)
-    //        {
-    //            x[i] = Vector.FromList(M.Row(i).ToArray());
-    //        }
-    //        //Vector[] x = new Vector[M.ColumnCount];
-    //        //for (int i = 0; i < M.ColumnCount; i++)
-    //        //{
-    //        //    x[i] = Vector.FromList(M.Column(i).ToArray());
-    //        //}
-    //        return x;
-    //    }
-    //    public static Vector[] GetDoubleVector(string csvFileName)
-    //    {
-    //        List<Vector> dataList = new List<Vector>();
-    //        using (StreamReader sr = new StreamReader(csvFileName))
-    //        {
-    //            string str;
-    //            while ((str = sr.ReadLine()) != null)
-    //            {
-    //                double[] arr = str.Split(',').Select(s => double.Parse(s)).ToArray();
-    //                dataList.Add(Vector.FromArray(arr));
-    //            }
-    //        }
-    //        Vector[] data = dataList.ToArray();
-    //        return data;
-    //    }
-    //    public static VariableArray<double> GetYDataForVariableArray(List<List<double>> data)
-    //    {
-    //        Range N = new Range(data.Count()).Named("N");
-    //        Vector<double> Y = GetYData(data);
-    //        VariableArray<double> y = Variable.Observed<double>(Y.ToArray(), N).Named("y");
-    //        return y;
-    //    }
-    //    public static VariableArray<double> GetYDataForVariableArray(List<List<string>> data)
-    //    {
-    //        Range N = new Range(data.Count()).Named("N");
-    //        Vector<double> Y = GetYData(data);
-    //        VariableArray<double> y = Variable.Observed<double>(Y.ToArray(), N).Named("y");
-    //        return y;
-    //    }
 }

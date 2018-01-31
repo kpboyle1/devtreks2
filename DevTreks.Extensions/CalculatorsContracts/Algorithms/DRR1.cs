@@ -10,7 +10,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		DRR1 algorithm
     ///Author:		www.devtreks.org
-    ///Date:		2017, April
+    ///Date:		2018, February
     ///References:	CTA algo1, CTAP subalgo9, 10, 11, 12
     ///</summary>
     public class DRR1 : PRA1
@@ -48,6 +48,8 @@ namespace DevTreks.Extensions.Algorithms
         public List<List<string>> DataResults = new List<List<string>>();
         //ind 5 and 6 sensitivity analysis
         public List<List<double>> DataSet2 = new List<List<double>>();
+        //ind 17 pop analysis
+        public List<List<string>> DataSet10 = new List<List<string>>();
         //used to fill in Qs for Ind6
         public double Highestorlowest = 0;
         public List<int> HighestBCRIndex = new List<int>();

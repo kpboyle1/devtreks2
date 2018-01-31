@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.SB1Statistics
     ///<summary>
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2017, November
+    ///Date:		2018, February
     ///NOTES        1. 
     /// </summary> 
     public class SB1Algos : SB1Base
@@ -146,7 +146,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                 || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                 || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
             {
                 //if its a good exceedance probability calc returns the string
                 algoindicator = await SetDRR2IndicatorStats(label, colNames, data,
@@ -1089,7 +1090,8 @@ namespace DevTreks.Extensions.SB1Statistics
             if (this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                 || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                 || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16))
+                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
             {
                 lowerci = qt1.QTLUnit;
                 upperci = qt1.QTUUnit;
