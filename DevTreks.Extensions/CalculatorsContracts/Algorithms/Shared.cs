@@ -1141,5 +1141,12 @@ namespace DevTreks.Extensions.Algorithms
             //    fromData[i].CopyTo(todata[i].ToArray());
             //}
         }
+        public static double GetSDGPerPopulation(double sdgQuantity, double sdgStartAllocation, 
+            double sdgEndAllocation, double popStartCount, double popStartAllocation, double popEndAllocation)
+        {
+            double sdgPerPopulationMember = 0;
+            sdgPerPopulationMember = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100)) / (popStartCount * ((popStartAllocation / 100) * (popEndAllocation / 100)));
+            return sdgPerPopulationMember;
+        }
     }
 }
