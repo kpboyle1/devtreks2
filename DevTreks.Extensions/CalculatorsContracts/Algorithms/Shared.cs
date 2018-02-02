@@ -1114,16 +1114,22 @@ namespace DevTreks.Extensions.Algorithms
         public static List<List<string>> GetURLData(List<string> lines)
         {
             List<List<string>> urldata = new List<List<string>>();
+            int i = 0;
             foreach (var line in lines)
             {
-                //skip the 3 colname columns
-                List<string> dataRow = line
-                    .Split(Constants.CSV_DELIMITERS)
-                    .Skip(3).ToList();
-                if (dataRow != null)
+                //skip the factors titles row
+                if (i != 0)
                 {
-                    urldata.Add(dataRow);
+                    //skip the 3 colname columns
+                    List<string> dataRow = line
+                        .Split(Constants.CSV_DELIMITERS)
+                        .Skip(3).ToList();
+                    if (dataRow != null)
+                    {
+                        urldata.Add(dataRow);
+                    }
                 }
+                i++;
             }
             return urldata;
         }
@@ -1145,7 +1151,13 @@ namespace DevTreks.Extensions.Algorithms
             double sdgEndAllocation, double popStartCount, double popStartAllocation, double popEndAllocation)
         {
             double sdgPerPopulationMember = 0;
-            sdgPerPopulationMember = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100)) / (popStartCount * ((popStartAllocation / 100) * (popEndAllocation / 100)));
+            double perPopCount = (popStartCount * ((popStartAllocation / 100) * (popEndAllocation / 100)));
+            perPopCount = CalculatorHelpers.CheckForNaNandRound4(perPopCount);
+            if (perPopCount <= 0)
+            {
+                perPopCount = 1;
+            }
+            sdgPerPopulationMember = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100)) / perPopCount;
             return sdgPerPopulationMember;
         }
     }

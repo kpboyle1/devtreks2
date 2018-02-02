@@ -15541,9 +15541,7 @@ namespace DevTreks.Extensions
                     if (HasMathType(MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm11)
                         || HasMathType(MATH_TYPES.algorithm1,
-                        MATH_SUBTYPES.subalgorithm12)
-                        || HasMathType(MATH_TYPES.algorithm1,
-                        MATH_SUBTYPES.subalgorithm17))
+                        MATH_SUBTYPES.subalgorithm12))
                     {
                         if (indicatorIndex == 2)
                         {
