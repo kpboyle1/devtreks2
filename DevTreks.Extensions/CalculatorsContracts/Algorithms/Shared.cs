@@ -1141,13 +1141,39 @@ namespace DevTreks.Extensions.Algorithms
                 todata.Add(row);
             }
             return todata;
-            //int i = 0;
-            //for (i = 0; i < fromData.Count; i++)
-            //{
-            //    fromData[i].CopyTo(todata[i].ToArray());
-            //}
         }
-        public static double GetSDGPerPopulation(double sdgQuantity, double sdgStartAllocation, 
+        public static double GetPopulationStartCount(double popStartCount,
+            double popStartAllocation)
+        {
+            double dbPopCount = 0;
+            dbPopCount = (popStartCount * (popStartAllocation / 100));
+            dbPopCount = CalculatorHelpers.CheckForNaNandRound4(dbPopCount);
+            if (dbPopCount <= 0)
+            {
+                dbPopCount = 1;
+            }
+            return dbPopCount;
+        }
+        public static double GetPopulationEndCount(double popStartCount, 
+            double popStartAllocation, double popEndAllocation)
+        {
+            double dbPopCount = 0;
+            dbPopCount = (popStartCount * ((popStartAllocation / 100) * (popEndAllocation / 100)));
+            dbPopCount = CalculatorHelpers.CheckForNaNandRound4(dbPopCount);
+            if (dbPopCount <= 0)
+            {
+                dbPopCount = 1;
+            }
+            return dbPopCount;
+        }
+        public static double GetSDGPerPopulation(double sdgQuantity, double sdgStartAllocation,
+            double sdgEndAllocation)
+        {
+            double sdgPerPopulation = 0;
+            sdgPerPopulation = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100));
+            return sdgPerPopulation;
+        }
+        public static double GetSDGPerPopulationMember(double sdgQuantity, double sdgStartAllocation, 
             double sdgEndAllocation, double popStartCount, double popStartAllocation, double popEndAllocation)
         {
             double sdgPerPopulationMember = 0;
