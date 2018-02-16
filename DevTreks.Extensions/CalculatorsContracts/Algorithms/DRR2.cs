@@ -167,7 +167,7 @@ namespace DevTreks.Extensions.Algorithms
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
             {
                 //need new QTMs, QTLs, and QTUs, certainties, %target, sdg unit, production process, and life cycle stage
-                iColCount = data[0].Count + 10;
+                iColCount = data[0].Count + 9;
             }
             DataResults = CalculatorHelpers.GetList(data.Count, iColCount);
             int iStartRow = SkipTitleRows(data, rowNames);
@@ -1356,8 +1356,8 @@ namespace DevTreks.Extensions.Algorithms
             }
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
             {
-                //214 assumes similar use of benchmarks, targets, and actuals
-                FillRCA3IndicatorQT(scoreIndicator);
+                //214 uses a start (Q1)-target (Q2)-actual (QTM) pattern
+                FillRCA5IndicatorQT(scoreIndicator);
             }
             else
             {
@@ -1820,6 +1820,49 @@ namespace DevTreks.Extensions.Algorithms
                 FillActualIndicatorQT(scoreIndicator, bHasActual, bHasTarget);
             }
         }
+        private void FillRCA5IndicatorQT(IndicatorQT1 scoreIndicator)
+        {
+            //fill in IndicatorQT with location or alternative with highest qtms
+            IndicatorQT.Q1 = 0;
+            IndicatorQT.Q2 = 0;
+            IndicatorQT.Q3 = 0;
+            IndicatorQT.Q4 = 0;
+            IndicatorQT.Q5 = 0;
+            IndicatorQT.QTM = 0;
+            IndicatorQT.QTL = 0;
+            IndicatorQT.QTU = 0;
+            IndicatorQT.QT = 0;
+            IndicatorQT.QTD1 = 0;
+            IndicatorQT.QTD2 = 0;
+            if (scoreIndicator.IndicatorQT1s != null)
+            {
+                foreach (var location in scoreIndicator.IndicatorQT1s)
+                {
+                    IndicatorQT.Q1 += (location.QTM * (location.Q1 / 100));
+                    IndicatorQT.Q2 += (location.QTL * (location.Q1 / 100));
+                    IndicatorQT.Q3 += (location.QTU * (location.Q1 / 100));
+                    IndicatorQT.Q1Unit = "benchmark most score";
+                    IndicatorQT.Q2Unit = "benchmark low score";
+                    IndicatorQT.Q3Unit = "benchmark high score";
+                    IndicatorQT.Q4 += (location.QTM / (location.Q2 / 100));
+                    IndicatorQT.Q5 += (location.QTL / (location.Q2 / 100));
+                    IndicatorQT.QT += (location.QTU / (location.Q2 / 100));
+                    IndicatorQT.Q4Unit = "target most score";
+                    IndicatorQT.Q5Unit = "target low score";
+                    IndicatorQT.QTUnit = "target high score";
+                    IndicatorQT.QTM += location.QTM;
+                    IndicatorQT.QTL += location.QTL;
+                    IndicatorQT.QTU += location.QTU;
+                    IndicatorQT.QTMUnit = "actual most score";
+                    IndicatorQT.QTLUnit = "actual low score";
+                    IndicatorQT.QTUUnit = "actual high score";
+                    IndicatorQT.QTD1 += (location.Q8 / scoreIndicator.IndicatorQT1s.Count);
+                    IndicatorQT.QTD2 += (location.Q9 / scoreIndicator.IndicatorQT1s.Count);
+                    IndicatorQT.QTD1Unit = "actual certainty1";
+                    IndicatorQT.QTD2Unit = "actual certainty2";
+                }
+            }
+        }
         private async Task<PRA1> CalculateSubIndicators(PRA1 pra1, PRA1 catIndexPRA)
         {
             if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString())
@@ -1996,7 +2039,12 @@ namespace DevTreks.Extensions.Algorithms
                 pra1.IndicatorQT.QTU = Shared.GetSDGPerPopulation(sdgHigh, pra1.IndicatorQT.Q1, 
                     pra1.IndicatorQT.Q3);
                 //% target calc (already wrote original target to dataresults)
-                pra1.IndicatorQT.Q2 = (pra1.IndicatorQT.Q3 / pra1.IndicatorQT.Q2) * 100;
+                double dbTarget = Shared.GetSDGPerPopulation(sdgMost, pra1.IndicatorQT.Q1,
+                    pra1.IndicatorQT.Q2);
+                dbTarget = (dbTarget == 0) ? 0 : dbTarget;
+                pra1.IndicatorQT.Q2 = (pra1.IndicatorQT.QTM / dbTarget) * 100;
+                //% start calc for display in Indicator props
+                pra1.IndicatorQT.Q1 = ((sdgMost * (pra1.IndicatorQT.Q1 / 100)) / pra1.IndicatorQT.QTM) * 100;
             }
             else
             {
@@ -2388,6 +2436,9 @@ namespace DevTreks.Extensions.Algorithms
                             //percent target 
                             catpra.Key.IndicatorQT.Q2
                                 += (cat.IndicatorQT.Q2 / catcategories.Count);
+                            //percent start
+                            catpra.Key.IndicatorQT.Q1
+                                += (cat.IndicatorQT.Q1 / catcategories.Count);
                         }
                         catcategories = new List<PRA1>();
                     }
@@ -2423,6 +2474,9 @@ namespace DevTreks.Extensions.Algorithms
                             //percent target
                             catpra.Key.IndicatorQT.Q2
                                 += (subpra.IndicatorQT.Q2 / catpra.Value.Count);
+                            //percent start 
+                            catpra.Key.IndicatorQT.Q1
+                                += (subpra.IndicatorQT.Q1 / catpra.Value.Count);
                             i++;
                             rStart++;
                         }
@@ -4511,7 +4565,6 @@ namespace DevTreks.Extensions.Algorithms
             List<double> nQTMs = new List<double>();
             List<double> nQTLs = new List<double>();
             List<double> nQTUs = new List<double>();
-            //208
             //weights
             List<double> nWts = new List<double>();
             //make a new index to pass to normal function
@@ -4552,6 +4605,7 @@ namespace DevTreks.Extensions.Algorithms
             double dbCertainty2 = 0;
             double dbCertainty3 = 0;
             double dbTargetPerCent = 0;
+            double dbStartPerCent = 0;
             double dbQTM = 0;
             double dbQTL = 0;
             double dbQTU = 0;
@@ -4571,6 +4625,7 @@ namespace DevTreks.Extensions.Algorithms
                         dbCertainty2 += locindex.IndicatorQT.Q9;
                         dbCertainty3 += locindex.IndicatorQT.Q10;
                         dbTargetPerCent += locindex.IndicatorQT.Q2;
+                        dbStartPerCent += locindex.IndicatorQT.Q1;
                         //replace each catindex with normalized and weighted result
                         if (bNeedsWeight)
                         {
@@ -4618,6 +4673,11 @@ namespace DevTreks.Extensions.Algorithms
                     {
                         locpra.Key.IndicatorQT.Q2 = dbTargetPerCent / nWts.Count;
                     }
+                    //avg start percent
+                    if (dbStartPerCent != 0)
+                    {
+                        locpra.Key.IndicatorQT.Q1 = dbStartPerCent / nWts.Count;
+                    }
                     //return result byref
                     tr.QTM = locpra.Key.IndicatorQT.QTM;
                     tr.QTL = locpra.Key.IndicatorQT.QTL;
@@ -4626,6 +4686,7 @@ namespace DevTreks.Extensions.Algorithms
                     tr.Q9 = locpra.Key.IndicatorQT.Q9;
                     tr.Q10 = locpra.Key.IndicatorQT.Q10;
                     tr.Q2 = locpra.Key.IndicatorQT.Q2;
+                    tr.Q1 = locpra.Key.IndicatorQT.Q1;
                     tr.Q5 = locpra.Key.IndicatorQT.Q5;
                     tr.Q6 = locpra.Key.IndicatorQT.Q6;
                     tr.Q7 = locpra.Key.IndicatorQT.Q7;
@@ -4637,6 +4698,7 @@ namespace DevTreks.Extensions.Algorithms
                     locationIndicator.Q9 = locpra.Key.IndicatorQT.Q9;
                     locationIndicator.Q10 = locpra.Key.IndicatorQT.Q10;
                     locationIndicator.Q2 = locpra.Key.IndicatorQT.Q2;
+                    locationIndicator.Q1 = locpra.Key.IndicatorQT.Q1;
                     locationIndicator.Q5 = locpra.Key.IndicatorQT.Q5;
                     locationIndicator.Q6 = locpra.Key.IndicatorQT.Q6;
                     locationIndicator.Q7 = locpra.Key.IndicatorQT.Q7;
