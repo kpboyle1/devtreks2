@@ -13641,7 +13641,7 @@ namespace DevTreks.Extensions
             this.CalcParameters = calcParameters;
             int iInd = 1;
             //configureawait allows ui to write results
-            bHasCalculations = await SetSB1StockCalculationsAsync(iInd, multiplier).ConfigureAwait(false); ;
+            bHasCalculations = await SetSB1StockCalculationsAsync(iInd, multiplier).ConfigureAwait(false);
             return bHasCalculations;
         }
 
@@ -15624,6 +15624,38 @@ namespace DevTreks.Extensions
                         else if (indicatorIndex == 8)
                         {
                             sLabel = SB1Label8;
+                        }
+                        else if (indicatorIndex == 8)
+                        {
+                            sLabel = SB1Label8;
+                        }
+                        else if (indicatorIndex == 9)
+                        {
+                            sLabel = SB1Label9;
+                        }
+                        else if (indicatorIndex == 10)
+                        {
+                            sLabel = SB1Label10;
+                        }
+                        else if (indicatorIndex == 11)
+                        {
+                            sLabel = SB1Label11;
+                        }
+                        else if (indicatorIndex == 12)
+                        {
+                            sLabel = SB1Label12;
+                        }
+                        else if (indicatorIndex == 13)
+                        {
+                            sLabel = SB1Label13;
+                        }
+                        else if (indicatorIndex == 14)
+                        {
+                            sLabel = SB1Label14;
+                        }
+                        else if (indicatorIndex == 15)
+                        {
+                            sLabel = SB1Label15;
                         }
                         if (NeedsIndicator(sLabel)
                             && _indicators.Contains(sLabel) == false)

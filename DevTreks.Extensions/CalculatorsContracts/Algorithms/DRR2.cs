@@ -167,7 +167,7 @@ namespace DevTreks.Extensions.Algorithms
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
             {
                 //need new QTMs, QTLs, and QTUs, certainties, %target, sdg unit, production process, and life cycle stage
-                iColCount = data[0].Count + 9;
+                iColCount = data[0].Count + 11;
             }
             DataResults = CalculatorHelpers.GetList(data.Count, iColCount);
             int iStartRow = SkipTitleRows(data, rowNames);
@@ -997,6 +997,8 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     if (bIsIndicator)
                     {
+                        //2nd dataset, cost per unit SDG
+                        pra1.IndicatorQT.Q7 = CalculatorHelpers.ConvertStringToDouble(DataSet10[r][c]);
                         //1st dataset; production process
                         pra1.IndicatorQT.Q9Unit = data[r][c];
                         DataResults[r][c] = DataSet10[r][c];
@@ -2001,26 +2003,32 @@ namespace DevTreks.Extensions.Algorithms
                 double sdgLow = pra1.IndicatorQT.QTL;
                 double sdgHigh = pra1.IndicatorQT.QTU;
                 //2.1.4 runs pra for pop catindex first to get pop measurement
-                if (!string.IsNullOrEmpty(catIndexPRA.IndicatorQT.QDistributionType)
-                    && catIndexPRA.IndicatorQT.QDistributionType != Constants.NONE
-                    && catIndexPRA.IndicatorQT.WhatIfTagName != Constants.ANALYZER_HOSTNAME)
+                if (catIndexPRA.IndicatorQT.WhatIfTagName != Constants.ANALYZER_HOSTNAME)
                 {
-                    //coming in from Indicator (pra1.Ind.QT, QTD1, and QTD2, store pop dist
-                    await catIndexPRA.RunAlgorithmAsync();
-                    //replace pop pra with calcs for display in CI using QTs because QTMs used to aggrg sdg per pop
-                    catIndexPRA.IndicatorQT.QT = catIndexPRA.IndicatorQT.QTM;
-                    catIndexPRA.IndicatorQT.QTD1 = catIndexPRA.IndicatorQT.QTL;
-                    catIndexPRA.IndicatorQT.QTD2 = catIndexPRA.IndicatorQT.QTU;
-                    catIndexPRA.IndicatorQT.QTUnit = catIndexPRA.IndicatorQT.QTMUnit;
-                    if (catIndexPRA.CILevel > 0)
+                    if (!string.IsNullOrEmpty(catIndexPRA.IndicatorQT.QDistributionType)
+                    && catIndexPRA.IndicatorQT.QDistributionType != Constants.NONE)
                     {
-                        catIndexPRA.IndicatorQT.QTD1Unit = string.Concat(CalculatorHelpers.GetMessage("LOWER"), catIndexPRA.CILevel.ToString(), CalculatorHelpers.GetMessage("CI_PCT"));
-                        catIndexPRA.IndicatorQT.QTD2Unit = string.Concat(CalculatorHelpers.GetMessage("UPPER"), catIndexPRA.CILevel.ToString(), CalculatorHelpers.GetMessage("CI_PCT"));
+                        //coming in from Indicator (pra1.Ind.QT, QTD1, and QTD2, store pop dist
+                        await catIndexPRA.RunAlgorithmAsync();
+                        //replace pop pra with calcs for display in CI using QTs because QTMs used to aggrg sdg per pop
+                        catIndexPRA.IndicatorQT.QT = catIndexPRA.IndicatorQT.QTM;
+                        catIndexPRA.IndicatorQT.QTD1 = catIndexPRA.IndicatorQT.QTL;
+                        catIndexPRA.IndicatorQT.QTD2 = catIndexPRA.IndicatorQT.QTU;
+                        catIndexPRA.IndicatorQT.QTUnit = catIndexPRA.IndicatorQT.QTMUnit;
+                        if (catIndexPRA.CILevel > 0)
+                        {
+                            catIndexPRA.IndicatorQT.QTD1Unit = string.Concat(CalculatorHelpers.GetMessage("LOWER"), catIndexPRA.CILevel.ToString(), CalculatorHelpers.GetMessage("CI_PCT"));
+                            catIndexPRA.IndicatorQT.QTD2Unit = string.Concat(CalculatorHelpers.GetMessage("UPPER"), catIndexPRA.CILevel.ToString(), CalculatorHelpers.GetMessage("CI_PCT"));
+                        }
+                        else
+                        {
+                            catIndexPRA.IndicatorQT.QTD1Unit = catIndexPRA.IndicatorQT.QTLUnit;
+                            catIndexPRA.IndicatorQT.QTD2Unit = catIndexPRA.IndicatorQT.QTUUnit;
+                        }
                     }
                     else
                     {
-                        catIndexPRA.IndicatorQT.QTD1Unit = catIndexPRA.IndicatorQT.QTLUnit;
-                        catIndexPRA.IndicatorQT.QTD2Unit = catIndexPRA.IndicatorQT.QTUUnit;
+                        //pop pra calcs are in correct properties
                     }
                     //tell it not to run after the first child indicator
                     catIndexPRA.IndicatorQT.WhatIfTagName = Constants.ANALYZER_HOSTNAME;
@@ -2045,6 +2053,8 @@ namespace DevTreks.Extensions.Algorithms
                 pra1.IndicatorQT.Q2 = (pra1.IndicatorQT.QTM / dbTarget) * 100;
                 //% start calc for display in Indicator props
                 pra1.IndicatorQT.Q1 = ((sdgMost * (pra1.IndicatorQT.Q1 / 100)) / pra1.IndicatorQT.QTM) * 100;
+                //total cost per SDG quantity (q7 = cost per unit SDG)
+                pra1.IndicatorQT.Q7 = pra1.IndicatorQT.QTM * pra1.IndicatorQT.Q7;
             }
             else
             {
@@ -2439,6 +2449,8 @@ namespace DevTreks.Extensions.Algorithms
                             //percent start
                             catpra.Key.IndicatorQT.Q1
                                 += (cat.IndicatorQT.Q1 / catcategories.Count);
+                            //total cost
+                            catpra.Key.IndicatorQT.Q7 += cat.IndicatorQT.Q7;
                         }
                         catcategories = new List<PRA1>();
                     }
@@ -2477,6 +2489,8 @@ namespace DevTreks.Extensions.Algorithms
                             //percent start 
                             catpra.Key.IndicatorQT.Q1
                                 += (subpra.IndicatorQT.Q1 / catpra.Value.Count);
+                            //total cost
+                            catpra.Key.IndicatorQT.Q7 += subpra.IndicatorQT.Q7;
                             i++;
                             rStart++;
                         }
@@ -3754,7 +3768,8 @@ namespace DevTreks.Extensions.Algorithms
                             DataResults[i][c + 15] = catpra.Key.IndicatorQT.Q8.ToString("F4", CultureInfo.InvariantCulture);
                             DataResults[i][c + 16] = catpra.Key.IndicatorQT.Q9.ToString("F4", CultureInfo.InvariantCulture);
                             DataResults[i][c + 17] = catpra.Key.IndicatorQT.Q10.ToString("F4", CultureInfo.InvariantCulture);
-                            //ScoreIndicator.QTM += catpra.Key.IndicatorQT.QTM;
+                            //total costs
+                            DataResults[i][c + 18] = catpra.Key.IndicatorQT.Q7.ToString("F4", CultureInfo.InvariantCulture);
                         }
                         else if (c == 1)
                         {
@@ -3816,12 +3831,14 @@ namespace DevTreks.Extensions.Algorithms
                                 DataResults[i][c + 15] = subpra.IndicatorQT.Q8.ToString("F4", CultureInfo.InvariantCulture);
                                 DataResults[i][c + 16] = subpra.IndicatorQT.Q9.ToString("F4", CultureInfo.InvariantCulture);
                                 DataResults[i][c + 17] = subpra.IndicatorQT.Q10.ToString("F4", CultureInfo.InvariantCulture);
+                                //total cost
+                                DataResults[i][c + 18] = subpra.IndicatorQT.Q7.ToString("F4", CultureInfo.InvariantCulture);
                                 //sdg unit
-                                DataResults[i][c + 18] = subpra.IndicatorQT.QTMUnit;
+                                DataResults[i][c + 19] = subpra.IndicatorQT.QTMUnit;
                                 //production process
-                                DataResults[i][c + 19] = subpra.IndicatorQT.Q9Unit;
+                                DataResults[i][c + 20] = subpra.IndicatorQT.Q9Unit;
                                 //life cycle stage
-                                DataResults[i][c + 20] = subpra.IndicatorQT.Q10Unit;
+                                DataResults[i][c + 21] = subpra.IndicatorQT.Q10Unit;
                             }
                             else if (c == 1)
                             {
@@ -4341,6 +4358,8 @@ namespace DevTreks.Extensions.Algorithms
                     DataResults[trIndex][c + 15] = tr.Q8.ToString("F4", CultureInfo.InvariantCulture);
                     DataResults[trIndex][c + 16] = tr.Q9.ToString("F4", CultureInfo.InvariantCulture);
                     DataResults[trIndex][c + 17] = tr.Q10.ToString("F4", CultureInfo.InvariantCulture);
+                    //total costs
+                    DataResults[trIndex][c + 18] = tr.Q7.ToString("F4", CultureInfo.InvariantCulture);
                 }
                 else if (c == 1)
                 {
@@ -4604,6 +4623,7 @@ namespace DevTreks.Extensions.Algorithms
             double dbCertainty1 = 0;
             double dbCertainty2 = 0;
             double dbCertainty3 = 0;
+            double dbTotalCosts = 0;
             double dbTargetPerCent = 0;
             double dbStartPerCent = 0;
             double dbQTM = 0;
@@ -4624,6 +4644,7 @@ namespace DevTreks.Extensions.Algorithms
                         dbCertainty1 += locindex.IndicatorQT.Q8;
                         dbCertainty2 += locindex.IndicatorQT.Q9;
                         dbCertainty3 += locindex.IndicatorQT.Q10;
+                        dbTotalCosts += locindex.IndicatorQT.Q7;
                         dbTargetPerCent += locindex.IndicatorQT.Q2;
                         dbStartPerCent += locindex.IndicatorQT.Q1;
                         //replace each catindex with normalized and weighted result
@@ -4652,7 +4673,7 @@ namespace DevTreks.Extensions.Algorithms
                     //for displaying nonnormalized TR sums in same cols as nonnorm LIs (0,1,2)
                     locpra.Key.IndicatorQT.Q5 = dbQTMNoNorm;
                     locpra.Key.IndicatorQT.Q6 = dbQTLNoNorm;
-                    locpra.Key.IndicatorQT.Q7 = dbQTUNoNorm;
+                    locpra.Key.IndicatorQT.Q4 = dbQTUNoNorm;
                     //certainty1
                     if (dbCertainty1 != 0)
                     {
@@ -4668,6 +4689,8 @@ namespace DevTreks.Extensions.Algorithms
                     {
                         locpra.Key.IndicatorQT.Q10 = dbCertainty3 / nWts.Count;
                     }
+                    //total costs
+                    locpra.Key.IndicatorQT.Q7 = dbTotalCosts;
                     //avg target percent
                     if (dbTargetPerCent != 0)
                     {
@@ -4689,6 +4712,7 @@ namespace DevTreks.Extensions.Algorithms
                     tr.Q1 = locpra.Key.IndicatorQT.Q1;
                     tr.Q5 = locpra.Key.IndicatorQT.Q5;
                     tr.Q6 = locpra.Key.IndicatorQT.Q6;
+                    tr.Q4 = locpra.Key.IndicatorQT.Q4;
                     tr.Q7 = locpra.Key.IndicatorQT.Q7;
                     // and locationind further calculations
                     locationIndicator.QTM = locpra.Key.IndicatorQT.QTM;
@@ -4701,6 +4725,7 @@ namespace DevTreks.Extensions.Algorithms
                     locationIndicator.Q1 = locpra.Key.IndicatorQT.Q1;
                     locationIndicator.Q5 = locpra.Key.IndicatorQT.Q5;
                     locationIndicator.Q6 = locpra.Key.IndicatorQT.Q6;
+                    locationIndicator.Q4 = locpra.Key.IndicatorQT.Q4;
                     locationIndicator.Q7 = locpra.Key.IndicatorQT.Q7;
                 }
             }
@@ -5003,6 +5028,8 @@ namespace DevTreks.Extensions.Algorithms
                     DataResults[scoreIndex][c + 15] = scoreIndicator.Q8.ToString("F4", CultureInfo.InvariantCulture);
                     DataResults[scoreIndex][c + 16] = scoreIndicator.Q9.ToString("F4", CultureInfo.InvariantCulture);
                     DataResults[scoreIndex][c + 17] = scoreIndicator.Q10.ToString("F4", CultureInfo.InvariantCulture);
+                    //total costs
+                    DataResults[scoreIndex][c + 18] = scoreIndicator.Q7.ToString("F4", CultureInfo.InvariantCulture);
                 }
                 else if (c == 1)
                 {
@@ -6039,7 +6066,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
             {
-                string[] newColNames = new string[24];
+                string[] newColNames = new string[25];
                 for (int i = 0; i < ColNames.Count(); i++)
                 {
                     newColNames[i] = ColNames[i];
@@ -6051,9 +6078,10 @@ namespace DevTreks.Extensions.Algorithms
                 newColNames[18] = "certainty1";
                 newColNames[19] = "certainty2";
                 newColNames[20] = "certainty3";
-                newColNames[21] = "sdgunit";
-                newColNames[22] = "productionprocess";
-                newColNames[23] = "lifecyclestage";
+                newColNames[21] = "totalcost";
+                newColNames[22] = "sdgunit";
+                newColNames[23] = "productionprocess";
+                newColNames[24] = "lifecyclestage";
                 ColNames = newColNames;
             }
             else
