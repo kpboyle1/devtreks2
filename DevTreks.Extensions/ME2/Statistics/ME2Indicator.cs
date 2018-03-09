@@ -1122,7 +1122,8 @@ namespace DevTreks.Extensions
                                     || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                                     || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                                     || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                                 {
                                     //198: scores use dataurl to run subalgos 10 and 11
                                     //string sTest = "skip";
@@ -1702,7 +1703,8 @@ namespace DevTreks.Extensions
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[1].IndURL);
                         }
@@ -1745,7 +1747,8 @@ namespace DevTreks.Extensions
                                || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                                || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                                || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                               || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                               || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                               || HasMathType(1, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                             {
                                 sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[1].IndURL);
                             }
@@ -1777,7 +1780,8 @@ namespace DevTreks.Extensions
                             || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(2, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[2].IndURL);
                         }
@@ -1812,7 +1816,8 @@ namespace DevTreks.Extensions
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(3, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[3].IndURL);
                         }
@@ -1845,7 +1850,8 @@ namespace DevTreks.Extensions
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(4, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[4].IndURL);
                         }
@@ -1878,7 +1884,8 @@ namespace DevTreks.Extensions
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(5, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[5].IndURL);
                         }
@@ -1909,7 +1916,8 @@ namespace DevTreks.Extensions
                         }
                         else if (HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[6].IndURL);
                         }
@@ -1940,7 +1948,8 @@ namespace DevTreks.Extensions
                         }
                         else if (HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(7, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[7].IndURL);
                         }
@@ -1966,7 +1975,8 @@ namespace DevTreks.Extensions
                     {
                         if (HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(8, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[8].IndURL);
                         }
@@ -1990,11 +2000,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 9))
                     {
-                        SetTotalMathTypeStock9();
-                        if (ME2Indicators[9].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[9].IndMathSubType)))
+                        if (HasMathType(9, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(9, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(9, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(9, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(9, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[9].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock9();
+                            if (ME2Indicators[9].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[9].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(9, qTs);
+                            }
                         }
                     }
                 }
@@ -2007,11 +2027,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 10))
                     {
-                        SetTotalMathTypeStock10();
-                        if (ME2Indicators[10].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[10].IndMathSubType)))
+                        if (HasMathType(10, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(10, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(10, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(10, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(10, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[10].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock10();
+                            if (ME2Indicators[10].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[10].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(10, qTs);
+                            }
                         }
                     }
                 }
@@ -2024,11 +2054,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 11))
                     {
-                        SetTotalMathTypeStock11();
-                        if (ME2Indicators[11].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[11].IndMathSubType)))
+                        if (HasMathType(11, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(11, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(11, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(11, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(11, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[11].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock11();
+                            if (ME2Indicators[11].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[11].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(11, qTs);
+                            }
                         }
                     }
                 }
@@ -2041,11 +2081,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 12))
                     {
-                        SetTotalMathTypeStock12();
-                        if (ME2Indicators[12].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[12].IndMathSubType)))
+                        if (HasMathType(12, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(12, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(12, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(12, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(12, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[12].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock12();
+                            if (ME2Indicators[12].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[12].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(12, qTs);
+                            }
                         }
                     }
                 }
@@ -2058,11 +2108,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 13))
                     {
-                        SetTotalMathTypeStock13();
-                        if (ME2Indicators[13].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[13].IndMathSubType)))
+                        if (HasMathType(13, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(13, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(13, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(13, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(13, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[13].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock13();
+                            if (ME2Indicators[13].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[13].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(13, qTs);
+                            }
                         }
                     }
                 }
@@ -2075,11 +2135,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 14))
                     {
-                        SetTotalMathTypeStock14();
-                        if (ME2Indicators[14].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[14].IndMathSubType)))
+                        if (HasMathType(14, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(14, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(14, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(14, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(14, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[14].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock14();
+                            if (ME2Indicators[14].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[14].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(14, qTs);
+                            }
                         }
                     }
                 }
@@ -2092,11 +2162,21 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 15))
                     {
-                        SetTotalMathTypeStock15();
-                        if (ME2Indicators[15].IndMathSubType != Constants.NONE
-                                && (!string.IsNullOrEmpty(ME2Indicators[15].IndMathSubType)))
+                        if (HasMathType(15, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(15, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(15, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(15, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
-                            iAlgo = await SetAlgoPRAStats(15, qTs);
+                            sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[15].IndURL);
+                        }
+                        else
+                        {
+                            SetTotalMathTypeStock15();
+                            if (ME2Indicators[15].IndMathSubType != Constants.NONE
+                                    && (!string.IsNullOrEmpty(ME2Indicators[15].IndMathSubType)))
+                            {
+                                iAlgo = await SetAlgoPRAStats(15, qTs);
+                            }
                         }
                     }
                 }
@@ -2210,7 +2290,8 @@ namespace DevTreks.Extensions
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                         || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                        || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                        || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                        || HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                     {
                         //212 Score analysis
                         if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
@@ -2774,7 +2855,8 @@ namespace DevTreks.Extensions
                             || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
                             || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                             || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17))
+                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             if (indicatorIndex == 0)
                             {
