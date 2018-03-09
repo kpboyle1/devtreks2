@@ -12,8 +12,8 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		DRR2 algorithm
     ///Author:		www.devtreks.org
-    ///Date:		2018, February
-    ///References:	CTA algo1, CTAP subalgo 9, 10, 11, 12, RCA subalgo 13, 14, 15, 16, 17
+    ///Date:		2018, March
+    ///References:	CTA algo1, CTAP subalgo 9, 10, 11, 12, RCA subalgo 13, 14, 15, 16, 17, 18
     ///</summary>
     public class DRR2 : DRR1
     {
@@ -117,7 +117,8 @@ namespace DevTreks.Extensions.Algorithms
                 else if (_subalgorithm == MATH_SUBTYPES.subalgorithm13.ToString()
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString()
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
-                    || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
+                    || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString()
+                    || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                 {
                     //4 level indicator systems
                     bHasCalculations = await Calculate4LevelIndicators(data, rowNames);
@@ -164,7 +165,8 @@ namespace DevTreks.Extensions.Algorithms
                 //qtm == colindex = 11
                 iColCount = data[0].Count + 3;
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 //need new QTMs, QTLs, and QTUs, certainties, %target, sdg unit, production process, and life cycle stage
                 iColCount = data[0].Count + 11;
@@ -237,7 +239,8 @@ namespace DevTreks.Extensions.Algorithms
                                 || _subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString()
                                 || _subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
                                 || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString()
-                                || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+                                || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                             {
                                 //resiliency indexes or mcas in scores, no weighted avg
                                 SetTRDataResult(r, iColCount, ThirdIndicator, LocationIndicator);
@@ -348,9 +351,11 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     //skip the row
                     iStartRow++;
-                    //not with this dataset
-                    //add the titles to the dataresults
-                    //AddTitlesToDataResults(data, r);
+                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
+                    {
+                        //add the titles to the dataresults
+                        AddTitlesToDataResults(data, r);
+                    }
                 }
             }
             return iStartRow;
@@ -429,6 +434,10 @@ namespace DevTreks.Extensions.Algorithms
             else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
             {
                 FillIndicatorDistributionForRCA5(data, rowNames, r, pra1);
+            }
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
+            {
+                FillIndicatorDistributionForRCA6(data, rowNames, r, pra1);
             }
             else
             {
@@ -859,6 +868,8 @@ namespace DevTreks.Extensions.Algorithms
         private void FillIndicatorDistributionForRCA5(List<List<string>> data, List<List<string>> rowNames,
             int r, PRA1 pra1)
         {
+            //for convenience, both Indicator and CI rows set properties
+            //so pra1 is 2 different entities with 2 sets of properties
             //SDG indicators come from 1st dataset, Pop comes from 2nd and both are added to specific pra1.QTInd props
             string sLabel
                 = CalculatorHelpers.GetParsedString(0, Constants.FILENAME_DELIMITERS, rowNames[r][0]);
@@ -914,7 +925,6 @@ namespace DevTreks.Extensions.Algorithms
                     {
                         //pop pra1
                         pra1.IndicatorQT.QT = CalculatorHelpers.ConvertStringToDouble(DataSet10[r][c]);
-                        //DataResults[r][c] = DataSet10[r][c];
                     }
                 }
                 else if (c == 3)
@@ -1046,6 +1056,180 @@ namespace DevTreks.Extensions.Algorithms
                 }
             }
         }
+        private void FillIndicatorDistributionForRCA6(List<List<string>> data, List<List<string>> rowNames,
+            int r, PRA1 pra1)
+        {
+            //SDG indicators
+            string sLabel
+                = CalculatorHelpers.GetParsedString(0, Constants.FILENAME_DELIMITERS, rowNames[r][0]);
+            bool bIsIndicator = IsIndicator(sLabel);
+            for (int c = 0; c < data[r].Count; c++)
+            {
+                if (c == 0)
+                {
+                    if (bIsIndicator)
+                    {
+                        //sdg most
+                        pra1.IndicatorQT.QTM = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        //need label in rowNames
+                        pra1.IndicatorQT.Label = rowNames[r][0];
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //socio characteristic
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 1)
+                {
+                    if (bIsIndicator)
+                    {
+                        //sdg unit of measurement
+                        pra1.IndicatorQT.QTMUnit = data[r][c];
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //socio characteristic
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 2)
+                {
+                    if (bIsIndicator)
+                    {
+                        //sdg low
+                        pra1.IndicatorQT.QTL = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //socio characteristic
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 3)
+                {
+                    if (bIsIndicator)
+                    {
+                        //sdg high
+                        pra1.IndicatorQT.QTU = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //socio characteristic
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 4)
+                {
+                    if (bIsIndicator)
+                    {
+                        //sdg low and high measurement
+                        pra1.IndicatorQT.QTUUnit = data[r][c];
+                        //sdg low and high measurement
+                        pra1.IndicatorQT.QTLUnit = data[r][c];
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //socio characteristic
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 5)
+                {
+                    if (bIsIndicator)
+                    {
+                        //sdg target allocation
+                        pra1.IndicatorQT.Q2 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //socio characteristic
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 6)
+                {
+                    if (bIsIndicator)
+                    {
+                        //certainty1
+                        pra1.IndicatorQT.Q8 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //pop count: keep compatible with subalgo17
+                        pra1.IndicatorQT.QT = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 7)
+                {
+                    if (bIsIndicator)
+                    {
+                        //certainty2
+                        pra1.IndicatorQT.Q9 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //pop unit: keep compatible with subalgo17
+                        pra1.IndicatorQT.QTUnit = data[r][c];
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 8)
+                {
+                    if (bIsIndicator)
+                    {
+                        //certainty3
+                        pra1.IndicatorQT.Q10 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //production process
+                        pra1.IndicatorQT.Q9Unit = data[r][c];
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 9)
+                {
+                    if (bIsIndicator)
+                    {
+                        //normalization type
+                        pra1.IndicatorQT.Q6Unit = data[r][c];
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //life cycle stage
+                        pra1.IndicatorQT.Q10Unit = data[r][c];
+                        //end date
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+                else if (c == 10)
+                {
+                    if (bIsIndicator)
+                    {
+                        //weight
+                        pra1.IndicatorQT.Q6 = CalculatorHelpers.ConvertStringToDouble(data[r][c]);
+                        DataResults[r][c] = data[r][c];
+                    }
+                    else
+                    {
+                        //end date
+                        DataResults[r][c] = data[r][c];
+                    }
+                }
+            }
+        }
         private void FillLocationIndicator(List<List<string>> data, List<List<string>> rowNames,
             int r, string label, string altName, int location, IndicatorQT1 locationIndicator)
         {
@@ -1059,7 +1243,8 @@ namespace DevTreks.Extensions.Algorithms
             {
                 FillLocationRCA3Indicator(data, rowNames, r, label, altName, location, locationIndicator);
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 FillLocationRCA5Indicator(data, rowNames, r, label, altName, location, locationIndicator);
             }
@@ -1300,15 +1485,7 @@ namespace DevTreks.Extensions.Algorithms
             locationIndicator.Label = label; //"TR";
             locationIndicator.AlternativeType = altName;
             locationIndicator.Alternative2 = location;
-            if (_subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
-                || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
-            {
-                locationIndicator.QTMUnit = "performance score";
-            }
-            else
-            {
-                locationIndicator.QTMUnit = "total risk";
-            }
+            locationIndicator.QTMUnit = "total risk";
             for (int c = 0; c < data[r].Count; c++)
             {
                 if (c == 0)
@@ -1316,7 +1493,8 @@ namespace DevTreks.Extensions.Algorithms
                     //don't need totals in data but do need label in rowNames
                     locationIndicator.Label = rowNames[r][0];
                 }
-                if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+                if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                    || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                 {
                     if (c == 9)
                     {
@@ -1356,7 +1534,8 @@ namespace DevTreks.Extensions.Algorithms
             {
                 FillRCA3IndicatorQT(scoreIndicator);
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 //214 uses a start (Q1)-target (Q2)-actual (QTM) pattern
                 FillRCA5IndicatorQT(scoreIndicator);
@@ -2040,11 +2219,11 @@ namespace DevTreks.Extensions.Algorithms
                    pra1.IndicatorQT.Q4);
                 //sdg per population = {sdgMost * (sdgStartAllocation) * (sdgEndAllocation)) 
                 //don't calc per member because the SDG numbers can be too low to further divide by pop count
-                pra1.IndicatorQT.QTM = Shared.GetSDGPerPopulation(sdgMost, pra1.IndicatorQT.Q1, 
+                pra1.IndicatorQT.QTM = Shared.GetSDGPerPopulation(sdgMost, pra1.IndicatorQT.Q1,
                     pra1.IndicatorQT.Q3);
-                pra1.IndicatorQT.QTL = Shared.GetSDGPerPopulation(sdgLow, pra1.IndicatorQT.Q1, 
+                pra1.IndicatorQT.QTL = Shared.GetSDGPerPopulation(sdgLow, pra1.IndicatorQT.Q1,
                     pra1.IndicatorQT.Q3);
-                pra1.IndicatorQT.QTU = Shared.GetSDGPerPopulation(sdgHigh, pra1.IndicatorQT.Q1, 
+                pra1.IndicatorQT.QTU = Shared.GetSDGPerPopulation(sdgHigh, pra1.IndicatorQT.Q1,
                     pra1.IndicatorQT.Q3);
                 //% target calc (already wrote original target to dataresults)
                 double dbTarget = Shared.GetSDGPerPopulation(sdgMost, pra1.IndicatorQT.Q1,
@@ -2055,6 +2234,13 @@ namespace DevTreks.Extensions.Algorithms
                 pra1.IndicatorQT.Q1 = ((sdgMost * (pra1.IndicatorQT.Q1 / 100)) / pra1.IndicatorQT.QTM) * 100;
                 //total cost per SDG quantity (q7 = cost per unit SDG)
                 pra1.IndicatorQT.Q7 = pra1.IndicatorQT.QTM * pra1.IndicatorQT.Q7;
+            }
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
+            {
+                //keep properties compatible with subalgo17
+                pra1.IndicatorQT.Q5 = catIndexPRA.IndicatorQT.QT;
+                //target percent
+                pra1.IndicatorQT.Q2 = (pra1.IndicatorQT.QTM / pra1.IndicatorQT.Q2) * 100;
             }
             else
             {
@@ -2073,7 +2259,8 @@ namespace DevTreks.Extensions.Algorithms
             List<string> dataR, int r, IndicatorQT1 locationIndicator)
         {
             bool bHasCompleted = false;
-            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 bHasCompleted = await SetCategoryAndIndicatorDataResult2(
                     locationIndex, locationIndexes, dataR, r, locationIndicator);
@@ -2400,7 +2587,9 @@ namespace DevTreks.Extensions.Algorithms
                nQTMs, nQTLs, nQTUs, nWts);
             int i = 0;
             int rStart = 0;
-            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            //both algos share props, subalgo18 has no costs but no harm in running cost calc
+            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 //init categories to zero -they are summations of inds only
                 foreach (var catpra in locationIndexes)
@@ -2436,7 +2625,8 @@ namespace DevTreks.Extensions.Algorithms
                             //certainty3
                             catpra.Key.IndicatorQT.Q10
                                 += (cat.IndicatorQT.Q10 / catcategories.Count);
-                            //QT holds pra pop math which gets displayed in cis and lis in cols
+                            //QT holds subalgo17 pra pop math which gets displayed in cis and lis in cols
+                            //subalgo18 only uses QT prop -rest will be zeros and string.empty
                             catpra.Key.IndicatorQT.QT += cat.IndicatorQT.QT;
                             catpra.Key.IndicatorQT.QTUnit = cat.IndicatorQT.QTUnit;
                             catpra.Key.IndicatorQT.QTD1 += cat.IndicatorQT.QTD1;
@@ -2502,8 +2692,9 @@ namespace DevTreks.Extensions.Algorithms
                     rStart++;
                 }
             }
-            //fill in the dataresults
-            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            //fill in the dataresults (both subalgos produce the same results, although 18 has some zeros and blanks
+            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 bHasCompleted = await FillCatAndIndDataResultRCA5(locationIndex, locationIndexes,
                     dataR, r, locationIndicator, rStart);
@@ -2636,7 +2827,8 @@ namespace DevTreks.Extensions.Algorithms
                             }
                         }
                     }
-                    else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+                    else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                        || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                     {
                         foreach (var subpra in catpra.Value)
                         {
@@ -3749,7 +3941,8 @@ namespace DevTreks.Extensions.Algorithms
                 }
                 else
                 {
-                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+                    if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                        || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                     {
                         //214 for score hotspots: it's the Indicators that have the correct hotspots metrics, not the CIs
                         //what shows up in score: averages? trend line?
@@ -3835,10 +4028,20 @@ namespace DevTreks.Extensions.Algorithms
                                 DataResults[i][c + 18] = subpra.IndicatorQT.Q7.ToString("F4", CultureInfo.InvariantCulture);
                                 //sdg unit
                                 DataResults[i][c + 19] = subpra.IndicatorQT.QTMUnit;
-                                //production process
-                                DataResults[i][c + 20] = subpra.IndicatorQT.Q9Unit;
-                                //life cycle stage
-                                DataResults[i][c + 21] = subpra.IndicatorQT.Q10Unit;
+                                if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+                                {
+                                    //production process
+                                    DataResults[i][c + 20] = subpra.IndicatorQT.Q9Unit;
+                                    //life cycle stage
+                                    DataResults[i][c + 21] = subpra.IndicatorQT.Q10Unit;
+                                }
+                                else
+                                {
+                                    //production process
+                                    DataResults[i][c + 20] = catpra.Key.IndicatorQT.Q9Unit;
+                                    //life cycle stage
+                                    DataResults[i][c + 21] = catpra.Key.IndicatorQT.Q10Unit;
+                                }
                             }
                             else if (c == 1)
                             {
@@ -3867,6 +4070,7 @@ namespace DevTreks.Extensions.Algorithms
             bHasCompleted = true;
             return bHasCompleted;
         }
+        
         private void SetTRDataResult(int trIndex, int colCount,
             IndicatorQT1 thirdIndicator, IndicatorQT1 locationIndicator)
         {
@@ -3886,7 +4090,8 @@ namespace DevTreks.Extensions.Algorithms
             {
                 SetTRRCA3DataResult(trIndex, colCount, thirdIndicator, locationIndicator);
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 SetTRRCA5DataResult(trIndex, colCount, thirdIndicator, locationIndicator);
             }
@@ -4341,7 +4546,8 @@ namespace DevTreks.Extensions.Algorithms
             IndicatorQT1 thirdIndicator, IndicatorQT1 locationIndicator)
         {
             IndicatorQT1 tr = new IndicatorQT1();
-            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 //214 supports separate norm and wt for locationindexes
                 CalculateTRRCA5(tr, thirdIndicator, locationIndicator);
@@ -5979,7 +6185,8 @@ namespace DevTreks.Extensions.Algorithms
                 || _subalgorithm == MATH_SUBTYPES.subalgorithm13.ToString()
                 || _subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
                 || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString()
-                || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 sb.AppendLine("rca results");
             }
@@ -6064,7 +6271,8 @@ namespace DevTreks.Extensions.Algorithms
                 newColNames[17] = "percent";
                 ColNames = newColNames;
             }
-            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString())
+            else if (_subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
             {
                 string[] newColNames = new string[25];
                 for (int i = 0; i < ColNames.Count(); i++)
@@ -6158,13 +6366,27 @@ namespace DevTreks.Extensions.Algorithms
                     iColCount = 0;
                     foreach (var resultcolumn in resultrow)
                     {
-                        if (iColCount == resultrow.Count - 1)
+                        if (!string.IsNullOrEmpty(resultcolumn))
                         {
-                            rb.Append(resultcolumn.ToString());
+                            if (iColCount == resultrow.Count - 1)
+                            {
+                                rb.Append(resultcolumn.ToString());
+                            }
+                            else
+                            {
+                                rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
+                            }
                         }
                         else
                         {
-                            rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
+                            if (iColCount == resultrow.Count - 1)
+                            {
+                                rb.Append(Constants.NONE);
+                            }
+                            else
+                            {
+                                rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
+                            }
                         }
                         iColCount++;
                     }
