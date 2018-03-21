@@ -14594,7 +14594,9 @@ namespace DevTreks.Extensions
                         {
                             sAlgo = await ProcessAlgosAsync3(indicatorIndex, this.SB1URL6);
                         }
-                        else if (HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                        else if (HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
+                           || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
+                           || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
                            || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
                            || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
                            || HasMathType(this.SB1Label6, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
