@@ -2755,32 +2755,34 @@ namespace DevTreks.Extensions
                     foreach (var ds in data)
                     {
                         algoIndicator= -1;
-                        iIndex = ds.Key;
-                        //indicator index means labels aren't critical
-                        if (indicatorIndex == 0)
-                        {
-                            iIndex = 0;
-                        }
-                        else if (indicatorIndex == 1)
-                        {
-                            iIndex = 1;
-                        }
-                        else if (indicatorIndex == 3)
-                        {
-                            iIndex = 3;
-                        }
-                        else if (indicatorIndex == 4)
-                        {
-                            iIndex = 4;
-                        }
-                        else if (indicatorIndex == 6)
-                        {
-                            iIndex = 6;
-                        }
-                        else if (indicatorIndex == 7)
-                        {
-                            iIndex = 7;
-                        }
+                        //214
+                        iIndex = indicatorIndex;
+                        //iIndex = ds.Key;
+                        ////indicator index means labels aren't critical
+                        //if (indicatorIndex == 0)
+                        //{
+                        //    iIndex = 0;
+                        //}
+                        //else if (indicatorIndex == 1)
+                        //{
+                        //    iIndex = 1;
+                        //}
+                        //else if (indicatorIndex == 3)
+                        //{
+                        //    iIndex = 3;
+                        //}
+                        //else if (indicatorIndex == 4)
+                        //{
+                        //    iIndex = 4;
+                        //}
+                        //else if (indicatorIndex == 6)
+                        //{
+                        //    iIndex = 6;
+                        //}
+                        //else if (indicatorIndex == 7)
+                        //{
+                        //    iIndex = 7;
+                        //}
                         if (_indicators.Contains(iIndex) == false)
                         {
                             //these all use 1 dataset
@@ -2850,50 +2852,53 @@ namespace DevTreks.Extensions
                     foreach (var ds in data)
                     {
                         algoIndicator= -1;
-                        iIndex = ds.Key;
-                        if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
-                            || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
-                        {
-                            if (indicatorIndex == 0)
-                            {
-                                iIndex = 0;
-                            }
-                            else if (indicatorIndex == 1)
-                            {
-                                iIndex = 1;
-                            }
-                        }
-                        //198: added 0 and 1 to list
-                        if (indicatorIndex == 0)
-                        {
-                            iIndex = 0;
-                        }
-                        else if (indicatorIndex == 1)
-                        {
-                            iIndex = 1;
-                        }
-                        else if (indicatorIndex == 2)
-                        {
-                            iIndex = 2;
-                        }
-                        else if (indicatorIndex == 3)
-                        {
-                            iIndex = 3;
-                        }
-                        else if (indicatorIndex == 4)
-                        {
-                            iIndex = 4;
-                        }
-                        else if (indicatorIndex == 5)
-                        {
-                            iIndex = 5;
-                        }
+                        //214
+                        iIndex = indicatorIndex;
+                        //iIndex = ds.Key;
+                        //if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
+                        //{
+                        //    if (indicatorIndex == 0)
+                        //    {
+                        //        iIndex = 0;
+                        //    }
+                        //    else if (indicatorIndex == 1)
+                        //    {
+                        //        iIndex = 1;
+                        //    }
+                        //}
+                        ////214
+                        //iIndex = indicatorIndex;
+                        //if (indicatorIndex == 0)
+                        //{
+                        //    iIndex = 0;
+                        //}
+                        //else if (indicatorIndex == 1)
+                        //{
+                        //    iIndex = 1;
+                        //}
+                        //else if (indicatorIndex == 2)
+                        //{
+                        //    iIndex = 2;
+                        //}
+                        //else if (indicatorIndex == 3)
+                        //{
+                        //    iIndex = 3;
+                        //}
+                        //else if (indicatorIndex == 4)
+                        //{
+                        //    iIndex = 4;
+                        //}
+                        //else if (indicatorIndex == 5)
+                        //{
+                        //    iIndex = 5;
+                        //}
                         if (_indicators.Contains(iIndex) == false)
                         {
                             algoIndicator = await SetAlgoStats4(iIndex, ds.Value, colSets[ds.Key], lines2);

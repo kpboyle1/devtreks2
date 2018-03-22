@@ -6314,7 +6314,9 @@ namespace DevTreks.Extensions.Algorithms
                 if (_subalgorithm == MATH_SUBTYPES.subalgorithm14.ToString()
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm13.ToString()
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm15.ToString()
-                    || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString())
+                    || _subalgorithm == MATH_SUBTYPES.subalgorithm16.ToString()
+                    || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
+                    || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                 {
                     SetIndMathResult(sb, rowNames);
                 }
@@ -6404,6 +6406,14 @@ namespace DevTreks.Extensions.Algorithms
             int iCount = 0;
             int iRNIndex = 0;
             int iRateIndex = 0;
+            //214: bug hack: why does DatSet2 have no error checking, and why can it break an algorithm when it's use is so inconsequential here
+            if (DataSet2 != null)
+            {
+                if (DataSet2.Count <= 0)
+                {
+                    IndicatorQT.ErrorMessage = "The Math Result could not be displayed because of a bug with the dataset holding interest rates and life spans.";
+                }
+            }
             for (int i = 0; i < DataResults.Count; i++)
             {
                 if (RowNameIndex.Count > i)
