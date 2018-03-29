@@ -213,7 +213,7 @@ namespace DevTreks.Extensions.Algorithms
             {
                 //eigenvalue decomposition
                 //this is the correlation matrix (order is the number of rows and columns which must be equal)
-                var evd = jointData.Evd();
+                var evd = jointData.Evd(Symmetricity.Symmetric);
                 if (evd == null)
                 {
                     this.IndicatorQT.IndicatorQT1s[0].MathResult += string.Concat(" ", Errors.MakeStandardErrorMsg("MATRIX_BADEIGEN"));

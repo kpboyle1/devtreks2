@@ -150,7 +150,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
                 || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
             {
-                //if its a good exceedance probability calc returns the string
+                //if its a good probability calc returns the string
                 algoindicator = await SetDRR2IndicatorStats(label, colNames, data,
                     colData, lines2);
             }

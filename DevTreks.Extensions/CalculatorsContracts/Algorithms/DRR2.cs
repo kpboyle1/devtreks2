@@ -2616,6 +2616,8 @@ namespace DevTreks.Extensions.Algorithms
                         catpra.Key.IndicatorQT.QTL = 0;
                         catpra.Key.IndicatorQT.QTU = 0;
                         catpra.Key.IndicatorQT.Indicators = new string[] { };
+                        catpra.Key.IndicatorQT.Q1 = 0;
+                        catpra.Key.IndicatorQT.Q2 = 0;
                     }
                 }
                 List<PRA1> catcategories = new List<PRA1>();

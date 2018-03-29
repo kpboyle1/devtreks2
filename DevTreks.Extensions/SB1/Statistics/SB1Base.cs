@@ -13763,30 +13763,8 @@ namespace DevTreks.Extensions
                                 || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
                                 || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
                             {
-                                //these algos must have joint urls but these are not standard dataset format
-                                if (!string.IsNullOrEmpty(this.SB1JointDataURL)
-                                    && (this.SB1JointDataURL != Constants.NONE))
-                                {
-                                    //process the joint data urls
-                                    dataURLs = this.SB1JointDataURL.Split(Constants.STRING_DELIMITERS);
-                                    //set up a list of tasks to run
-                                    List<Task<string>> runTasks = new List<Task<string>>();
-                                    for (int i = 0; i < dataURLs.Count(); i++)
-                                    {
-                                        //i corresponds to jointdataurl index
-                                        //add the tasks to the collection
-                                        runTasks.Add(ProcessAlgoCorrAsync(dataURLs[i], i));
-                                    }
-                                    //return a csv string of indicators when all of the tasks are completed
-                                    string[] indicatorscsvs = await Task.WhenAll(runTasks);
-                                    _indicators = GetIndicators(indicatorscsvs);
-                                    bHasCalculations = true;
-                                }
-                                else
-                                {
-                                    //missing correlation matrix 
-                                    this.SB1ScoreMathResult += string.Concat(" ", Errors.MakeStandardErrorMsg("JOINTURL_MISSING"));
-                                }
+                                //214
+                                bHasCalculations = await PreProcessAlgoCorrAsync();
                             }
                             //set descriptive statistics for observed datasets
                             if (!string.IsNullOrEmpty(this.DataURL)
@@ -15407,6 +15385,35 @@ namespace DevTreks.Extensions
             }
             sIndicatorsCSV = algoIndicator;
             return sIndicatorsCSV;
+        }
+        private async Task<bool> PreProcessAlgoCorrAsync()
+        {
+            bool bHasCalculations = false;
+            //these algos must have joint urls but these are not standard dataset format
+            if (!string.IsNullOrEmpty(this.SB1JointDataURL)
+                && (this.SB1JointDataURL != Constants.NONE))
+            {
+                //process the joint data urls
+                string[] dataURLs = this.SB1JointDataURL.Split(Constants.STRING_DELIMITERS);
+                //set up a list of tasks to run
+                List<Task<string>> runTasks = new List<Task<string>>();
+                for (int i = 0; i < dataURLs.Count(); i++)
+                {
+                    //i corresponds to jointdataurl index
+                    //add the tasks to the collection
+                    runTasks.Add(ProcessAlgoCorrAsync(dataURLs[i], i));
+                }
+                //return a csv string of indicators when all of the tasks are completed
+                string[] indicatorscsvs = await Task.WhenAll(runTasks);
+                _indicators = GetIndicators(indicatorscsvs);
+                bHasCalculations = true;
+            }
+            else
+            {
+                //missing correlation matrix 
+                this.SB1ScoreMathResult += string.Concat(" ", Errors.MakeStandardErrorMsg("JOINTURL_MISSING"));
+            }
+            return bHasCalculations;
         }
         private async Task<string> ProcessAlgoCorrAsync(string jdataURL, int dataIndex)
         {
@@ -17960,16 +17967,9 @@ namespace DevTreks.Extensions
                 && DataURL != Constants.NONE)
             {
                 string[] dataURLs = DataURL.Split(Constants.STRING_DELIMITERS);
-                //IDictionary<string, List<List<double>>> data = new Dictionary<string, List<List<double>>>();
                 List<string> dlines = new List<string>();
-                if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
-                {
-                    //dlines = GetDataLines(dataURLs[dataIndex]);
-                    //210: async used
-                    dlines = await GetDataLinesAsync(dataURLs[dataIndex]);
-                }
+                //210: async used
+                dlines = await GetDataLinesAsync(dataURLs[dataIndex]);
                 if (dlines != null)
                 {
                     //reset the data

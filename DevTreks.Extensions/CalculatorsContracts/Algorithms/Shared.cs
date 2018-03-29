@@ -1142,6 +1142,20 @@ namespace DevTreks.Extensions.Algorithms
             }
             return todata;
         }
+        public static List<List<double>> CopyDoubleData(List<List<string>> fromData)
+        {
+            List<List<double>> todata = new List<List<double>>();
+            foreach (var row in fromData)
+            {
+                todata.Add(new List<double>());
+                foreach (var col in row)
+                {
+                    todata.Last().Add(CalculatorHelpers.ConvertStringToDouble(col));
+                }
+                
+            }
+            return todata;
+        }
         public static double GetPopulationStartCount(double popStartCount,
             double popStartAllocation)
         {
