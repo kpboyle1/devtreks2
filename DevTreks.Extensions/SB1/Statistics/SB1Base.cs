@@ -959,7 +959,7 @@ namespace DevTreks.Extensions
         public const string cSB1TD1Unit11 = "SB1TD1Unit11";
         public const string cSB1TD2Amount11 = "SB1TD2Amount11";
         public const string cSB1TD2Unit11 = "SB1TD2Unit11";
-        public const string cSB1MathResult11 = "SB1MathResource11";
+        public const string cSB1MathResult11 = "SB1MathResult11";
         public const string cSB1MathSubType11 = "SB1MathSubType11";
 
         public const string cSB1TMAmount11 = "SB1TMAmount11";

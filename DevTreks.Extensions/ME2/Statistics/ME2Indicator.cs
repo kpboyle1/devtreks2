@@ -2630,10 +2630,6 @@ namespace DevTreks.Extensions
             {
                 //206 change
                 sIndicatorsCSV += string.Concat(indicator, Constants.CSV_DELIMITER);
-                //if (indicator != 0)
-                //{
-                //    sIndicatorsCSV += string.Concat(indicator, Constants.CSV_DELIMITER);
-                //}
             }
             //remove the last delimiter
             if (sIndicatorsCSV.EndsWith(Constants.CSV_DELIMITER))
@@ -2757,32 +2753,6 @@ namespace DevTreks.Extensions
                         algoIndicator= -1;
                         //214
                         iIndex = indicatorIndex;
-                        //iIndex = ds.Key;
-                        ////indicator index means labels aren't critical
-                        //if (indicatorIndex == 0)
-                        //{
-                        //    iIndex = 0;
-                        //}
-                        //else if (indicatorIndex == 1)
-                        //{
-                        //    iIndex = 1;
-                        //}
-                        //else if (indicatorIndex == 3)
-                        //{
-                        //    iIndex = 3;
-                        //}
-                        //else if (indicatorIndex == 4)
-                        //{
-                        //    iIndex = 4;
-                        //}
-                        //else if (indicatorIndex == 6)
-                        //{
-                        //    iIndex = 6;
-                        //}
-                        //else if (indicatorIndex == 7)
-                        //{
-                        //    iIndex = 7;
-                        //}
                         if (_indicators.Contains(iIndex) == false)
                         {
                             //these all use 1 dataset
@@ -2854,51 +2824,6 @@ namespace DevTreks.Extensions
                         algoIndicator= -1;
                         //214
                         iIndex = indicatorIndex;
-                        //iIndex = ds.Key;
-                        //if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
-                        //    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
-                        //{
-                        //    if (indicatorIndex == 0)
-                        //    {
-                        //        iIndex = 0;
-                        //    }
-                        //    else if (indicatorIndex == 1)
-                        //    {
-                        //        iIndex = 1;
-                        //    }
-                        //}
-                        ////214
-                        //iIndex = indicatorIndex;
-                        //if (indicatorIndex == 0)
-                        //{
-                        //    iIndex = 0;
-                        //}
-                        //else if (indicatorIndex == 1)
-                        //{
-                        //    iIndex = 1;
-                        //}
-                        //else if (indicatorIndex == 2)
-                        //{
-                        //    iIndex = 2;
-                        //}
-                        //else if (indicatorIndex == 3)
-                        //{
-                        //    iIndex = 3;
-                        //}
-                        //else if (indicatorIndex == 4)
-                        //{
-                        //    iIndex = 4;
-                        //}
-                        //else if (indicatorIndex == 5)
-                        //{
-                        //    iIndex = 5;
-                        //}
                         if (_indicators.Contains(iIndex) == false)
                         {
                             algoIndicator = await SetAlgoStats4(iIndex, ds.Value, colSets[ds.Key], lines2);
@@ -3690,32 +3615,7 @@ namespace DevTreks.Extensions
             }
             return lines;
         }
-        //public List<string> GetDataLines(string dataURL)
-        //{
-        //    List<string> lines = new List<string>();
-        //    lines = CalculatorHelpers.ReadLines(CalcParameters.ExtensionDocToCalcURI, dataURL);
-        //    if (lines == null)
-        //    {
-        //        CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BAD"));
-        //        return null;
-        //    }
-        //    if (lines.Count == 0)
-        //    {
-        //        CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BAD"));
-        //        return null;
-        //    }
-        //    if (!string.IsNullOrEmpty(CalcParameters.ExtensionDocToCalcURI.ErrorMessage))
-        //    {
-        //        CalculatorDescription += CalcParameters.ExtensionDocToCalcURI.ErrorMessage;
-        //        return null;
-        //    }
-        //    if (lines.Count == 0)
-        //    {
-        //        //not an error no data set for the d = 0 to d < 15 iteration
-        //        return null;
-        //    }
-        //    return lines;
-        //}
+        
         private async Task<List<string>> GetDataLines(int dataSetIndex, string url)
         {
             List<string> lines = new List<string>();
