@@ -13,7 +13,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Serialize and deserialize a Stock object with up to 20 indicators
     ///Author:		www.devtreks.org
-    ///Date:		2018, March
+    ///Date:		2018, April
     ///NOTES        1. These support unit input and output indicators. The Q must be set in 
     ///             the Op/Comp/Outcome.
     /// </summary>             
@@ -15051,6 +15051,12 @@ namespace DevTreks.Extensions
                 //198: scores can run datasets for algos
                 if (!string.IsNullOrEmpty(this.DataURL)
                     && (this.DataURL != Constants.NONE))
+                {
+                    return true;
+                }
+                //214 consistency with m&e
+                if (!string.IsNullOrEmpty(this.SB1JointDataURL)
+                    && (this.SB1JointDataURL != Constants.NONE))
                 {
                     return true;
                 }
