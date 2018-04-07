@@ -48,7 +48,7 @@ namespace DevTreks.Extensions.ME2Statistics
             return algoindicator;
         }
         
-        public async Task<string> SetAlgoCorrIndicatorStats(string jdataURL, IDictionary<int, List<List<double>>> data,
+        public async Task<string> SetAlgoCorrIndicatorStats(string scriptURL, IDictionary<int, List<List<double>>> data,
             string[] colNames)
         {
             //if the algo is used with the label, return it as affirmation
@@ -58,7 +58,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
                 || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
-                algoindicators = await SetPRACorrIndicatorStats(jdataURL, colNames, data);
+                algoindicators = await SetPRACorrIndicatorStats(scriptURL, colNames, data);
             }
             return algoindicators;
         }
@@ -88,7 +88,7 @@ namespace DevTreks.Extensions.ME2Statistics
             return algoindicator;
         }
         public async Task<int> SetAlgoIndicatorStats2(int index, string[] colNames, 
-            string dataURL, string jDataURL)
+            string dataURL, string scriptURL)
         {
             //if the algo is used with the label, return it as affirmation
             int algoindicator = -1;
@@ -99,7 +99,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 if (this.HasMathType(index, MATH_TYPES.algorithm4))
                 {
                     //if its a good calc returns the string
-                    algoindicator = await SetScriptCloudStats(index, colNames, dataURL, jDataURL);
+                    algoindicator = await SetScriptCloudStats(index, colNames, dataURL, scriptURL);
                 }
             }
             else 
@@ -108,12 +108,12 @@ namespace DevTreks.Extensions.ME2Statistics
                     || this.HasMathType(index, MATH_TYPES.algorithm3))
                 {
                     //if its a good calc returns the string
-                    algoindicator = await SetScriptWebStats(index, colNames, dataURL, jDataURL);
+                    algoindicator = await SetScriptWebStats(index, colNames, dataURL, scriptURL);
                 }
                 else if (this.HasMathType(index, MATH_TYPES.algorithm4))
                 {
                     //always runs the cloud web servive (but response can vary)
-                    algoindicator = await SetScriptCloudStats(index, colNames, dataURL, jDataURL);
+                    algoindicator = await SetScriptCloudStats(index, colNames, dataURL, scriptURL);
                 }
             }
             return algoindicator;
@@ -588,7 +588,7 @@ namespace DevTreks.Extensions.ME2Statistics
             
             return algoIndicator;
         }
-        private async Task<string> SetPRACorrIndicatorStats(string jdataURL, string[] colNames,
+        private async Task<string> SetPRACorrIndicatorStats(string scriptURL, string[] colNames,
             IDictionary<int, List<List<double>>> data)
         {
             string algoIndicator = string.Empty;
@@ -599,7 +599,7 @@ namespace DevTreks.Extensions.ME2Statistics
             DevTreks.Extensions.Algorithms.PRA2 pra
                 = InitPRA2Algo(qt, this.ME2Indicators[0].IndCILevel, this.ME2Indicators[0].IndIterations, this.ME2Indicators[0].IndRandom);
             IDictionary<string, List<List<double>>> data2 = ConvertDataToString(data);
-            algoIndicator = await pra.RunAlgorithmAsync(jdataURL, data2);
+            algoIndicator = await pra.RunAlgorithmAsync(scriptURL, data2);
             FillBaseIndicators(pra.IndicatorQT, sLowerCI, sUpperCI);
             if (!string.IsNullOrEmpty(algoIndicator))
             {
@@ -3429,7 +3429,7 @@ namespace DevTreks.Extensions.ME2Statistics
             return iSiblingIndex;
         }
         private async Task<int> SetScriptCloudStats(int index, string[] colNames, 
-            string dataURL, string jDataURL)
+            string dataURL, string scriptURL)
         {
             int algoIndicator = index;
             System.Threading.CancellationToken ctk = new System.Threading.CancellationToken();
@@ -3442,7 +3442,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[0].IndMathExpression, this.ME2Indicators[0].IndMathType, this.ME2Indicators[0].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[0].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[0].IndTLAmount = script2.QTL;
                 this.ME2Indicators[0].IndTLUnit = sLowerCI;
@@ -3459,7 +3459,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[1].IndMathExpression, this.ME2Indicators[1].IndMathType, this.ME2Indicators[1].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[1].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[1].IndTLAmount = script2.QTL;
                 this.ME2Indicators[1].IndTLUnit = sLowerCI;
@@ -3476,7 +3476,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[2].IndMathExpression, this.ME2Indicators[2].IndMathType, this.ME2Indicators[2].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[2].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[2].IndTLAmount = script2.QTL;
                 this.ME2Indicators[2].IndTLUnit = sLowerCI;
@@ -3492,7 +3492,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[3].IndMathExpression, this.ME2Indicators[3].IndMathType, this.ME2Indicators[3].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[3].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[3].IndTLAmount = script2.QTL;
                 this.ME2Indicators[3].IndTLUnit = sLowerCI;
@@ -3508,7 +3508,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[4].IndMathExpression, this.ME2Indicators[4].IndMathType, this.ME2Indicators[4].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[4].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[4].IndTLAmount = script2.QTL;
                 this.ME2Indicators[4].IndTLUnit = sLowerCI;
@@ -3524,7 +3524,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[5].IndMathExpression, this.ME2Indicators[5].IndMathType, this.ME2Indicators[5].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[5].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[5].IndTLAmount = script2.QTL;
                 this.ME2Indicators[5].IndTLUnit = sLowerCI;
@@ -3540,7 +3540,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[6].IndMathExpression, this.ME2Indicators[6].IndMathType, this.ME2Indicators[6].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[6].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[6].IndTLAmount = script2.QTL;
                 this.ME2Indicators[6].IndTLUnit = sLowerCI;
@@ -3556,7 +3556,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[7].IndMathExpression, this.ME2Indicators[7].IndMathType, this.ME2Indicators[7].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[7].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[7].IndTLAmount = script2.QTL;
                 this.ME2Indicators[7].IndTLUnit = sLowerCI;
@@ -3572,7 +3572,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[8].IndMathExpression, this.ME2Indicators[8].IndMathType, this.ME2Indicators[8].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[8].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[8].IndTLAmount = script2.QTL;
                 this.ME2Indicators[8].IndTLUnit = sLowerCI;
@@ -3588,7 +3588,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[9].IndMathExpression, this.ME2Indicators[9].IndMathType, this.ME2Indicators[9].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[9].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[9].IndTLAmount = script2.QTL;
                 this.ME2Indicators[9].IndTLUnit = sLowerCI;
@@ -3604,7 +3604,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[10].IndMathExpression, this.ME2Indicators[10].IndMathType, this.ME2Indicators[10].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[10].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[10].IndTLAmount = script2.QTL;
                 this.ME2Indicators[10].IndTLUnit = sLowerCI;
@@ -3620,7 +3620,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[11].IndMathExpression, this.ME2Indicators[11].IndMathType, this.ME2Indicators[11].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[11].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[11].IndTLAmount = script2.QTL;
                 this.ME2Indicators[11].IndTLUnit = sLowerCI;
@@ -3636,7 +3636,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[12].IndMathExpression, this.ME2Indicators[12].IndMathType, this.ME2Indicators[12].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[12].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[12].IndTLAmount = script2.QTL;
                 this.ME2Indicators[12].IndTLUnit = sLowerCI;
@@ -3652,7 +3652,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[13].IndMathExpression, this.ME2Indicators[13].IndMathType, this.ME2Indicators[13].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[13].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[13].IndTLAmount = script2.QTL;
                 this.ME2Indicators[13].IndTLUnit = sLowerCI;
@@ -3668,7 +3668,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[14].IndMathExpression, this.ME2Indicators[14].IndMathType, this.ME2Indicators[14].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[14].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[14].IndTLAmount = script2.QTL;
                 this.ME2Indicators[14].IndTLUnit = sLowerCI;
@@ -3684,7 +3684,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[15].IndMathExpression, this.ME2Indicators[15].IndMathType, this.ME2Indicators[15].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[15].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[15].IndTLAmount = script2.QTL;
                 this.ME2Indicators[15].IndTLUnit = sLowerCI;
@@ -3700,7 +3700,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[16].IndMathExpression, this.ME2Indicators[16].IndMathType, this.ME2Indicators[16].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[16].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[16].IndTLAmount = script2.QTL;
                 this.ME2Indicators[16].IndTLUnit = sLowerCI;
@@ -3716,7 +3716,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[17].IndMathExpression, this.ME2Indicators[17].IndMathType, this.ME2Indicators[17].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[17].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[17].IndTLAmount = script2.QTL;
                 this.ME2Indicators[17].IndTLUnit = sLowerCI;
@@ -3732,7 +3732,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[18].IndMathExpression, this.ME2Indicators[18].IndMathType, this.ME2Indicators[18].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[18].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[18].IndTLAmount = script2.QTL;
                 this.ME2Indicators[18].IndTLUnit = sLowerCI;
@@ -3748,7 +3748,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[19].IndMathExpression, this.ME2Indicators[19].IndMathType, this.ME2Indicators[19].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[19].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[19].IndTLAmount = script2.QTL;
                 this.ME2Indicators[19].IndTLUnit = sLowerCI;
@@ -3764,7 +3764,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script2 script2
                     = InitScript2Algo(index, colNames, this.ME2Indicators[20].IndMathExpression, this.ME2Indicators[20].IndMathType, this.ME2Indicators[20].IndMathSubType);
-                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script2.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[20].IndTMAmount = script2.QTPredicted;
                 this.ME2Indicators[20].IndTLAmount = script2.QTL;
                 this.ME2Indicators[20].IndTLUnit = sLowerCI;
@@ -3780,7 +3780,7 @@ namespace DevTreks.Extensions.ME2Statistics
             return algoIndicator;
         }
         private async Task<int> SetScriptWebStats(int index, string[] colNames,
-            string dataURL, string jDataURL)
+            string dataURL, string scriptURL)
         {
             int algoIndicator = index;
             System.Threading.CancellationToken ctk = new System.Threading.CancellationToken();
@@ -3794,7 +3794,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[0].IndMathExpression, this.ME2Indicators[0].IndMathType, this.ME2Indicators[0].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[0].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[0].IndTLAmount = script1.QTL;
                 this.ME2Indicators[0].IndTLUnit = sLowerCI;
@@ -3812,7 +3812,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[1].IndMathExpression, this.ME2Indicators[1].IndMathType, this.ME2Indicators[1].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[1].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[1].IndTLAmount = script1.QTL;
                 this.ME2Indicators[1].IndTLUnit = sLowerCI;
@@ -3830,7 +3830,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[2].IndMathExpression, this.ME2Indicators[2].IndMathType, this.ME2Indicators[2].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[2].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[2].IndTLAmount = script1.QTL;
                 this.ME2Indicators[2].IndTLUnit = sLowerCI;
@@ -3847,7 +3847,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[3].IndMathExpression, this.ME2Indicators[3].IndMathType, this.ME2Indicators[3].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[3].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[3].IndTLAmount = script1.QTL;
                 this.ME2Indicators[3].IndTLUnit = sLowerCI;
@@ -3864,7 +3864,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[4].IndMathExpression, this.ME2Indicators[4].IndMathType, this.ME2Indicators[4].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[4].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[4].IndTLAmount = script1.QTL;
                 this.ME2Indicators[4].IndTLUnit = sLowerCI;
@@ -3881,7 +3881,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[5].IndMathExpression, this.ME2Indicators[5].IndMathType, this.ME2Indicators[5].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[5].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[5].IndTLAmount = script1.QTL;
                 this.ME2Indicators[5].IndTLUnit = sLowerCI;
@@ -3898,7 +3898,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[6].IndMathExpression, this.ME2Indicators[6].IndMathType, this.ME2Indicators[6].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[6].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[6].IndTLAmount = script1.QTL;
                 this.ME2Indicators[6].IndTLUnit = sLowerCI;
@@ -3915,7 +3915,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[7].IndMathExpression, this.ME2Indicators[7].IndMathType, this.ME2Indicators[7].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[7].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[7].IndTLAmount = script1.QTL;
                 this.ME2Indicators[7].IndTLUnit = sLowerCI;
@@ -3932,7 +3932,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[8].IndMathExpression, this.ME2Indicators[8].IndMathType, this.ME2Indicators[8].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[8].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[8].IndTLAmount = script1.QTL;
                 this.ME2Indicators[8].IndTLUnit = sLowerCI;
@@ -3949,7 +3949,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[9].IndMathExpression, this.ME2Indicators[9].IndMathType, this.ME2Indicators[9].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[9].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[9].IndTLAmount = script1.QTL;
                 this.ME2Indicators[9].IndTLUnit = sLowerCI;
@@ -3966,7 +3966,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[10].IndMathExpression, this.ME2Indicators[10].IndMathType, this.ME2Indicators[10].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[10].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[10].IndTLAmount = script1.QTL;
                 this.ME2Indicators[10].IndTLUnit = sLowerCI;
@@ -3983,7 +3983,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[11].IndMathExpression, this.ME2Indicators[11].IndMathType, this.ME2Indicators[11].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[11].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[11].IndTLAmount = script1.QTL;
                 this.ME2Indicators[11].IndTLUnit = sLowerCI;
@@ -4000,7 +4000,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[12].IndMathExpression, this.ME2Indicators[12].IndMathType, this.ME2Indicators[12].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[12].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[12].IndTLAmount = script1.QTL;
                 this.ME2Indicators[12].IndTLUnit = sLowerCI;
@@ -4017,7 +4017,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[13].IndMathExpression, this.ME2Indicators[13].IndMathType, this.ME2Indicators[13].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[13].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[13].IndTLAmount = script1.QTL;
                 this.ME2Indicators[13].IndTLUnit = sLowerCI;
@@ -4034,7 +4034,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[14].IndMathExpression, this.ME2Indicators[14].IndMathType, this.ME2Indicators[14].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[14].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[14].IndTLAmount = script1.QTL;
                 this.ME2Indicators[14].IndTLUnit = sLowerCI;
@@ -4051,7 +4051,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[15].IndMathExpression, this.ME2Indicators[15].IndMathType, this.ME2Indicators[15].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[15].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[15].IndTLAmount = script1.QTL;
                 this.ME2Indicators[15].IndTLUnit = sLowerCI;
@@ -4068,7 +4068,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[16].IndMathExpression, this.ME2Indicators[16].IndMathType, this.ME2Indicators[16].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[16].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[16].IndTLAmount = script1.QTL;
                 this.ME2Indicators[16].IndTLUnit = sLowerCI;
@@ -4085,7 +4085,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[17].IndMathExpression, this.ME2Indicators[17].IndMathType, this.ME2Indicators[17].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[17].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[17].IndTLAmount = script1.QTL;
                 this.ME2Indicators[17].IndTLUnit = sLowerCI;
@@ -4102,7 +4102,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[18].IndMathExpression, this.ME2Indicators[18].IndMathType, this.ME2Indicators[18].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[18].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[18].IndTLAmount = script1.QTL;
                 this.ME2Indicators[18].IndTLUnit = sLowerCI;
@@ -4119,7 +4119,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[19].IndMathExpression, this.ME2Indicators[19].IndMathType, this.ME2Indicators[19].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[19].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[19].IndTLAmount = script1.QTL;
                 this.ME2Indicators[19].IndTLUnit = sLowerCI;
@@ -4136,7 +4136,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 algoIndicator = index;
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[20].IndMathExpression, this.ME2Indicators[20].IndMathType, this.ME2Indicators[20].IndMathSubType);
-                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, jDataURL, ctk);
+                bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
                 this.ME2Indicators[20].IndTMAmount = script1.QTPredicted;
                 this.ME2Indicators[20].IndTLAmount = script1.QTL;
                 this.ME2Indicators[20].IndTLUnit = sLowerCI;
