@@ -1816,7 +1816,6 @@ namespace DevTreks.Extensions
                             sDataURL = dataURLs[i];
                         }
                     }
-                    //passes jdataurl
                     sAlgo = await ProcessAlgoCorrAsync(sScriptURL, sDataURL);
                 }
             }

@@ -1156,6 +1156,7 @@ namespace DevTreks.Extensions
             DevTreksHelpers.AddInHelperLinq.ValidateSerializationAttributes(
                 linkedViewsElement);
         }
+
         public static async Task<string> GetFullCalculatorResultsPath(CalculatorParameters calcParams)
         {
             string sFullCalculatorDocPath = string.Empty;

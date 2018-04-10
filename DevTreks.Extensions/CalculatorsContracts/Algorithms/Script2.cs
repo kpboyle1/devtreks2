@@ -10,7 +10,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		Simple AML script algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2016, October
+    ///Date:		2018, April
     ///References:	CTA 4 reference
     ///</summary>
     public class Script2 : Calculator1
@@ -138,6 +138,7 @@ namespace DevTreks.Extensions.Algorithms
                 }
             }
             //r web service is default
+            //temporary and not used
             string sApiKey =
                 "fxBeL9LJ3ORm0kW0DtKhT99OfUK6YgBlc59crizYhlxKoEjRd3kuDHvPRuehCQ02VJhPPXcdYTp2pDUynb9gMA==";
             if (_subalgorithm == Calculator1.MATH_SUBTYPES.subalgorithm2.ToString())

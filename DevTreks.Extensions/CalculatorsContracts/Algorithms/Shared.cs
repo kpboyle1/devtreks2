@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using MathNet.Numerics.LinearAlgebra;
 using System.Globalization;
-
+using System.Threading.Tasks;
 
 namespace DevTreks.Extensions.Algorithms
 {
     /// <summary>
     ///Purpose:		Shared static functions that support algos
     ///Author:		www.devtreks.org
-    ///Date:		2017, April
+    ///Date:		2018, April
     ///References:	CTA reference
     ///</summary>
     public static class Shared
@@ -1199,6 +1199,103 @@ namespace DevTreks.Extensions.Algorithms
             }
             sdgPerPopulationMember = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100)) / perPopCount;
             return sdgPerPopulationMember;
+        }
+        public static async Task<bool> FillMathResult(IndicatorQT1 meta, CalculatorParameters calcParams,
+           StringBuilder sb, List<string> last3Lines)
+        {
+            bool bHasMathResults = false;
+            if (meta.MathResult.ToLower().StartsWith("http"))
+            {
+                bool bHasSaved = await CalculatorHelpers.SaveTextInURI(
+                    calcParams.ExtensionDocToCalcURI, sb.ToString(), meta.MathResult);
+                if (!string.IsNullOrEmpty(calcParams.ExtensionDocToCalcURI.ErrorMessage))
+                {
+                    meta.MathResult += calcParams.ExtensionDocToCalcURI.ErrorMessage;
+                    //done with errormsg
+                    calcParams.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
+                }
+            }
+            else
+            {
+                meta.MathResult = sb.ToString();
+            }
+            //last line of string should have the QTM vars
+            if (last3Lines.Count > 0)
+            {
+                for (int x = 0; x < last3Lines.Count; x++)
+                {
+                    string[] vars = last3Lines[x].Split(Constants.CSV_DELIMITERS);
+                    bool bHasVars = false;
+                    if (vars != null)
+                    {
+                        if (vars.Count() > 1)
+                        {
+                            bHasVars = true;
+                        }
+                        if (!bHasVars)
+                        {
+                            //try space delimited
+                            vars = last3Lines[x].Split(' ');
+                            bHasVars = true;
+                        }
+                        if (vars != null)
+                        {
+                            int iPos = vars.Count() - 3;
+                            if (x == 1)
+                            {
+                                //row count may be in first pos
+                                iPos = vars.Count() - 3;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.Q1 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                iPos = vars.Count() - 2;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.Q2 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                iPos = vars.Count() - 1;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.Q3 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                            }
+                            else if (x == 2)
+                            {
+                                //row count may be in first pos
+                                iPos = vars.Count() - 3;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.Q4 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                iPos = vars.Count() - 2;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.Q5 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                iPos = vars.Count() - 1;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.QT = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                            }
+                            else
+                            {
+                                //row count may be in first pos
+                                iPos = vars.Count() - 3;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.QTM = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                iPos = vars.Count() - 2;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.QTL = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                iPos = vars.Count() - 1;
+                                if (iPos >= 0)
+                                    if (vars[iPos] != null)
+                                        meta.QTU = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                            }
+                        }
+                    }
+                }
+            }
+            //indicators store errors and then move to next calculation
+            bHasMathResults = true;
+            return bHasMathResults;
         }
     }
 }

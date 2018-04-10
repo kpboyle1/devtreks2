@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		Run scripting language algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2018, April
     ///References:	CTA 1, 2, and 3 references
     ///</summary>
     public class Script1 : Calculator1
@@ -49,15 +49,16 @@ namespace DevTreks.Extensions.Algorithms
         private string _subalgorithm { get; set; }
 
         //output
-        public double QTSlope { get; set; }
-        //qTM = predicted y
-        public double QTPredicted { get; set; }
-        //lower ci
-        public double QTL { get; set; }
-        public string QTLUnit { get; set; }
-        //upper ci
-        public double QTU { get; set; }
-        public string QTUUnit { get; set; }
+        public IndicatorQT1 meta = new IndicatorQT1();
+        //public double QTSlope { get; set; }
+        ////qTM = predicted y
+        //public double QTPredicted { get; set; }
+        ////lower ci
+        //public double QTL { get; set; }
+        //public string QTLUnit { get; set; }
+        ////upper ci
+        //public double QTU { get; set; }
+        //public string QTUUnit { get; set; }
         
         public async Task<bool> RunAlgorithmAsync(string inputFilePath, string scriptFilePath, 
             System.Threading.CancellationToken ctk)
@@ -65,17 +66,17 @@ namespace DevTreks.Extensions.Algorithms
             bool bHasCalcs = false;
             try
             {
-                this.ErrorMessage =string.Empty;
+                meta.ErrorMessage =string.Empty;
                 if (string.IsNullOrEmpty(inputFilePath) || (!inputFilePath.EndsWith(".csv")))
                 {
-                    this.ErrorMessage ="The dataset file URL has not been added to the Data URL. The file must be stored in a Resource and use a csv file extension.";
+                    meta.ErrorMessage ="The dataset file URL has not been added to the Data URL. The file must be stored in a Resource and use a csv file extension.";
                 }
                 if (string.IsNullOrEmpty(scriptFilePath) || (!scriptFilePath.EndsWith(".txt")))
                 {
-                    this.ErrorMessage += "The script file URL has not been added to the Joint Data.The file must be stored in a Resource and use a txt file extension.";
+                    meta.ErrorMessage += "The script file URL has not been added to the Joint Data.The file must be stored in a Resource and use a txt file extension.";
                 }
                 //unblock after debug
-                if (!string.IsNullOrEmpty(this.ErrorMessage))
+                if (!string.IsNullOrEmpty(meta.ErrorMessage))
                 {
                     return bHasCalcs;
                 }
@@ -102,17 +103,6 @@ namespace DevTreks.Extensions.Algorithms
                             bool bHasFile = await CalculatorHelpers.CopyFiles(
                                 _params.ExtensionDocToCalcURI, scriptFilePath, sTempPath);
                             scriptFilePath = sTempPath;
-                            //string sPyScript = await CalculatorHelpers.ReadText(_params.ExtensionDocToCalcURI, scriptFilePath);
-                            //if (!string.IsNullOrEmpty(sPyScript))
-                            //{
-                            //    string sFileName = Path.GetFileName(scriptFilePath);
-                            //    string sPyScriptFileName = sFileName.Replace(".txt", ".pyw");
-                            //    bool bIsLocalCache = false;
-                            //    string sTempPath = CalculatorHelpers.GetTempDocsPath(_params.ExtensionDocToCalcURI, bIsLocalCache, sPyScriptFileName);
-                            //    bool bHasFile = await CalculatorHelpers.SaveTextInURI(
-                            //        _params.ExtensionDocToCalcURI, sPyScript, sTempPath);
-                            //    scriptFilePath = sTempPath;
-                            //}
                         }
                     }
                     sb.AppendLine("python results");
@@ -125,23 +115,19 @@ namespace DevTreks.Extensions.Algorithms
                         //rscript.exe can't run from a url 
                         if (scriptFilePath.StartsWith("http"))
                         {
-                            //210: deprecated bottom code in favor of moving it to temp docs path -overcomes localhost:5509 versus 5000 debugging
+                            //210: started using temp docs path -overcomes localhost:5509 versus 5000 debugging
                             string sFileName = Path.GetFileName(scriptFilePath);
                             bool bIsLocalCache = false;
                             string sTempPath = CalculatorHelpers.GetTempDocsPath(_params.ExtensionDocToCalcURI, bIsLocalCache, sFileName);
                             bool bHasFile = await CalculatorHelpers.CopyFiles(
                                 _params.ExtensionDocToCalcURI, scriptFilePath, sTempPath);
                             scriptFilePath = sTempPath;
-                            ////convert it to a filesystem path
-                            ////make sure that both localhost and localhost:44300 have a copy of the file 
-                            //string sRFilePath = CalculatorHelpers.ConvertFullURIToFilePath(
-                            //     this._params.ExtensionDocToCalcURI, scriptFilePath);
-                            //scriptFilePath = sRFilePath;
                         }
                     }
                     //r is default
                     sb.AppendLine("r results");
                 }
+                List<string> lastLines = new List<string>();
                 string sLastLine = string.Empty;
                 //2.0.2: algo 2 subalgo2 is r or algo 3 subalgo2 Python; subalgo 2 is virtual machine
                 if (_subalgorithm == Calculator1.MATH_SUBTYPES.subalgorithm2.ToString())
@@ -204,92 +190,105 @@ namespace DevTreks.Extensions.Algorithms
                                     //store the result in the MathResult (or in the MathResult.URL below)
                                     sb.Append(statScript.StatisticalResult);
                                     sLastLine = lines.Last();
-                                    if (string.IsNullOrEmpty(sLastLine))
+                                    int iLastIndex = lines.Count - 1;
+                                    //datasets sometime inadvertently include blank end rows
+                                    if (string.IsNullOrEmpty(sLastLine)
+                                        && iLastIndex > 0)
                                     {
-                                        int iSecondToLast = lines.Count - 2;
-                                        sLastLine = lines[iSecondToLast];
+                                        iLastIndex = lines.Count - 2;
+                                        if (iLastIndex >= 0)
+                                        sLastLine = lines[iLastIndex];
                                     }
+                                    if (iLastIndex >= 2)
+                                        lastLines.Add(lines[iLastIndex - 2]);
+                                    if (iLastIndex >= 1)
+                                        lastLines.Add(lines[iLastIndex - 1]);
+                                    lastLines.Add(sLastLine);
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        if ((!string.IsNullOrEmpty(statScript.StatisticalResult)))
+                        {
+                            meta.MathResult += statScript.ErrorMessage;
+                        }
                         else
                         {
-                            if ((!string.IsNullOrEmpty(statScript.StatisticalResult)))
-                            {
-                                this.MathResult += statScript.ErrorMessage;
-                            }
-                            else
-                            {
-                                this.MathResult += "The remote server returned a successful response header but failed to generate the statistical results.";
-                            }
+                            meta.MathResult += "The remote server returned a successful response header but failed to generate the statistical results.";
                         }
                     }
                 }
                 else
                 {
                     //default subalgo1 runs statpackages on the same server
-                    sLastLine = RunScript(sb, sScriptExecutable, scriptFilePath, inputFilePath);
+                    lastLines = RunScript(sb, sScriptExecutable, scriptFilePath, inputFilePath);
                 }
-                if (this.MathResult.ToLower().StartsWith("http"))
-                {
-                    bool bHasSaved = await CalculatorHelpers.SaveTextInURI(
-                        _params.ExtensionDocToCalcURI, sb.ToString(), this.MathResult);
-                    if (!string.IsNullOrEmpty(_params.ExtensionDocToCalcURI.ErrorMessage))
-                    {
-                        this.MathResult += _params.ExtensionDocToCalcURI.ErrorMessage;
-                        //done with errormsg
-                        _params.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
-                    }
-                }
-                else
-                {
-                    this.MathResult = sb.ToString();
-                }
-                bHasCalcs = true;
-                //last line of string should have the QTM vars
-                if (!string.IsNullOrEmpty(sLastLine))
-                {
-                    string[] vars = sLastLine.Split(Constants.CSV_DELIMITERS);
-                    bool bHasVars = false;
-                    if (vars != null)
-                    {
-                        if (vars.Count() > 1)
-                        {
-                            bHasVars = true;
-                        }
-                        if (!bHasVars)
-                        {
-                            //try space delimited
-                            vars = sLastLine.Split(' ');
-                            bHasVars = true;
-                        }
-                        if (vars != null)
-                        {
-                            //row count may be in first pos
-                            int iPos = vars.Count() - 3;
-                            if (vars[iPos] != null)
-                                this.QTPredicted = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                            iPos = vars.Count() - 2;
-                            if (vars[iPos] != null)
-                                this.QTL = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                            iPos = vars.Count() - 1;
-                            if (vars[iPos] != null)
-                                this.QTU = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                        }
-                    }
-                }
-                else
-                {
-                    this.MathResult = "The script did not run successfully. Please check the dataset and script. Verify their urls.";
-                }
+                bHasCalcs = await Shared.FillMathResult(meta, _params, sb, lastLines);
+                //if (this.MathResult.ToLower().StartsWith("http"))
+                //{
+                //    bool bHasSaved = await CalculatorHelpers.SaveTextInURI(
+                //        _params.ExtensionDocToCalcURI, sb.ToString(), this.MathResult);
+                //    if (!string.IsNullOrEmpty(_params.ExtensionDocToCalcURI.ErrorMessage))
+                //    {
+                //        this.MathResult += _params.ExtensionDocToCalcURI.ErrorMessage;
+                //        //done with errormsg
+                //        _params.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
+                //    }
+                //}
+                //else
+                //{
+                //    this.MathResult = sb.ToString();
+                //}
+                //bHasCalcs = true;
+                ////last line of string should have the QTM vars
+                //if (!string.IsNullOrEmpty(sLastLine))
+                //{
+                //    string[] vars = sLastLine.Split(Constants.CSV_DELIMITERS);
+                //    bool bHasVars = false;
+                //    if (vars != null)
+                //    {
+                //        if (vars.Count() > 1)
+                //        {
+                //            bHasVars = true;
+                //        }
+                //        if (!bHasVars)
+                //        {
+                //            //try space delimited
+                //            vars = sLastLine.Split(' ');
+                //            bHasVars = true;
+                //        }
+                //        if (vars != null)
+                //        {
+                //            //row count may be in first pos
+                //            int iPos = vars.Count() - 3;
+                //            if (iPos >= 0)
+                //            if (vars[iPos] != null)
+                //                this.QTPredicted = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                //            iPos = vars.Count() - 2;
+                //            if (iPos >= 0)
+                //                if (vars[iPos] != null)
+                //                this.QTL = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                //            iPos = vars.Count() - 1;
+                //            if (iPos >= 0)
+                //                if (vars[iPos] != null)
+                //                this.QTU = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    this.MathResult = "The script did not run successfully. Please check the dataset and script. Verify their urls.";
+                //}
             }
             catch (Exception ex)
             {
-                this.ErrorMessage += ex.Message;
+                meta.ErrorMessage += ex.Message;
             }
             return bHasCalcs;
         }
-        private string RunScript(StringBuilder sb, string scriptExecutable, 
+        private List<string> RunScript(StringBuilder sb, string scriptExecutable, 
             string scriptFilePath, string inputFilePath)
         {
             //run the excecutable as a console app
@@ -299,6 +298,7 @@ namespace DevTreks.Extensions.Algorithms
             start.UseShellExecute = false;
             start.Arguments = string.Format("{0} {1}", scriptFilePath, inputFilePath);
             start.CreateNoWindow = true;
+            List<string> last3Lines = new List<string>();
             string sLastLine = string.Empty;
             using (Process process = Process.Start(start))
             {
@@ -307,12 +307,17 @@ namespace DevTreks.Extensions.Algorithms
                     while (!reader.EndOfStream)
                     {
                         sLastLine = reader.ReadLine();
+                        last3Lines.Add(sLastLine);
                         sb.AppendLine(sLastLine);
                     }
                 }
                 process.WaitForExit();
             }
-            return sLastLine;
+            if (last3Lines.Count > 3)
+            {
+                last3Lines.RemoveRange(0, last3Lines.Count - 3);
+            }
+            return last3Lines;
         }
     }
 }

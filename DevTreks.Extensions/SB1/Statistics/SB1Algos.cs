@@ -1084,6 +1084,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 }
             }
         }
+        
         private void FillBaseIndicator(IndicatorQT1 qt1, string label, string lowerci, string upperci)
         {
             bool bNeedsDistribution = true;
@@ -1739,6 +1740,774 @@ namespace DevTreks.Extensions.SB1Statistics
                 this.SB14Unit20 = qt1.Q4Unit;
                 this.SB15Amount20 = qt1.Q5;
                 this.SB15Unit20 = qt1.Q5Unit;
+            }
+            else
+            {
+                //ignore the row
+            }
+        }
+        private void FillBaseIndicator(IndicatorQT1 qt1, string label)
+        {
+            if (label == _score
+                && HasMathExpression(this.SB1ScoreMathExpression))
+            {
+                this.SB1ScoreM = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1ScoreMUnit))
+                    this.SB1ScoreMUnit = qt1.QTMUnit;
+                this.SB1ScoreLAmount = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1ScoreLUnit))
+                    this.SB1ScoreLUnit = qt1.QTLUnit;
+                this.SB1ScoreUAmount = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1ScoreUUnit))
+                    this.SB1ScoreUUnit = qt1.QTUUnit;
+                this.SB1Score = qt1.QT;
+                this.SB1ScoreUnit = qt1.QTUnit;
+                this.SB1ScoreD1Amount = qt1.QTD1;
+                this.SB1ScoreD1Unit = qt1.QTD1Unit;
+                this.SB1ScoreD2Amount = qt1.QTD2;
+                this.SB1ScoreD2Unit = qt1.QTD2Unit;
+                this.SB1ScoreMathResult = qt1.ErrorMessage;
+                this.SB1ScoreMathResult += string.Concat("---", qt1.MathResult);
+            }
+            else if (label == this.SB1Label1
+                && HasMathExpression(this.SB1MathExpression1))
+            {
+                this.SB1TMAmount1 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit1))
+                    this.SB1TMUnit1 = qt1.QTMUnit;
+                this.SB1TLAmount1 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit1))
+                    this.SB1TLUnit1 = qt1.QTLUnit;
+                this.SB1TUAmount1 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit1))
+                    this.SB1TUUnit1 = qt1.QTUUnit;
+                this.SB1TAmount1 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit1))
+                    this.SB1TUnit1 = qt1.QTUnit;
+                this.SB1TD1Amount1 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit1))
+                    this.SB1TD1Unit1 = qt1.QTD1Unit;
+                this.SB1TD2Amount1 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit1))
+                    this.SB1TD2Unit1 = qt1.QTD2Unit;
+                this.SB11Amount1 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit1))
+                    this.SB11Unit1 = qt1.Q1Unit;
+                this.SB12Amount1 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit1))
+                    this.SB12Unit1 = qt1.Q2Unit;
+                this.SB13Amount1 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit1))
+                    this.SB13Unit1 = qt1.Q3Unit;
+                this.SB14Amount1 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit1))
+                    this.SB14Unit1 = qt1.Q4Unit;
+                this.SB15Amount1 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit1))
+                    this.SB15Unit1 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label2
+                && HasMathExpression(this.SB1MathExpression2))
+            {
+                this.SB1TMAmount2 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit2))
+                    this.SB1TMUnit2 = qt1.QTMUnit;
+                this.SB1TLAmount2 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit2))
+                    this.SB1TLUnit2 = qt1.QTLUnit;
+                this.SB1TUAmount2 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit2))
+                    this.SB1TUUnit2 = qt1.QTUUnit;
+                this.SB1TAmount2 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit2))
+                    this.SB1TUnit2 = qt1.QTUnit;
+                this.SB1TD1Amount2 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit2))
+                    this.SB1TD1Unit2 = qt1.QTD1Unit;
+                this.SB1TD2Amount2 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit2))
+                    this.SB1TD2Unit2 = qt1.QTD2Unit;
+                this.SB11Amount2 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit2))
+                    this.SB11Unit2 = qt1.Q1Unit;
+                this.SB12Amount2 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit2))
+                    this.SB12Unit2 = qt1.Q2Unit;
+                this.SB13Amount2 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit2))
+                    this.SB13Unit2 = qt1.Q3Unit;
+                this.SB14Amount2 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit2))
+                    this.SB14Unit2 = qt1.Q4Unit;
+                this.SB15Amount2 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit2))
+                    this.SB15Unit2 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label3
+                && HasMathExpression(this.SB1MathExpression3))
+            {
+                this.SB1TMAmount3 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit3))
+                    this.SB1TMUnit3 = qt1.QTMUnit;
+                this.SB1TLAmount3 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit3))
+                    this.SB1TLUnit3 = qt1.QTLUnit;
+                this.SB1TUAmount3 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit3))
+                    this.SB1TUUnit3 = qt1.QTUUnit;
+                this.SB1TAmount3 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit3))
+                    this.SB1TUnit3 = qt1.QTUnit;
+                this.SB1TD1Amount3 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit3))
+                    this.SB1TD1Unit3 = qt1.QTD1Unit;
+                this.SB1TD2Amount3 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit3))
+                    this.SB1TD2Unit3 = qt1.QTD2Unit;
+                this.SB11Amount3 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit3))
+                    this.SB11Unit3 = qt1.Q1Unit;
+                this.SB12Amount3 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit3))
+                    this.SB12Unit3 = qt1.Q2Unit;
+                this.SB13Amount3 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit3))
+                    this.SB13Unit3 = qt1.Q3Unit;
+                this.SB14Amount3 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit3))
+                    this.SB14Unit3 = qt1.Q4Unit;
+                this.SB15Amount3 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit3))
+                    this.SB15Unit3 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label4
+                && HasMathExpression(this.SB1MathExpression4))
+            {
+                this.SB1TMAmount4 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit4))
+                    this.SB1TMUnit4 = qt1.QTMUnit;
+                this.SB1TLAmount4 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit4))
+                    this.SB1TLUnit4 = qt1.QTLUnit;
+                this.SB1TUAmount4 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit4))
+                    this.SB1TUUnit4 = qt1.QTUUnit;
+                this.SB1TAmount4 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit4))
+                    this.SB1TUnit4 = qt1.QTUnit;
+                this.SB1TD1Amount4 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit4))
+                    this.SB1TD1Unit4 = qt1.QTD1Unit;
+                this.SB1TD2Amount4 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit4))
+                    this.SB1TD2Unit4 = qt1.QTD2Unit;
+                this.SB11Amount4 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit4))
+                    this.SB11Unit4 = qt1.Q1Unit;
+                this.SB12Amount4 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit4))
+                    this.SB12Unit4 = qt1.Q2Unit;
+                this.SB13Amount4 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit4))
+                    this.SB13Unit4 = qt1.Q3Unit;
+                this.SB14Amount4 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit4))
+                    this.SB14Unit4 = qt1.Q4Unit;
+                this.SB15Amount4 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit4))
+                    this.SB15Unit4 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label5
+                && HasMathExpression(this.SB1MathExpression5))
+            {
+                this.SB1TMAmount5 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit5))
+                    this.SB1TMUnit5 = qt1.QTMUnit;
+                this.SB1TLAmount5 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit5))
+                    this.SB1TLUnit5 = qt1.QTLUnit;
+                this.SB1TUAmount5 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit5))
+                    this.SB1TUUnit5 = qt1.QTUUnit;
+                this.SB1TAmount5 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit5))
+                    this.SB1TUnit5 = qt1.QTUnit;
+                this.SB1TD1Amount5 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit5))
+                    this.SB1TD1Unit5 = qt1.QTD1Unit;
+                this.SB1TD2Amount5 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit5))
+                    this.SB1TD2Unit5 = qt1.QTD2Unit;
+                this.SB11Amount5 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit5))
+                    this.SB11Unit5 = qt1.Q1Unit;
+                this.SB12Amount5 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit5))
+                    this.SB12Unit5 = qt1.Q2Unit;
+                this.SB13Amount5 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit5))
+                    this.SB13Unit5 = qt1.Q3Unit;
+                this.SB14Amount5 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit5))
+                    this.SB14Unit5 = qt1.Q4Unit;
+                this.SB15Amount5 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit5))
+                    this.SB15Unit5 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label6
+                && HasMathExpression(this.SB1MathExpression6))
+            {
+                this.SB1TMAmount7 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit7))
+                    this.SB1TMUnit7 = qt1.QTMUnit;
+                this.SB1TLAmount7 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit7))
+                    this.SB1TLUnit7 = qt1.QTLUnit;
+                this.SB1TUAmount7 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit7))
+                    this.SB1TUUnit7 = qt1.QTUUnit;
+                this.SB1TAmount7 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit7))
+                    this.SB1TUnit7 = qt1.QTUnit;
+                this.SB1TD1Amount7 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit7))
+                    this.SB1TD1Unit7 = qt1.QTD1Unit;
+                this.SB1TD2Amount7 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit7))
+                    this.SB1TD2Unit7 = qt1.QTD2Unit;
+                this.SB11Amount7 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit7))
+                    this.SB11Unit7 = qt1.Q1Unit;
+                this.SB12Amount7 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit7))
+                    this.SB12Unit7 = qt1.Q2Unit;
+                this.SB13Amount7 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit7))
+                    this.SB13Unit7 = qt1.Q3Unit;
+                this.SB14Amount7 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit7))
+                    this.SB14Unit7 = qt1.Q4Unit;
+                this.SB15Amount7 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit7))
+                    this.SB15Unit7 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label7
+                && HasMathExpression(this.SB1MathExpression7))
+            {
+                this.SB1TMAmount7 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit7))
+                    this.SB1TMUnit7 = qt1.QTMUnit;
+                this.SB1TLAmount7 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit7))
+                    this.SB1TLUnit7 = qt1.QTLUnit;
+                this.SB1TUAmount7 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit7))
+                    this.SB1TUUnit7 = qt1.QTUUnit;
+                this.SB1TAmount7 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit7))
+                    this.SB1TUnit7 = qt1.QTUnit;
+                this.SB1TD1Amount7 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit7))
+                    this.SB1TD1Unit7 = qt1.QTD1Unit;
+                this.SB1TD2Amount7 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit7))
+                    this.SB1TD2Unit7 = qt1.QTD2Unit;
+                this.SB11Amount7 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit7))
+                    this.SB11Unit7 = qt1.Q1Unit;
+                this.SB12Amount7 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit7))
+                    this.SB12Unit7 = qt1.Q2Unit;
+                this.SB13Amount7 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit7))
+                    this.SB13Unit7 = qt1.Q3Unit;
+                this.SB14Amount7 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit7))
+                    this.SB14Unit7 = qt1.Q4Unit;
+                this.SB15Amount7 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit7))
+                    this.SB15Unit7 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label8
+                && HasMathExpression(this.SB1MathExpression8))
+            {
+                this.SB1TMAmount8 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit8))
+                    this.SB1TMUnit8 = qt1.QTMUnit;
+                this.SB1TLAmount8 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit8))
+                    this.SB1TLUnit8 = qt1.QTLUnit;
+                this.SB1TUAmount8 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit8))
+                    this.SB1TUUnit8 = qt1.QTUUnit;
+                this.SB1TAmount8 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit8))
+                    this.SB1TUnit8 = qt1.QTUnit;
+                this.SB1TD1Amount8 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit8))
+                    this.SB1TD1Unit8 = qt1.QTD1Unit;
+                this.SB1TD2Amount8 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit8))
+                    this.SB1TD2Unit8 = qt1.QTD2Unit;
+                this.SB11Amount8 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit8))
+                    this.SB11Unit8 = qt1.Q1Unit;
+                this.SB12Amount8 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit8))
+                    this.SB12Unit8 = qt1.Q2Unit;
+                this.SB13Amount8 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit8))
+                    this.SB13Unit8 = qt1.Q3Unit;
+                this.SB14Amount8 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit8))
+                    this.SB14Unit8 = qt1.Q4Unit;
+                this.SB15Amount8 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit8))
+                    this.SB15Unit8 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label9
+                && HasMathExpression(this.SB1MathExpression9))
+            {
+                this.SB1TMAmount9 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit9))
+                    this.SB1TMUnit9 = qt1.QTMUnit;
+                this.SB1TLAmount9 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit9))
+                    this.SB1TLUnit9 = qt1.QTLUnit;
+                this.SB1TUAmount9 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit9))
+                    this.SB1TUUnit9 = qt1.QTUUnit;
+                this.SB1TAmount9 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit9))
+                    this.SB1TUnit9 = qt1.QTUnit;
+                this.SB1TD1Amount9 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit9))
+                    this.SB1TD1Unit9 = qt1.QTD1Unit;
+                this.SB1TD2Amount9 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit9))
+                    this.SB1TD2Unit9 = qt1.QTD2Unit;
+                this.SB11Amount9 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit9))
+                    this.SB11Unit9 = qt1.Q1Unit;
+                this.SB12Amount9 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit9))
+                    this.SB12Unit9 = qt1.Q2Unit;
+                this.SB13Amount9 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit9))
+                    this.SB13Unit9 = qt1.Q3Unit;
+                this.SB14Amount9 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit9))
+                    this.SB14Unit9 = qt1.Q4Unit;
+                this.SB15Amount9 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit9))
+                    this.SB15Unit9 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label10
+                && HasMathExpression(this.SB1MathExpression10))
+            {
+                this.SB1TMAmount10 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit10))
+                    this.SB1TMUnit10 = qt1.QTMUnit;
+                this.SB1TLAmount10 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit10))
+                    this.SB1TLUnit10 = qt1.QTLUnit;
+                this.SB1TUAmount10 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit10))
+                    this.SB1TUUnit10 = qt1.QTUUnit;
+                this.SB1TAmount10 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit10))
+                    this.SB1TUnit10 = qt1.QTUnit;
+                this.SB1TD1Amount10 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit10))
+                    this.SB1TD1Unit10 = qt1.QTD1Unit;
+                this.SB1TD2Amount10 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit10))
+                    this.SB1TD2Unit10 = qt1.QTD2Unit;
+                this.SB11Amount10 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit10))
+                    this.SB11Unit10 = qt1.Q1Unit;
+                this.SB12Amount10 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit10))
+                    this.SB12Unit10 = qt1.Q2Unit;
+                this.SB13Amount10 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit10))
+                    this.SB13Unit10 = qt1.Q3Unit;
+                this.SB14Amount10 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit10))
+                    this.SB14Unit10 = qt1.Q4Unit;
+                this.SB15Amount10 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit10))
+                    this.SB15Unit10 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label11
+                && HasMathExpression(this.SB1MathExpression11))
+            {
+                this.SB1TMAmount11 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit11))
+                    this.SB1TMUnit11 = qt1.QTMUnit;
+                this.SB1TLAmount11 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit11))
+                    this.SB1TLUnit11 = qt1.QTLUnit;
+                this.SB1TUAmount11 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit11))
+                    this.SB1TUUnit11 = qt1.QTUUnit;
+                this.SB1TAmount11 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit11))
+                    this.SB1TUnit11 = qt1.QTUnit;
+                this.SB1TD1Amount11 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit11))
+                    this.SB1TD1Unit11 = qt1.QTD1Unit;
+                this.SB1TD2Amount11 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit11))
+                    this.SB1TD2Unit11 = qt1.QTD2Unit;
+                this.SB11Amount11 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit11))
+                    this.SB11Unit11 = qt1.Q1Unit;
+                this.SB12Amount11 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit11))
+                    this.SB12Unit11 = qt1.Q2Unit;
+                this.SB13Amount11 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit11))
+                    this.SB13Unit11 = qt1.Q3Unit;
+                this.SB14Amount11 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit11))
+                    this.SB14Unit11 = qt1.Q4Unit;
+                this.SB15Amount11 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit11))
+                    this.SB15Unit11 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label12
+                && HasMathExpression(this.SB1MathExpression12))
+            {
+                this.SB1TMAmount12 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit12))
+                    this.SB1TMUnit12 = qt1.QTMUnit;
+                this.SB1TLAmount12 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit12))
+                    this.SB1TLUnit12 = qt1.QTLUnit;
+                this.SB1TUAmount12 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit12))
+                    this.SB1TUUnit12 = qt1.QTUUnit;
+                this.SB1TAmount12 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit12))
+                    this.SB1TUnit12 = qt1.QTUnit;
+                this.SB1TD1Amount12 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit12))
+                    this.SB1TD1Unit12 = qt1.QTD1Unit;
+                this.SB1TD2Amount12 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit12))
+                    this.SB1TD2Unit12 = qt1.QTD2Unit;
+                this.SB11Amount12 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit12))
+                    this.SB11Unit12 = qt1.Q1Unit;
+                this.SB12Amount12 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit12))
+                    this.SB12Unit12 = qt1.Q2Unit;
+                this.SB13Amount12 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit12))
+                    this.SB13Unit12 = qt1.Q3Unit;
+                this.SB14Amount12 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit12))
+                    this.SB14Unit12 = qt1.Q4Unit;
+                this.SB15Amount12 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit12))
+                    this.SB15Unit12 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label13
+                && HasMathExpression(this.SB1MathExpression13))
+            {
+                this.SB1TMAmount13 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit13))
+                    this.SB1TMUnit13 = qt1.QTMUnit;
+                this.SB1TLAmount13 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit13))
+                    this.SB1TLUnit13 = qt1.QTLUnit;
+                this.SB1TUAmount13 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit13))
+                    this.SB1TUUnit13 = qt1.QTUUnit;
+                this.SB1TAmount13 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit13))
+                    this.SB1TUnit13 = qt1.QTUnit;
+                this.SB1TD1Amount13 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit13))
+                    this.SB1TD1Unit13 = qt1.QTD1Unit;
+                this.SB1TD2Amount13 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit13))
+                    this.SB1TD2Unit13 = qt1.QTD2Unit;
+                this.SB11Amount13 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit13))
+                    this.SB11Unit13 = qt1.Q1Unit;
+                this.SB12Amount13 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit13))
+                    this.SB12Unit13 = qt1.Q2Unit;
+                this.SB13Amount13 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit13))
+                    this.SB13Unit13 = qt1.Q3Unit;
+                this.SB14Amount13 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit13))
+                    this.SB14Unit13 = qt1.Q4Unit;
+                this.SB15Amount13 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit13))
+                    this.SB15Unit13 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label14
+                && HasMathExpression(this.SB1MathExpression14))
+            {
+                this.SB1TMAmount14 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit14))
+                    this.SB1TMUnit14 = qt1.QTMUnit;
+                this.SB1TLAmount14 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit14))
+                    this.SB1TLUnit14 = qt1.QTLUnit;
+                this.SB1TUAmount14 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit14))
+                    this.SB1TUUnit14 = qt1.QTUUnit;
+                this.SB1TAmount14 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit14))
+                    this.SB1TUnit14 = qt1.QTUnit;
+                this.SB1TD1Amount14 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit14))
+                    this.SB1TD1Unit14 = qt1.QTD1Unit;
+                this.SB1TD2Amount14 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit14))
+                    this.SB1TD2Unit14 = qt1.QTD2Unit;
+                this.SB11Amount14 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit14))
+                    this.SB11Unit14 = qt1.Q1Unit;
+                this.SB12Amount14 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit14))
+                    this.SB12Unit14 = qt1.Q2Unit;
+                this.SB13Amount14 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit14))
+                    this.SB13Unit14 = qt1.Q3Unit;
+                this.SB14Amount14 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit14))
+                    this.SB14Unit14 = qt1.Q4Unit;
+                this.SB15Amount14 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit14))
+                    this.SB15Unit14 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label15
+                && HasMathExpression(this.SB1MathExpression15))
+            {
+                this.SB1TMAmount15 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit15))
+                    this.SB1TMUnit15 = qt1.QTMUnit;
+                this.SB1TLAmount15 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit15))
+                    this.SB1TLUnit15 = qt1.QTLUnit;
+                this.SB1TUAmount15 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit15))
+                    this.SB1TUUnit15 = qt1.QTUUnit;
+                this.SB1TAmount15 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit15))
+                    this.SB1TUnit15 = qt1.QTUnit;
+                this.SB1TD1Amount15 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit15))
+                    this.SB1TD1Unit15 = qt1.QTD1Unit;
+                this.SB1TD2Amount15 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit15))
+                    this.SB1TD2Unit15 = qt1.QTD2Unit;
+                this.SB11Amount15 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit15))
+                    this.SB11Unit15 = qt1.Q1Unit;
+                this.SB12Amount15 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit15))
+                    this.SB12Unit15 = qt1.Q2Unit;
+                this.SB13Amount15 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit15))
+                    this.SB13Unit15 = qt1.Q3Unit;
+                this.SB14Amount15 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit15))
+                    this.SB14Unit15 = qt1.Q4Unit;
+                this.SB15Amount15 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit15))
+                    this.SB15Unit15 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label16
+                && HasMathExpression(this.SB1MathExpression16))
+            {
+                this.SB1TMAmount16 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit16))
+                    this.SB1TMUnit16 = qt1.QTMUnit;
+                this.SB1TLAmount16 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit16))
+                    this.SB1TLUnit16 = qt1.QTLUnit;
+                this.SB1TUAmount16 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit16))
+                    this.SB1TUUnit16 = qt1.QTUUnit;
+                this.SB1TAmount16 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit16))
+                    this.SB1TUnit16 = qt1.QTUnit;
+                this.SB1TD1Amount16 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit16))
+                    this.SB1TD1Unit16 = qt1.QTD1Unit;
+                this.SB1TD2Amount16 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit16))
+                    this.SB1TD2Unit16 = qt1.QTD2Unit;
+                this.SB11Amount16 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit16))
+                    this.SB11Unit16 = qt1.Q1Unit;
+                this.SB12Amount16 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit16))
+                    this.SB12Unit16 = qt1.Q2Unit;
+                this.SB13Amount16 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit16))
+                    this.SB13Unit16 = qt1.Q3Unit;
+                this.SB14Amount16 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit16))
+                    this.SB14Unit16 = qt1.Q4Unit;
+                this.SB15Amount16 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit16))
+                    this.SB15Unit16 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label17
+                && HasMathExpression(this.SB1MathExpression17))
+            {
+                this.SB1TMAmount17 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit17))
+                    this.SB1TMUnit17 = qt1.QTMUnit;
+                this.SB1TLAmount17 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit17))
+                    this.SB1TLUnit17 = qt1.QTLUnit;
+                this.SB1TUAmount17 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit17))
+                    this.SB1TUUnit17 = qt1.QTUUnit;
+                this.SB1TAmount17 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit17))
+                    this.SB1TUnit17 = qt1.QTUnit;
+                this.SB1TD1Amount17 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit17))
+                    this.SB1TD1Unit17 = qt1.QTD1Unit;
+                this.SB1TD2Amount17 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit17))
+                    this.SB1TD2Unit17 = qt1.QTD2Unit;
+                this.SB11Amount17 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit17))
+                    this.SB11Unit17 = qt1.Q1Unit;
+                this.SB12Amount17 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit17))
+                    this.SB12Unit17 = qt1.Q2Unit;
+                this.SB13Amount17 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit17))
+                    this.SB13Unit17 = qt1.Q3Unit;
+                this.SB14Amount17 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit17))
+                    this.SB14Unit17 = qt1.Q4Unit;
+                this.SB15Amount17 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit17))
+                    this.SB15Unit17 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label18
+                && HasMathExpression(this.SB1MathExpression18))
+            {
+                this.SB1TMAmount18 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit18))
+                    this.SB1TMUnit18 = qt1.QTMUnit;
+                this.SB1TLAmount18 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit18))
+                    this.SB1TLUnit18 = qt1.QTLUnit;
+                this.SB1TUAmount18 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit18))
+                    this.SB1TUUnit18 = qt1.QTUUnit;
+                this.SB1TAmount18 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit18))
+                    this.SB1TUnit18 = qt1.QTUnit;
+                this.SB1TD1Amount18 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit18))
+                    this.SB1TD1Unit18 = qt1.QTD1Unit;
+                this.SB1TD2Amount18 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit18))
+                    this.SB1TD2Unit18 = qt1.QTD2Unit;
+                this.SB11Amount18 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit18))
+                    this.SB11Unit18 = qt1.Q1Unit;
+                this.SB12Amount18 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit18))
+                    this.SB12Unit18 = qt1.Q2Unit;
+                this.SB13Amount18 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit18))
+                    this.SB13Unit18 = qt1.Q3Unit;
+                this.SB14Amount18 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit18))
+                    this.SB14Unit18 = qt1.Q4Unit;
+                this.SB15Amount18 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit18))
+                    this.SB15Unit18 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label19
+                && HasMathExpression(this.SB1MathExpression19))
+            {
+                this.SB1TMAmount19 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit19))
+                    this.SB1TMUnit19 = qt1.QTMUnit;
+                this.SB1TLAmount19 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit19))
+                    this.SB1TLUnit19 = qt1.QTLUnit;
+                this.SB1TUAmount19 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit19))
+                    this.SB1TUUnit19 = qt1.QTUUnit;
+                this.SB1TAmount19 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit19))
+                    this.SB1TUnit19 = qt1.QTUnit;
+                this.SB1TD1Amount19 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit19))
+                    this.SB1TD1Unit19 = qt1.QTD1Unit;
+                this.SB1TD2Amount19 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit19))
+                    this.SB1TD2Unit19 = qt1.QTD2Unit;
+                this.SB11Amount19 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit19))
+                    this.SB11Unit19 = qt1.Q1Unit;
+                this.SB12Amount19 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit19))
+                    this.SB12Unit19 = qt1.Q2Unit;
+                this.SB13Amount19 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit19))
+                    this.SB13Unit19 = qt1.Q3Unit;
+                this.SB14Amount19 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit19))
+                    this.SB14Unit19 = qt1.Q4Unit;
+                this.SB15Amount19 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit19))
+                    this.SB15Unit19 = qt1.Q5Unit;
+            }
+            else if (label == this.SB1Label20
+                && HasMathExpression(this.SB1MathExpression20))
+            {
+                this.SB1TMAmount20 = qt1.QTM;
+                if (string.IsNullOrEmpty(this.SB1TMUnit20))
+                    this.SB1TMUnit20 = qt1.QTMUnit;
+                this.SB1TLAmount20 = qt1.QTL;
+                if (string.IsNullOrEmpty(this.SB1TLUnit20))
+                    this.SB1TLUnit20 = qt1.QTLUnit;
+                this.SB1TUAmount20 = qt1.QTU;
+                if (string.IsNullOrEmpty(this.SB1TUUnit20))
+                    this.SB1TUUnit20 = qt1.QTUUnit;
+                this.SB1TAmount20 = qt1.QT;
+                if (string.IsNullOrEmpty(this.SB1TUnit20))
+                    this.SB1TUnit20 = qt1.QTUnit;
+                this.SB1TD1Amount20 = qt1.QTD1;
+                if (string.IsNullOrEmpty(this.SB1TD1Unit20))
+                    this.SB1TD1Unit20 = qt1.QTD1Unit;
+                this.SB1TD2Amount20 = qt1.QTD2;
+                if (string.IsNullOrEmpty(this.SB1TD2Unit20))
+                    this.SB1TD2Unit20 = qt1.QTD2Unit;
+                this.SB11Amount20 = qt1.Q1;
+                if (string.IsNullOrEmpty(this.SB1TUnit20))
+                    this.SB11Unit20 = qt1.Q1Unit;
+                this.SB12Amount20 = qt1.Q2;
+                if (string.IsNullOrEmpty(this.SB12Unit20))
+                    this.SB12Unit20 = qt1.Q2Unit;
+                this.SB13Amount20 = qt1.Q3;
+                if (string.IsNullOrEmpty(this.SB13Unit20))
+                    this.SB13Unit20 = qt1.Q3Unit;
+                this.SB14Amount20 = qt1.Q4;
+                if (string.IsNullOrEmpty(this.SB14Unit20))
+                    this.SB14Unit20 = qt1.Q4Unit;
+                this.SB15Amount20 = qt1.Q5;
+                if (string.IsNullOrEmpty(this.SB15Unit20))
+                    this.SB15Unit20 = qt1.Q5Unit;
             }
             else
             {
@@ -3708,8 +4477,8 @@ namespace DevTreks.Extensions.SB1Statistics
         {
             string algoIndicator = label;
             System.Threading.CancellationToken ctk = new System.Threading.CancellationToken();
-            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            //string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            //string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
             if (label == this.SB1Label1
                 && (this.SB1MathType1 == MATH_TYPES.algorithm2.ToString()
                     || this.SB1MathType1 == MATH_TYPES.algorithm3.ToString())
@@ -3719,14 +4488,15 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression1, this.SB1MathType1, this.SB1MathSubType1);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount1 = script1.QTPredicted;
-                this.SB1TLAmount1 = script1.QTL;
-                this.SB1TLUnit1 = sLowerCI;
-                this.SB1TUAmount1 = script1.QTU;
-                this.SB1TUUnit1 = sUpperCI;
-                //no condition on type of result yet KISS for now
-                this.SB1MathResult1 = script1.ErrorMessage;
-                this.SB1MathResult1 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount1 = script1.QTPredicted;
+                //this.SB1TLAmount1 = script1.QTL;
+                //this.SB1TLUnit1 = sLowerCI;
+                //this.SB1TUAmount1 = script1.QTU;
+                //this.SB1TUUnit1 = sUpperCI;
+                ////no condition on type of result yet KISS for now
+                //this.SB1MathResult1 = script1.ErrorMessage;
+                //this.SB1MathResult1 += script1.MathResult;
             }
             else if (label == this.SB1Label2
                 && (this.SB1MathType2 == MATH_TYPES.algorithm2.ToString()
@@ -3737,13 +4507,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression2, this.SB1MathType2, this.SB1MathSubType2);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount2 = script1.QTPredicted;
-                this.SB1TLAmount2 = script1.QTL;
-                this.SB1TLUnit2 = sLowerCI;
-                this.SB1TUAmount2 = script1.QTU;
-                this.SB1TUUnit2 = sUpperCI;
-                this.SB1MathResult2 = script1.ErrorMessage;
-                this.SB1MathResult2 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount2 = script1.QTPredicted;
+                //this.SB1TLAmount2 = script1.QTL;
+                //this.SB1TLUnit2 = sLowerCI;
+                //this.SB1TUAmount2 = script1.QTU;
+                //this.SB1TUUnit2 = sUpperCI;
+                //this.SB1MathResult2 = script1.ErrorMessage;
+                //this.SB1MathResult2 += script1.MathResult;
             }
             else if (label == this.SB1Label3
                 && (this.SB1MathType3 == MATH_TYPES.algorithm2.ToString()
@@ -3754,13 +4525,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression3, this.SB1MathType3, this.SB1MathSubType3);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount3 = script1.QTPredicted;
-                this.SB1TLAmount3 = script1.QTL;
-                this.SB1TLUnit3 = sLowerCI;
-                this.SB1TUAmount3 = script1.QTU;
-                this.SB1TUUnit3 = sUpperCI;
-                this.SB1MathResult3 = script1.ErrorMessage;
-                this.SB1MathResult3 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount3 = script1.QTPredicted;
+                //this.SB1TLAmount3 = script1.QTL;
+                //this.SB1TLUnit3 = sLowerCI;
+                //this.SB1TUAmount3 = script1.QTU;
+                //this.SB1TUUnit3 = sUpperCI;
+                //this.SB1MathResult3 = script1.ErrorMessage;
+                //this.SB1MathResult3 += script1.MathResult;
             }
             else if (label == this.SB1Label4
                 && (this.SB1MathType4 == MATH_TYPES.algorithm2.ToString()
@@ -3771,13 +4543,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression4, this.SB1MathType4, this.SB1MathSubType4);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount4 = script1.QTPredicted;
-                this.SB1TLAmount4 = script1.QTL;
-                this.SB1TLUnit4 = sLowerCI;
-                this.SB1TUAmount4 = script1.QTU;
-                this.SB1TUUnit4 = sUpperCI;
-                this.SB1MathResult4 = script1.ErrorMessage;
-                this.SB1MathResult4 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount4 = script1.QTPredicted;
+                //this.SB1TLAmount4 = script1.QTL;
+                //this.SB1TLUnit4 = sLowerCI;
+                //this.SB1TUAmount4 = script1.QTU;
+                //this.SB1TUUnit4 = sUpperCI;
+                //this.SB1MathResult4 = script1.ErrorMessage;
+                //this.SB1MathResult4 += script1.MathResult;
             }
             else if (label == this.SB1Label5
                && (this.SB1MathType5 == MATH_TYPES.algorithm2.ToString()
@@ -3788,13 +4561,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression5, this.SB1MathType5, this.SB1MathSubType5);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount5 = script1.QTPredicted;
-                this.SB1TLAmount5 = script1.QTL;
-                this.SB1TLUnit5 = sLowerCI;
-                this.SB1TUAmount5 = script1.QTU;
-                this.SB1TUUnit5 = sUpperCI;
-                this.SB1MathResult5 = script1.ErrorMessage;
-                this.SB1MathResult5 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount5 = script1.QTPredicted;
+                //this.SB1TLAmount5 = script1.QTL;
+                //this.SB1TLUnit5 = sLowerCI;
+                //this.SB1TUAmount5 = script1.QTU;
+                //this.SB1TUUnit5 = sUpperCI;
+                //this.SB1MathResult5 = script1.ErrorMessage;
+                //this.SB1MathResult5 += script1.MathResult;
             }
             else if (label == this.SB1Label6
                 && (this.SB1MathType6 == MATH_TYPES.algorithm2.ToString()
@@ -3805,13 +4579,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression6, this.SB1MathType6, this.SB1MathSubType6);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount6 = script1.QTPredicted;
-                this.SB1TLAmount6 = script1.QTL;
-                this.SB1TLUnit6 = sLowerCI;
-                this.SB1TUAmount6 = script1.QTU;
-                this.SB1TUUnit6 = sUpperCI;
-                this.SB1MathResult6 = script1.ErrorMessage;
-                this.SB1MathResult6 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount6 = script1.QTPredicted;
+                //this.SB1TLAmount6 = script1.QTL;
+                //this.SB1TLUnit6 = sLowerCI;
+                //this.SB1TUAmount6 = script1.QTU;
+                //this.SB1TUUnit6 = sUpperCI;
+                //this.SB1MathResult6 = script1.ErrorMessage;
+                //this.SB1MathResult6 += script1.MathResult;
             }
             else if (label == this.SB1Label7
                 && (this.SB1MathType7 == MATH_TYPES.algorithm2.ToString()
@@ -3822,13 +4597,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression7, this.SB1MathType7, this.SB1MathSubType7);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount7 = script1.QTPredicted;
-                this.SB1TLAmount7 = script1.QTL;
-                this.SB1TLUnit7 = sLowerCI;
-                this.SB1TUAmount7 = script1.QTU;
-                this.SB1TUUnit7 = sUpperCI;
-                this.SB1MathResult7 = script1.ErrorMessage;
-                this.SB1MathResult7 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount7 = script1.QTPredicted;
+                //this.SB1TLAmount7 = script1.QTL;
+                //this.SB1TLUnit7 = sLowerCI;
+                //this.SB1TUAmount7 = script1.QTU;
+                //this.SB1TUUnit7 = sUpperCI;
+                //this.SB1MathResult7 = script1.ErrorMessage;
+                //this.SB1MathResult7 += script1.MathResult;
             }
             else if (label == this.SB1Label8
                 && (this.SB1MathType8 == MATH_TYPES.algorithm2.ToString()
@@ -3839,13 +4615,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression8, this.SB1MathType8, this.SB1MathSubType8);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount8 = script1.QTPredicted;
-                this.SB1TLAmount8 = script1.QTL;
-                this.SB1TLUnit8 = sLowerCI;
-                this.SB1TUAmount8 = script1.QTU;
-                this.SB1TUUnit8 = sUpperCI;
-                this.SB1MathResult8 = script1.ErrorMessage;
-                this.SB1MathResult8 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount8 = script1.QTPredicted;
+                //this.SB1TLAmount8 = script1.QTL;
+                //this.SB1TLUnit8 = sLowerCI;
+                //this.SB1TUAmount8 = script1.QTU;
+                //this.SB1TUUnit8 = sUpperCI;
+                //this.SB1MathResult8 = script1.ErrorMessage;
+                //this.SB1MathResult8 += script1.MathResult;
             }
             else if (label == this.SB1Label9
                 && (this.SB1MathType9 == MATH_TYPES.algorithm2.ToString()
@@ -3856,13 +4633,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression9, this.SB1MathType9, this.SB1MathSubType9);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount9 = script1.QTPredicted;
-                this.SB1TLAmount9 = script1.QTL;
-                this.SB1TLUnit9 = sLowerCI;
-                this.SB1TUAmount9 = script1.QTU;
-                this.SB1TUUnit9 = sUpperCI;
-                this.SB1MathResult9 = script1.ErrorMessage;
-                this.SB1MathResult9 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount9 = script1.QTPredicted;
+                //this.SB1TLAmount9 = script1.QTL;
+                //this.SB1TLUnit9 = sLowerCI;
+                //this.SB1TUAmount9 = script1.QTU;
+                //this.SB1TUUnit9 = sUpperCI;
+                //this.SB1MathResult9 = script1.ErrorMessage;
+                //this.SB1MathResult9 += script1.MathResult;
             }
             else if (label == this.SB1Label10
                 && (this.SB1MathType10 == MATH_TYPES.algorithm2.ToString()
@@ -3873,13 +4651,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression10, this.SB1MathType10, this.SB1MathSubType10);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount10 = script1.QTPredicted;
-                this.SB1TLAmount10 = script1.QTL;
-                this.SB1TLUnit10 = sLowerCI;
-                this.SB1TUAmount10 = script1.QTU;
-                this.SB1TUUnit10 = sUpperCI;
-                this.SB1MathResult10 = script1.ErrorMessage;
-                this.SB1MathResult10 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount10 = script1.QTPredicted;
+                //this.SB1TLAmount10 = script1.QTL;
+                //this.SB1TLUnit10 = sLowerCI;
+                //this.SB1TUAmount10 = script1.QTU;
+                //this.SB1TUUnit10 = sUpperCI;
+                //this.SB1MathResult10 = script1.ErrorMessage;
+                //this.SB1MathResult10 += script1.MathResult;
             }
             else if (label == this.SB1Label11
                 && (this.SB1MathType11 == MATH_TYPES.algorithm2.ToString()
@@ -3890,13 +4669,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression11, this.SB1MathType11, this.SB1MathSubType11);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount11 = script1.QTPredicted;
-                this.SB1TLAmount11 = script1.QTL;
-                this.SB1TLUnit11 = sLowerCI;
-                this.SB1TUAmount11 = script1.QTU;
-                this.SB1TUUnit11 = sUpperCI;
-                this.SB1MathResult11 = script1.ErrorMessage;
-                this.SB1MathResult11 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount11 = script1.QTPredicted;
+                //this.SB1TLAmount11 = script1.QTL;
+                //this.SB1TLUnit11 = sLowerCI;
+                //this.SB1TUAmount11 = script1.QTU;
+                //this.SB1TUUnit11 = sUpperCI;
+                //this.SB1MathResult11 = script1.ErrorMessage;
+                //this.SB1MathResult11 += script1.MathResult;
             }
             else if (label == this.SB1Label12
                 && (this.SB1MathType12 == MATH_TYPES.algorithm2.ToString()
@@ -3907,13 +4687,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression12, this.SB1MathType12, this.SB1MathSubType12);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount12 = script1.QTPredicted;
-                this.SB1TLAmount12 = script1.QTL;
-                this.SB1TLUnit12 = sLowerCI;
-                this.SB1TUAmount12 = script1.QTU;
-                this.SB1TUUnit12 = sUpperCI;
-                this.SB1MathResult12 = script1.ErrorMessage;
-                this.SB1MathResult12 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount12 = script1.QTPredicted;
+                //this.SB1TLAmount12 = script1.QTL;
+                //this.SB1TLUnit12 = sLowerCI;
+                //this.SB1TUAmount12 = script1.QTU;
+                //this.SB1TUUnit12 = sUpperCI;
+                //this.SB1MathResult12 = script1.ErrorMessage;
+                //this.SB1MathResult12 += script1.MathResult;
             }
             else if (label == this.SB1Label13
                 && (this.SB1MathType13 == MATH_TYPES.algorithm2.ToString()
@@ -3924,13 +4705,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression13, this.SB1MathType13, this.SB1MathSubType13);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount13 = script1.QTPredicted;
-                this.SB1TLAmount13 = script1.QTL;
-                this.SB1TLUnit13 = sLowerCI;
-                this.SB1TUAmount13 = script1.QTU;
-                this.SB1TUUnit13 = sUpperCI;
-                this.SB1MathResult13 = script1.ErrorMessage;
-                this.SB1MathResult13 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount13 = script1.QTPredicted;
+                //this.SB1TLAmount13 = script1.QTL;
+                //this.SB1TLUnit13 = sLowerCI;
+                //this.SB1TUAmount13 = script1.QTU;
+                //this.SB1TUUnit13 = sUpperCI;
+                //this.SB1MathResult13 = script1.ErrorMessage;
+                //this.SB1MathResult13 += script1.MathResult;
             }
             else if (label == this.SB1Label14
                 && (this.SB1MathType14 == MATH_TYPES.algorithm2.ToString()
@@ -3941,13 +4723,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression14, this.SB1MathType14, this.SB1MathSubType14);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount14 = script1.QTPredicted;
-                this.SB1TLAmount14 = script1.QTL;
-                this.SB1TLUnit14 = sLowerCI;
-                this.SB1TUAmount14 = script1.QTU;
-                this.SB1TUUnit14 = sUpperCI;
-                this.SB1MathResult14 = script1.ErrorMessage;
-                this.SB1MathResult14 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount14 = script1.QTPredicted;
+                //this.SB1TLAmount14 = script1.QTL;
+                //this.SB1TLUnit14 = sLowerCI;
+                //this.SB1TUAmount14 = script1.QTU;
+                //this.SB1TUUnit14 = sUpperCI;
+                //this.SB1MathResult14 = script1.ErrorMessage;
+                //this.SB1MathResult14 += script1.MathResult;
             }
             else if (label == this.SB1Label15
                 && (this.SB1MathType15 == MATH_TYPES.algorithm2.ToString()
@@ -3958,13 +4741,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression15, this.SB1MathType15, this.SB1MathSubType15);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount15 = script1.QTPredicted;
-                this.SB1TLAmount15 = script1.QTL;
-                this.SB1TLUnit15 = sLowerCI;
-                this.SB1TUAmount15 = script1.QTU;
-                this.SB1TUUnit15 = sUpperCI;
-                this.SB1MathResult15 = script1.ErrorMessage;
-                this.SB1MathResult15 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount15 = script1.QTPredicted;
+                //this.SB1TLAmount15 = script1.QTL;
+                //this.SB1TLUnit15 = sLowerCI;
+                //this.SB1TUAmount15 = script1.QTU;
+                //this.SB1TUUnit15 = sUpperCI;
+                //this.SB1MathResult15 = script1.ErrorMessage;
+                //this.SB1MathResult15 += script1.MathResult;
             }
             else if (label == this.SB1Label16
                 && (this.SB1MathType16 == MATH_TYPES.algorithm2.ToString()
@@ -3975,13 +4759,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression16, this.SB1MathType16, this.SB1MathSubType16);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount16 = script1.QTPredicted;
-                this.SB1TLAmount16 = script1.QTL;
-                this.SB1TLUnit16 = sLowerCI;
-                this.SB1TUAmount16 = script1.QTU;
-                this.SB1TUUnit16 = sUpperCI;
-                this.SB1MathResult16 = script1.ErrorMessage;
-                this.SB1MathResult16 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount16 = script1.QTPredicted;
+                //this.SB1TLAmount16 = script1.QTL;
+                //this.SB1TLUnit16 = sLowerCI;
+                //this.SB1TUAmount16 = script1.QTU;
+                //this.SB1TUUnit16 = sUpperCI;
+                //this.SB1MathResult16 = script1.ErrorMessage;
+                //this.SB1MathResult16 += script1.MathResult;
             }
             else if (label == this.SB1Label17
                 && (this.SB1MathType17 == MATH_TYPES.algorithm2.ToString()
@@ -3992,13 +4777,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression17, this.SB1MathType17, this.SB1MathSubType17);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount17 = script1.QTPredicted;
-                this.SB1TLAmount17 = script1.QTL;
-                this.SB1TLUnit17 = sLowerCI;
-                this.SB1TUAmount17 = script1.QTU;
-                this.SB1TUUnit17 = sUpperCI;
-                this.SB1MathResult17 = script1.ErrorMessage;
-                this.SB1MathResult17 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount17 = script1.QTPredicted;
+                //this.SB1TLAmount17 = script1.QTL;
+                //this.SB1TLUnit17 = sLowerCI;
+                //this.SB1TUAmount17 = script1.QTU;
+                //this.SB1TUUnit17 = sUpperCI;
+                //this.SB1MathResult17 = script1.ErrorMessage;
+                //this.SB1MathResult17 += script1.MathResult;
             }
             else if (label == this.SB1Label18
                 && (this.SB1MathType18 == MATH_TYPES.algorithm2.ToString()
@@ -4009,13 +4795,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression18, this.SB1MathType18, this.SB1MathSubType18);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount18 = script1.QTPredicted;
-                this.SB1TLAmount18 = script1.QTL;
-                this.SB1TLUnit18 = sLowerCI;
-                this.SB1TUAmount18 = script1.QTU;
-                this.SB1TUUnit18 = sUpperCI;
-                this.SB1MathResult18 = script1.ErrorMessage;
-                this.SB1MathResult18 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount18 = script1.QTPredicted;
+                //this.SB1TLAmount18 = script1.QTL;
+                //this.SB1TLUnit18 = sLowerCI;
+                //this.SB1TUAmount18 = script1.QTU;
+                //this.SB1TUUnit18 = sUpperCI;
+                //this.SB1MathResult18 = script1.ErrorMessage;
+                //this.SB1MathResult18 += script1.MathResult;
             }
             else if (label == this.SB1Label19
                 && (this.SB1MathType19 == MATH_TYPES.algorithm2.ToString()
@@ -4026,13 +4813,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression19, this.SB1MathType19, this.SB1MathSubType19);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount19 = script1.QTPredicted;
-                this.SB1TLAmount19 = script1.QTL;
-                this.SB1TLUnit19 = sLowerCI;
-                this.SB1TUAmount19 = script1.QTU;
-                this.SB1TUUnit19 = sUpperCI;
-                this.SB1MathResult19 = script1.ErrorMessage;
-                this.SB1MathResult19 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount19 = script1.QTPredicted;
+                //this.SB1TLAmount19 = script1.QTL;
+                //this.SB1TLUnit19 = sLowerCI;
+                //this.SB1TUAmount19 = script1.QTU;
+                //this.SB1TUUnit19 = sUpperCI;
+                //this.SB1MathResult19 = script1.ErrorMessage;
+                //this.SB1MathResult19 += script1.MathResult;
             }
             else if (label == this.SB1Label20
                 && (this.SB1MathType20 == MATH_TYPES.algorithm2.ToString()
@@ -4043,13 +4831,14 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(label, colNames, this.SB1MathExpression20, this.SB1MathType20, this.SB1MathSubType20);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.SB1TMAmount20 = script1.QTPredicted;
-                this.SB1TLAmount20 = script1.QTL;
-                this.SB1TLUnit20 = sLowerCI;
-                this.SB1TUAmount20 = script1.QTU;
-                this.SB1TUUnit20 = sUpperCI;
-                this.SB1MathResult20 = script1.ErrorMessage;
-                this.SB1MathResult20 += script1.MathResult;
+                FillBaseIndicator(script1.meta, label);
+                //this.SB1TMAmount20 = script1.QTPredicted;
+                //this.SB1TLAmount20 = script1.QTL;
+                //this.SB1TLUnit20 = sLowerCI;
+                //this.SB1TUAmount20 = script1.QTU;
+                //this.SB1TUUnit20 = sUpperCI;
+                //this.SB1MathResult20 = script1.ErrorMessage;
+                //this.SB1MathResult20 += script1.MathResult;
             }
             else
             {

@@ -1088,6 +1088,42 @@ namespace DevTreks.Extensions.ME2Statistics
                 }
             }
         }
+        private void FillBaseIndicatorfor3Ranges(IndicatorQT1 qt1, int index)
+        {
+            this.ME2Indicators[index].IndTMAmount = qt1.QTM;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].IndTMUnit))
+                this.ME2Indicators[index].IndTMUnit = qt1.QTMUnit;
+            this.ME2Indicators[index].IndTLAmount = qt1.QTL;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].IndTLUnit))
+                this.ME2Indicators[index].IndTLUnit = qt1.QTLUnit;
+            this.ME2Indicators[index].IndTUAmount = qt1.QTU;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].IndTUUnit))
+                this.ME2Indicators[index].IndTUUnit = qt1.QTUUnit;
+            this.ME2Indicators[index].Ind1Amount = qt1.Q1;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].Ind1Unit))
+                this.ME2Indicators[index].Ind1Unit = qt1.Q1Unit;
+            this.ME2Indicators[index].Ind2Amount = qt1.Q2;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].Ind2Unit))
+                this.ME2Indicators[index].Ind2Unit = qt1.Q2Unit;
+            this.ME2Indicators[index].Ind3Amount = qt1.Q3;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].Ind3Unit))
+                this.ME2Indicators[index].Ind3Unit = qt1.Q3Unit;
+            this.ME2Indicators[index].Ind4Amount = qt1.Q4;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].Ind4Unit))
+                this.ME2Indicators[index].Ind4Unit = qt1.Q4Unit;
+            this.ME2Indicators[index].Ind5Amount = qt1.Q5;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].Ind5Unit))
+                this.ME2Indicators[index].Ind5Unit = qt1.Q5Unit;
+            this.ME2Indicators[index].IndTAmount = qt1.QT;
+            if (string.IsNullOrEmpty(this.ME2Indicators[index].IndTUnit))
+                this.ME2Indicators[index].IndTUnit = qt1.QTUnit;
+            //this.ME2Indicators[index].IndTD1Amount = qt1.QTD1;
+            //this.ME2Indicators[index].IndTD1Unit = qt1.QTD1Unit;
+            //this.ME2Indicators[index].IndTD2Amount = qt1.QTD2;
+            //this.ME2Indicators[index].IndTD2Unit = qt1.QTD2Unit;
+            this.ME2Indicators[index].IndMathResult = qt1.ErrorMessage;
+            this.ME2Indicators[index].IndMathResult += string.Concat("---", qt1.MathResult);
+        }
         private void FillBaseIndicator(IndicatorQT1 qt1, int index, string lowerci, string upperci)
         {
             bool bNeedsDistribution = true;
@@ -3784,8 +3820,8 @@ namespace DevTreks.Extensions.ME2Statistics
         {
             int algoIndicator = index;
             System.Threading.CancellationToken ctk = new System.Threading.CancellationToken();
-            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            //string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            //string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
             if (index == 0
                 && (this.ME2Indicators[0].IndMathType == MATH_TYPES.algorithm2.ToString()
                     || this.ME2Indicators[0].IndMathType == MATH_TYPES.algorithm3.ToString())
@@ -3795,14 +3831,16 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[0].IndMathExpression, this.ME2Indicators[0].IndMathType, this.ME2Indicators[0].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[0].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[0].IndTLAmount = script1.QTL;
-                this.ME2Indicators[0].IndTLUnit = sLowerCI;
-                this.ME2Indicators[0].IndTUAmount = script1.QTU;
-                this.ME2Indicators[0].IndTUUnit = sUpperCI;
-                //no condition on type of result yet KISS for now
-                this.ME2Indicators[0].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[0].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+
+                //this.ME2Indicators[0].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[0].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[0].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[0].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[0].IndTUUnit = sUpperCI;
+                ////no condition on type of result yet KISS for now
+                //this.ME2Indicators[0].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[0].IndMathResult += script1.MathResult;
             }
             else if (index == 1
                 && (this.ME2Indicators[1].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3813,14 +3851,15 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[1].IndMathExpression, this.ME2Indicators[1].IndMathType, this.ME2Indicators[1].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[1].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[1].IndTLAmount = script1.QTL;
-                this.ME2Indicators[1].IndTLUnit = sLowerCI;
-                this.ME2Indicators[1].IndTUAmount = script1.QTU;
-                this.ME2Indicators[1].IndTUUnit = sUpperCI;
-                //no condition on type of result yet KISS for now
-                this.ME2Indicators[1].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[1].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[1].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[1].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[1].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[1].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[1].IndTUUnit = sUpperCI;
+                ////no condition on type of result yet KISS for now
+                //this.ME2Indicators[1].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[1].IndMathResult += script1.MathResult;
             }
             else if (index == 2
                 && (this.ME2Indicators[2].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3831,13 +3870,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[2].IndMathExpression, this.ME2Indicators[2].IndMathType, this.ME2Indicators[2].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[2].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[2].IndTLAmount = script1.QTL;
-                this.ME2Indicators[2].IndTLUnit = sLowerCI;
-                this.ME2Indicators[2].IndTUAmount = script1.QTU;
-                this.ME2Indicators[2].IndTUUnit = sUpperCI;
-                this.ME2Indicators[2].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[2].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[2].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[2].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[2].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[2].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[2].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[2].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[2].IndMathResult += script1.MathResult;
             }
             else if (index == 3
                 && (this.ME2Indicators[3].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3848,13 +3888,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[3].IndMathExpression, this.ME2Indicators[3].IndMathType, this.ME2Indicators[3].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[3].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[3].IndTLAmount = script1.QTL;
-                this.ME2Indicators[3].IndTLUnit = sLowerCI;
-                this.ME2Indicators[3].IndTUAmount = script1.QTU;
-                this.ME2Indicators[3].IndTUUnit = sUpperCI;
-                this.ME2Indicators[3].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[3].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[3].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[3].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[3].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[3].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[3].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[3].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[3].IndMathResult += script1.MathResult;
             }
             else if (index == 4
                 && (this.ME2Indicators[4].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3865,13 +3906,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[4].IndMathExpression, this.ME2Indicators[4].IndMathType, this.ME2Indicators[4].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[4].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[4].IndTLAmount = script1.QTL;
-                this.ME2Indicators[4].IndTLUnit = sLowerCI;
-                this.ME2Indicators[4].IndTUAmount = script1.QTU;
-                this.ME2Indicators[4].IndTUUnit = sUpperCI;
-                this.ME2Indicators[4].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[4].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[4].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[4].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[4].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[4].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[4].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[4].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[4].IndMathResult += script1.MathResult;
             }
             else if (index == 5
                && (this.ME2Indicators[5].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3882,13 +3924,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[5].IndMathExpression, this.ME2Indicators[5].IndMathType, this.ME2Indicators[5].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[5].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[5].IndTLAmount = script1.QTL;
-                this.ME2Indicators[5].IndTLUnit = sLowerCI;
-                this.ME2Indicators[5].IndTUAmount = script1.QTU;
-                this.ME2Indicators[5].IndTUUnit = sUpperCI;
-                this.ME2Indicators[5].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[5].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[5].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[5].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[5].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[5].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[5].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[5].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[5].IndMathResult += script1.MathResult;
             }
             else if (index == 6
                 && (this.ME2Indicators[6].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3899,13 +3942,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[6].IndMathExpression, this.ME2Indicators[6].IndMathType, this.ME2Indicators[6].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[6].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[6].IndTLAmount = script1.QTL;
-                this.ME2Indicators[6].IndTLUnit = sLowerCI;
-                this.ME2Indicators[6].IndTUAmount = script1.QTU;
-                this.ME2Indicators[6].IndTUUnit = sUpperCI;
-                this.ME2Indicators[6].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[6].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[6].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[6].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[6].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[6].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[6].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[6].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[6].IndMathResult += script1.MathResult;
             }
             else if (index == 7
                 && (this.ME2Indicators[7].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3916,13 +3960,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[7].IndMathExpression, this.ME2Indicators[7].IndMathType, this.ME2Indicators[7].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[7].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[7].IndTLAmount = script1.QTL;
-                this.ME2Indicators[7].IndTLUnit = sLowerCI;
-                this.ME2Indicators[7].IndTUAmount = script1.QTU;
-                this.ME2Indicators[7].IndTUUnit = sUpperCI;
-                this.ME2Indicators[7].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[7].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[7].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[7].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[7].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[7].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[7].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[7].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[7].IndMathResult += script1.MathResult;
             }
             else if (index == 8
                 && (this.ME2Indicators[8].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3933,13 +3978,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[8].IndMathExpression, this.ME2Indicators[8].IndMathType, this.ME2Indicators[8].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[8].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[8].IndTLAmount = script1.QTL;
-                this.ME2Indicators[8].IndTLUnit = sLowerCI;
-                this.ME2Indicators[8].IndTUAmount = script1.QTU;
-                this.ME2Indicators[8].IndTUUnit = sUpperCI;
-                this.ME2Indicators[8].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[8].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[8].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[8].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[8].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[8].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[8].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[8].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[8].IndMathResult += script1.MathResult;
             }
             else if (index == 9
                 && (this.ME2Indicators[9].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3950,13 +3996,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[9].IndMathExpression, this.ME2Indicators[9].IndMathType, this.ME2Indicators[9].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[9].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[9].IndTLAmount = script1.QTL;
-                this.ME2Indicators[9].IndTLUnit = sLowerCI;
-                this.ME2Indicators[9].IndTUAmount = script1.QTU;
-                this.ME2Indicators[9].IndTUUnit = sUpperCI;
-                this.ME2Indicators[9].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[9].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[9].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[9].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[9].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[9].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[9].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[9].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[9].IndMathResult += script1.MathResult;
             }
             else if (index == 10
                 && (this.ME2Indicators[10].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3967,13 +4014,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[10].IndMathExpression, this.ME2Indicators[10].IndMathType, this.ME2Indicators[10].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[10].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[10].IndTLAmount = script1.QTL;
-                this.ME2Indicators[10].IndTLUnit = sLowerCI;
-                this.ME2Indicators[10].IndTUAmount = script1.QTU;
-                this.ME2Indicators[10].IndTUUnit = sUpperCI;
-                this.ME2Indicators[10].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[10].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[10].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[10].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[10].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[10].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[10].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[10].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[10].IndMathResult += script1.MathResult;
             }
             else if (index == 11
                 && (this.ME2Indicators[11].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -3984,13 +4032,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[11].IndMathExpression, this.ME2Indicators[11].IndMathType, this.ME2Indicators[11].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[11].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[11].IndTLAmount = script1.QTL;
-                this.ME2Indicators[11].IndTLUnit = sLowerCI;
-                this.ME2Indicators[11].IndTUAmount = script1.QTU;
-                this.ME2Indicators[11].IndTUUnit = sUpperCI;
-                this.ME2Indicators[11].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[11].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[11].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[11].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[11].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[11].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[11].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[11].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[11].IndMathResult += script1.MathResult;
             }
             else if (index == 12
                 && (this.ME2Indicators[12].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4001,13 +4050,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[12].IndMathExpression, this.ME2Indicators[12].IndMathType, this.ME2Indicators[12].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[12].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[12].IndTLAmount = script1.QTL;
-                this.ME2Indicators[12].IndTLUnit = sLowerCI;
-                this.ME2Indicators[12].IndTUAmount = script1.QTU;
-                this.ME2Indicators[12].IndTUUnit = sUpperCI;
-                this.ME2Indicators[12].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[12].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[12].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[12].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[12].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[12].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[12].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[12].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[12].IndMathResult += script1.MathResult;
             }
             else if (index == 13
                 && (this.ME2Indicators[13].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4018,13 +4068,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[13].IndMathExpression, this.ME2Indicators[13].IndMathType, this.ME2Indicators[13].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[13].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[13].IndTLAmount = script1.QTL;
-                this.ME2Indicators[13].IndTLUnit = sLowerCI;
-                this.ME2Indicators[13].IndTUAmount = script1.QTU;
-                this.ME2Indicators[13].IndTUUnit = sUpperCI;
-                this.ME2Indicators[13].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[13].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[13].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[13].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[13].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[13].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[13].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[13].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[13].IndMathResult += script1.MathResult;
             }
             else if (index == 14
                 && (this.ME2Indicators[14].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4035,13 +4086,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[14].IndMathExpression, this.ME2Indicators[14].IndMathType, this.ME2Indicators[14].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[14].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[14].IndTLAmount = script1.QTL;
-                this.ME2Indicators[14].IndTLUnit = sLowerCI;
-                this.ME2Indicators[14].IndTUAmount = script1.QTU;
-                this.ME2Indicators[14].IndTUUnit = sUpperCI;
-                this.ME2Indicators[14].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[14].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[14].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[14].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[14].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[14].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[14].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[14].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[14].IndMathResult += script1.MathResult;
             }
             else if (index == 15
                 && (this.ME2Indicators[15].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4052,13 +4104,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[15].IndMathExpression, this.ME2Indicators[15].IndMathType, this.ME2Indicators[15].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[15].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[15].IndTLAmount = script1.QTL;
-                this.ME2Indicators[15].IndTLUnit = sLowerCI;
-                this.ME2Indicators[15].IndTUAmount = script1.QTU;
-                this.ME2Indicators[15].IndTUUnit = sUpperCI;
-                this.ME2Indicators[15].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[15].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[15].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[15].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[15].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[15].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[15].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[15].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[15].IndMathResult += script1.MathResult;
             }
             else if (index == 16
                 && (this.ME2Indicators[16].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4069,13 +4122,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[16].IndMathExpression, this.ME2Indicators[16].IndMathType, this.ME2Indicators[16].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[16].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[16].IndTLAmount = script1.QTL;
-                this.ME2Indicators[16].IndTLUnit = sLowerCI;
-                this.ME2Indicators[16].IndTUAmount = script1.QTU;
-                this.ME2Indicators[16].IndTUUnit = sUpperCI;
-                this.ME2Indicators[16].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[16].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[16].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[16].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[16].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[16].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[16].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[16].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[16].IndMathResult += script1.MathResult;
             }
             else if (index == 17
                 && (this.ME2Indicators[17].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4086,13 +4140,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[17].IndMathExpression, this.ME2Indicators[17].IndMathType, this.ME2Indicators[17].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[17].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[17].IndTLAmount = script1.QTL;
-                this.ME2Indicators[17].IndTLUnit = sLowerCI;
-                this.ME2Indicators[17].IndTUAmount = script1.QTU;
-                this.ME2Indicators[17].IndTUUnit = sUpperCI;
-                this.ME2Indicators[17].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[17].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[17].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[17].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[17].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[17].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[17].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[17].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[17].IndMathResult += script1.MathResult;
             }
             else if (index == 18
                 && (this.ME2Indicators[18].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4103,13 +4158,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[18].IndMathExpression, this.ME2Indicators[18].IndMathType, this.ME2Indicators[18].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[18].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[18].IndTLAmount = script1.QTL;
-                this.ME2Indicators[18].IndTLUnit = sLowerCI;
-                this.ME2Indicators[18].IndTUAmount = script1.QTU;
-                this.ME2Indicators[18].IndTUUnit = sUpperCI;
-                this.ME2Indicators[18].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[18].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[18].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[18].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[18].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[18].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[18].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[18].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[18].IndMathResult += script1.MathResult;
             }
             else if (index == 19
                 && (this.ME2Indicators[19].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4120,13 +4176,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[19].IndMathExpression, this.ME2Indicators[19].IndMathType, this.ME2Indicators[19].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[19].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[19].IndTLAmount = script1.QTL;
-                this.ME2Indicators[19].IndTLUnit = sLowerCI;
-                this.ME2Indicators[19].IndTUAmount = script1.QTU;
-                this.ME2Indicators[19].IndTUUnit = sUpperCI;
-                this.ME2Indicators[19].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[19].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[19].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[19].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[19].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[19].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[19].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[19].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[19].IndMathResult += script1.MathResult;
             }
             else if (index == 20
                 && (this.ME2Indicators[20].IndMathType == MATH_TYPES.algorithm2.ToString()
@@ -4137,13 +4194,14 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.Script1 script1
                     = InitScript1Algo(index, colNames, this.ME2Indicators[20].IndMathExpression, this.ME2Indicators[20].IndMathType, this.ME2Indicators[20].IndMathSubType);
                 bool bHasCalcs = await script1.RunAlgorithmAsync(dataURL, scriptURL, ctk);
-                this.ME2Indicators[20].IndTMAmount = script1.QTPredicted;
-                this.ME2Indicators[20].IndTLAmount = script1.QTL;
-                this.ME2Indicators[20].IndTLUnit = sLowerCI;
-                this.ME2Indicators[20].IndTUAmount = script1.QTU;
-                this.ME2Indicators[20].IndTUUnit = sUpperCI;
-                this.ME2Indicators[20].IndMathResult = script1.ErrorMessage;
-                this.ME2Indicators[20].IndMathResult += script1.MathResult;
+                FillBaseIndicatorfor3Ranges(script1.meta, index);
+                //this.ME2Indicators[20].IndTMAmount = script1.QTPredicted;
+                //this.ME2Indicators[20].IndTLAmount = script1.QTL;
+                //this.ME2Indicators[20].IndTLUnit = sLowerCI;
+                //this.ME2Indicators[20].IndTUAmount = script1.QTU;
+                //this.ME2Indicators[20].IndTUUnit = sUpperCI;
+                //this.ME2Indicators[20].IndMathResult = script1.ErrorMessage;
+                //this.ME2Indicators[20].IndMathResult += script1.MathResult;
             }
             else
             {
