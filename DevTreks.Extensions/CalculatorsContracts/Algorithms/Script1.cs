@@ -19,7 +19,7 @@ namespace DevTreks.Extensions.Algorithms
 
         public Script1(string[] mathTerms, string[] colNames, string[] depColNames,
             double[] qs, string algorithm, string subAlgorithm,
-            CalculatorParameters calcParams)
+            CalculatorParameters calcParams, IndicatorQT1 qt1)
             : base()
         {
             _colNames = colNames;
@@ -34,6 +34,8 @@ namespace DevTreks.Extensions.Algorithms
             _qs[0] = 1;
             qs.CopyTo(_qs, 1);
             _params = calcParams;
+            //public and by ref back to algos
+            meta = new IndicatorQT1(qt1);
         }
         private CalculatorParameters _params { get; set; }
         //all of the the dependent and independent var column names
@@ -50,15 +52,6 @@ namespace DevTreks.Extensions.Algorithms
 
         //output
         public IndicatorQT1 meta = new IndicatorQT1();
-        //public double QTSlope { get; set; }
-        ////qTM = predicted y
-        //public double QTPredicted { get; set; }
-        ////lower ci
-        //public double QTL { get; set; }
-        //public string QTLUnit { get; set; }
-        ////upper ci
-        //public double QTU { get; set; }
-        //public string QTUUnit { get; set; }
         
         public async Task<bool> RunAlgorithmAsync(string inputFilePath, string scriptFilePath, 
             System.Threading.CancellationToken ctk)
@@ -132,7 +125,6 @@ namespace DevTreks.Extensions.Algorithms
                 //2.0.2: algo 2 subalgo2 is r or algo 3 subalgo2 Python; subalgo 2 is virtual machine
                 if (_subalgorithm == Calculator1.MATH_SUBTYPES.subalgorithm2.ToString())
                 {
-                   
                     //run on remote servers that have the DevTreksStatsApi WebApi app deployed
                     string sStatType = Data.Helpers.StatScript.STAT_TYPE.r.ToString();
                     if (_algorithm == Calculator1.MATH_TYPES.algorithm3.ToString())
@@ -225,62 +217,16 @@ namespace DevTreks.Extensions.Algorithms
                     //default subalgo1 runs statpackages on the same server
                     lastLines = RunScript(sb, sScriptExecutable, scriptFilePath, inputFilePath);
                 }
-                bHasCalcs = await Shared.FillMathResult(meta, _params, sb, lastLines);
-                //if (this.MathResult.ToLower().StartsWith("http"))
-                //{
-                //    bool bHasSaved = await CalculatorHelpers.SaveTextInURI(
-                //        _params.ExtensionDocToCalcURI, sb.ToString(), this.MathResult);
-                //    if (!string.IsNullOrEmpty(_params.ExtensionDocToCalcURI.ErrorMessage))
-                //    {
-                //        this.MathResult += _params.ExtensionDocToCalcURI.ErrorMessage;
-                //        //done with errormsg
-                //        _params.ExtensionDocToCalcURI.ErrorMessage = string.Empty;
-                //    }
-                //}
-                //else
-                //{
-                //    this.MathResult = sb.ToString();
-                //}
-                //bHasCalcs = true;
-                ////last line of string should have the QTM vars
-                //if (!string.IsNullOrEmpty(sLastLine))
-                //{
-                //    string[] vars = sLastLine.Split(Constants.CSV_DELIMITERS);
-                //    bool bHasVars = false;
-                //    if (vars != null)
-                //    {
-                //        if (vars.Count() > 1)
-                //        {
-                //            bHasVars = true;
-                //        }
-                //        if (!bHasVars)
-                //        {
-                //            //try space delimited
-                //            vars = sLastLine.Split(' ');
-                //            bHasVars = true;
-                //        }
-                //        if (vars != null)
-                //        {
-                //            //row count may be in first pos
-                //            int iPos = vars.Count() - 3;
-                //            if (iPos >= 0)
-                //            if (vars[iPos] != null)
-                //                this.QTPredicted = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                //            iPos = vars.Count() - 2;
-                //            if (iPos >= 0)
-                //                if (vars[iPos] != null)
-                //                this.QTL = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                //            iPos = vars.Count() - 1;
-                //            if (iPos >= 0)
-                //                if (vars[iPos] != null)
-                //                this.QTU = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    this.MathResult = "The script did not run successfully. Please check the dataset and script. Verify their urls.";
-                //}
+                if (lastLines.Count > 0)
+                {
+                    Shared.META_TYPE mType = await Shared.GetMetaType(_params, scriptFilePath);
+                    bHasCalcs = await Shared.FillMathResult(meta, mType, 
+                        _params, sb, lastLines);
+                    if (!bHasCalcs)
+                    {
+                        meta.MathResult = "The script did not run successfully. Please check the dataset and script. Verify their urls.";
+                    }
+                }
             }
             catch (Exception ex)
             {

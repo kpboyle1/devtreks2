@@ -1886,9 +1886,9 @@ namespace DevTreks.Extensions
                     }
                 }
             }
-            else if (HasMathType(MATH_TYPES.algorithm2)
-                || HasMathType(MATH_TYPES.algorithm3)
-                || HasMathType(MATH_TYPES.algorithm4))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
             {
                 //214 pattern puts script file first and data file second
                 string sScriptURL = string.Empty;

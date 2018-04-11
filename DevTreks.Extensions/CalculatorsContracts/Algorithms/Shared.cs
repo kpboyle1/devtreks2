@@ -101,7 +101,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return bIsDouble;
         }
-        public static void AddStringArrayToDoubleArray(string[] strArray, 
+        public static void AddStringArrayToDoubleArray(string[] strArray,
             List<List<double>> trends)
         {
             //trends
@@ -173,20 +173,20 @@ namespace DevTreks.Extensions.Algorithms
             }
             return newArray;
         }
-        public static void CopyStringDataToStringData(List<List<string>> dataToCopy, List<List<string>> data, 
+        public static void CopyStringDataToStringData(List<List<string>> dataToCopy, List<List<string>> data,
             int numOfCols, int startColIndex)
         {
             int iRow = 0;
             int iCol = 0;
             int iColStop = numOfCols + startColIndex;
             double dbZero = 0;
-            foreach(var row in dataToCopy)
+            foreach (var row in dataToCopy)
             {
-                foreach(var col in dataToCopy)
+                foreach (var col in dataToCopy)
                 {
                     if (data.Count() > iRow)
                     {
-                        for(int i = startColIndex; i < iColStop; i++)
+                        for (int i = startColIndex; i < iColStop; i++)
                         {
                             if (row.Count > i && data[iRow].Count > i)
                             {
@@ -797,7 +797,7 @@ namespace DevTreks.Extensions.Algorithms
             sb.Append(spaces.Substring(0, iLengthMissing));
             return sb.ToString();
         }
-        
+
         public static double GetNormalizedValue(string subIndNormType, double startValue,
             MathNet.Numerics.Statistics.DescriptiveStatistics stats)
         {
@@ -1037,7 +1037,7 @@ namespace DevTreks.Extensions.Algorithms
             return dbValue;
         }
         public static List<List<double>> GetNormalizedandWeightedLists(
-            string subIndNormType, double startValue, bool scaleUp4Digits, 
+            string subIndNormType, double startValue, bool scaleUp4Digits,
             List<double> weights, List<List<double>> trends)
         {
             List<List<double>> normTrends = new List<List<double>>();
@@ -1070,10 +1070,10 @@ namespace DevTreks.Extensions.Algorithms
             }
             return normTrends2;
         }
-        public static double GetDiscountedTotal(string discountType, 
+        public static double GetDiscountedTotal(string discountType,
             double price, double quantity,
-            double life, double realRate, double nominalRate, 
-            double escalationRate, double times, double planningYear, 
+            double life, double realRate, double nominalRate,
+            double escalationRate, double times, double planningYear,
             double serviceYears, double yearFromBase)
         {
             double dbDiscTotal = price * quantity;
@@ -1086,7 +1086,7 @@ namespace DevTreks.Extensions.Algorithms
             dbDiscTotal = GeneralRules.GetGradientRealDiscountValue(dbDiscTotal,
                 realRate, serviceYears, yearFromBase,
                 planningYear, eGrowthType, escalationRate,
-                escalationRate, life,  times, dbSalvVal);
+                escalationRate, life, times, dbSalvVal);
             return dbDiscTotal;
         }
         public static double GetDiscountedAmount(double initialAmount, double life, double rate)
@@ -1101,7 +1101,7 @@ namespace DevTreks.Extensions.Algorithms
             dbUPV = seriesAmount * ((Math.Pow(1 + rate, life) - 1) / (rate * (Math.Pow((1 + rate), life))));
             return dbUPV;
         }
-        public static double GetAvgAmortizedAmount(double amount, 
+        public static double GetAvgAmortizedAmount(double amount,
             double life, double rate)
         {
             double dbAAC = amount;
@@ -1136,7 +1136,7 @@ namespace DevTreks.Extensions.Algorithms
         public static List<List<string>> CopyData(List<List<string>> fromData)
         {
             List<List<string>> todata = new List<List<string>>();
-            foreach(var row in fromData)
+            foreach (var row in fromData)
             {
                 todata.Add(row);
             }
@@ -1152,7 +1152,7 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     todata.Last().Add(CalculatorHelpers.ConvertStringToDouble(col));
                 }
-                
+
             }
             return todata;
         }
@@ -1168,7 +1168,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return dbPopCount;
         }
-        public static double GetPopulationEndCount(double popStartCount, 
+        public static double GetPopulationEndCount(double popStartCount,
             double popStartAllocation, double popEndAllocation)
         {
             double dbPopCount = 0;
@@ -1187,7 +1187,7 @@ namespace DevTreks.Extensions.Algorithms
             sdgPerPopulation = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100));
             return sdgPerPopulation;
         }
-        public static double GetSDGPerPopulationMember(double sdgQuantity, double sdgStartAllocation, 
+        public static double GetSDGPerPopulationMember(double sdgQuantity, double sdgStartAllocation,
             double sdgEndAllocation, double popStartCount, double popStartAllocation, double popEndAllocation)
         {
             double sdgPerPopulationMember = 0;
@@ -1200,8 +1200,32 @@ namespace DevTreks.Extensions.Algorithms
             sdgPerPopulationMember = (sdgQuantity * (sdgStartAllocation / 100) * (sdgEndAllocation / 100)) / perPopCount;
             return sdgPerPopulationMember;
         }
-        public static async Task<bool> FillMathResult(IndicatorQT1 meta, CalculatorParameters calcParams,
-           StringBuilder sb, List<string> last3Lines)
+        //does the script return more data to parse for meta?
+        public enum META_TYPE
+        {
+            none = 0,
+            row3_col4 = 1
+        }
+        public static async Task<META_TYPE> GetMetaType(CalculatorParameters calcParams, 
+            string scriptFilePath)
+        {
+            META_TYPE mType = META_TYPE.none;
+            if (!string.IsNullOrEmpty(scriptFilePath)
+                && calcParams.ExtensionDocToCalcURI != null)
+            {
+                string sScript = await CalculatorHelpers.ReadText(
+                    calcParams.ExtensionDocToCalcURI, scriptFilePath);
+                //scripts configured to return ci ranges
+                if (sScript.Contains("predict(") && sScript.Contains("lm("))
+                {
+                    mType = META_TYPE.row3_col4;
+                }
+            }
+            return mType;
+        }
+        public static async Task<bool> FillMathResult(IndicatorQT1 meta, 
+            META_TYPE metaType, CalculatorParameters calcParams, 
+            StringBuilder sb, List<string> lastLines)
         {
             bool bHasMathResults = false;
             if (meta.MathResult.ToLower().StartsWith("http"))
@@ -1219,75 +1243,82 @@ namespace DevTreks.Extensions.Algorithms
             {
                 meta.MathResult = sb.ToString();
             }
-            //last line of string should have the QTM vars
-            if (last3Lines.Count > 0)
+            if (metaType == META_TYPE.row3_col4)
             {
-                for (int x = 0; x < last3Lines.Count; x++)
+                //last line of string should have the QTM vars
+                if (lastLines.Count > 0)
                 {
-                    string[] vars = last3Lines[x].Split(Constants.CSV_DELIMITERS);
-                    bool bHasVars = false;
-                    if (vars != null)
+                    for (int x = 0; x < lastLines.Count; x++)
                     {
-                        if (vars.Count() > 1)
-                        {
-                            bHasVars = true;
-                        }
-                        if (!bHasVars)
-                        {
-                            //try space delimited
-                            vars = last3Lines[x].Split(' ');
-                            bHasVars = true;
-                        }
+                        string[] vars = lastLines[x].Split(Constants.CSV_DELIMITERS);
+                        bool bHasVars = false;
                         if (vars != null)
                         {
-                            int iPos = vars.Count() - 3;
-                            if (x == 1)
+                            if (vars.Count() > 1)
                             {
-                                //row count may be in first pos
-                                iPos = vars.Count() - 3;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.Q1 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                                iPos = vars.Count() - 2;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.Q2 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                                iPos = vars.Count() - 1;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.Q3 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                bHasVars = true;
                             }
-                            else if (x == 2)
+                            if (!bHasVars)
                             {
-                                //row count may be in first pos
-                                iPos = vars.Count() - 3;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.Q4 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                                iPos = vars.Count() - 2;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.Q5 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                                iPos = vars.Count() - 1;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.QT = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                //try space delimited
+                                vars = lastLines[x].Split(' ');
+                                bHasVars = true;
                             }
-                            else
+                            if (vars != null)
                             {
-                                //row count may be in first pos
-                                iPos = vars.Count() - 3;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.QTM = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                                iPos = vars.Count() - 2;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.QTL = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
-                                iPos = vars.Count() - 1;
-                                if (iPos >= 0)
-                                    if (vars[iPos] != null)
-                                        meta.QTU = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                if (vars.Count() != 4)
+                                {
+
+                                }
+                                int iPos = vars.Count() - 3;
+                                if (x == 1)
+                                {
+                                    //row count may be in first pos
+                                    iPos = vars.Count() - 3;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.Q1 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                    iPos = vars.Count() - 2;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.Q2 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                    iPos = vars.Count() - 1;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.Q3 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                }
+                                else if (x == 2)
+                                {
+                                    //row count may be in first pos
+                                    iPos = vars.Count() - 3;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.Q4 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                    iPos = vars.Count() - 2;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.Q5 = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                    iPos = vars.Count() - 1;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.QT = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                }
+                                else
+                                {
+                                    //row count may be in first pos
+                                    iPos = vars.Count() - 3;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.QTM = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                    iPos = vars.Count() - 2;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.QTL = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                    iPos = vars.Count() - 1;
+                                    if (iPos >= 0)
+                                        if (vars[iPos] != null)
+                                            meta.QTU = CalculatorHelpers.ConvertStringToDouble(vars[iPos]);
+                                }
                             }
                         }
                     }
