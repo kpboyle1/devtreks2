@@ -1843,6 +1843,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit1)
                     || this.SB15Unit1 == Constants.NONE)
                     this.SB15Unit1 = qt1.Q5Unit;
+                this.SB1MathResult1 = qt1.ErrorMessage;
+                this.SB1MathResult1 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label2
                 && HasMathExpression(this.SB1MathExpression2))
@@ -1902,6 +1904,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit2)
                     || this.SB15Unit2 == Constants.NONE)
                     this.SB15Unit2 = qt1.Q5Unit;
+                this.SB1MathResult2 = qt1.ErrorMessage;
+                this.SB1MathResult2 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label3
                 && HasMathExpression(this.SB1MathExpression3))
@@ -1961,6 +1965,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit3)
                     || this.SB15Unit3 == Constants.NONE)
                     this.SB15Unit3 = qt1.Q5Unit;
+                this.SB1MathResult3 = qt1.ErrorMessage;
+                this.SB1MathResult3 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label4
                 && HasMathExpression(this.SB1MathExpression4))
@@ -2020,6 +2026,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit4)
                     || this.SB15Unit4 == Constants.NONE)
                     this.SB15Unit4 = qt1.Q5Unit;
+                this.SB1MathResult4 = qt1.ErrorMessage;
+                this.SB1MathResult4 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label5
                 && HasMathExpression(this.SB1MathExpression5))
@@ -2079,6 +2087,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit5)
                     || this.SB15Unit5 == Constants.NONE)
                     this.SB15Unit5 = qt1.Q5Unit;
+                this.SB1MathResult5 = qt1.ErrorMessage;
+                this.SB1MathResult5 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label6
                 && HasMathExpression(this.SB1MathExpression6))
@@ -2138,6 +2148,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit6)
                     || this.SB15Unit6 == Constants.NONE)
                     this.SB15Unit6 = qt1.Q5Unit;
+                this.SB1MathResult6 = qt1.ErrorMessage;
+                this.SB1MathResult6 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label7
                 && HasMathExpression(this.SB1MathExpression7))
@@ -2197,6 +2209,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit7)
                     || this.SB15Unit7 == Constants.NONE)
                     this.SB15Unit7 = qt1.Q5Unit;
+                this.SB1MathResult7 = qt1.ErrorMessage;
+                this.SB1MathResult7 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label8
                 && HasMathExpression(this.SB1MathExpression8))
@@ -2256,6 +2270,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit8)
                     || this.SB15Unit8 == Constants.NONE)
                     this.SB15Unit8 = qt1.Q5Unit;
+                this.SB1MathResult8 = qt1.ErrorMessage;
+                this.SB1MathResult8 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label9
                 && HasMathExpression(this.SB1MathExpression9))
@@ -2315,6 +2331,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit9)
                     || this.SB15Unit9 == Constants.NONE)
                     this.SB15Unit9 = qt1.Q5Unit;
+                this.SB1MathResult9 = qt1.ErrorMessage;
+                this.SB1MathResult9 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label10
                 && HasMathExpression(this.SB1MathExpression10))
@@ -2374,6 +2392,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit10)
                     || this.SB15Unit10 == Constants.NONE)
                     this.SB15Unit10 = qt1.Q5Unit;
+                this.SB1MathResult10 = qt1.ErrorMessage;
+                this.SB1MathResult10 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label11
                 && HasMathExpression(this.SB1MathExpression11))
@@ -2433,6 +2453,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit11)
                     || this.SB15Unit11 == Constants.NONE)
                     this.SB15Unit11 = qt1.Q5Unit;
+                this.SB1MathResult11 = qt1.ErrorMessage;
+                this.SB1MathResult11 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label12
                 && HasMathExpression(this.SB1MathExpression12))
@@ -2492,6 +2514,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit12)
                     || this.SB15Unit12 == Constants.NONE)
                     this.SB15Unit12 = qt1.Q5Unit;
+                this.SB1MathResult12 = qt1.ErrorMessage;
+                this.SB1MathResult12 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label13
                 && HasMathExpression(this.SB1MathExpression13))
@@ -2551,6 +2575,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit13)
                     || this.SB15Unit13 == Constants.NONE)
                     this.SB15Unit13 = qt1.Q5Unit;
+                this.SB1MathResult13 = qt1.ErrorMessage;
+                this.SB1MathResult13 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label14
                 && HasMathExpression(this.SB1MathExpression14))
@@ -2610,6 +2636,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit14)
                     || this.SB15Unit14 == Constants.NONE)
                     this.SB15Unit14 = qt1.Q5Unit;
+                this.SB1MathResult14 = qt1.ErrorMessage;
+                this.SB1MathResult14 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label15
                 && HasMathExpression(this.SB1MathExpression15))
@@ -2669,6 +2697,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit15)
                     || this.SB15Unit15 == Constants.NONE)
                     this.SB15Unit15 = qt1.Q5Unit;
+                this.SB1MathResult15 = qt1.ErrorMessage;
+                this.SB1MathResult15 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label16
                 && HasMathExpression(this.SB1MathExpression16))
@@ -2728,6 +2758,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit16)
                     || this.SB15Unit16 == Constants.NONE)
                     this.SB15Unit16 = qt1.Q5Unit;
+                this.SB1MathResult16 = qt1.ErrorMessage;
+                this.SB1MathResult16 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label17
                 && HasMathExpression(this.SB1MathExpression17))
@@ -2787,6 +2819,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit17)
                     || this.SB15Unit17 == Constants.NONE)
                     this.SB15Unit17 = qt1.Q5Unit;
+                this.SB1MathResult17 = qt1.ErrorMessage;
+                this.SB1MathResult17 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label18
                 && HasMathExpression(this.SB1MathExpression18))
@@ -2846,6 +2880,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit18)
                     || this.SB15Unit18 == Constants.NONE)
                     this.SB15Unit18 = qt1.Q5Unit;
+                this.SB1MathResult18 = qt1.ErrorMessage;
+                this.SB1MathResult18 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label19
                 && HasMathExpression(this.SB1MathExpression19))
@@ -2905,6 +2941,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit19)
                     || this.SB15Unit19 == Constants.NONE)
                     this.SB15Unit19 = qt1.Q5Unit;
+                this.SB1MathResult19 = qt1.ErrorMessage;
+                this.SB1MathResult19 += string.Concat("---", qt1.MathResult);
             }
             else if (label == this.SB1Label20
                 && HasMathExpression(this.SB1MathExpression20))
@@ -2964,6 +3002,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (string.IsNullOrEmpty(this.SB15Unit20)
                     || this.SB15Unit20 == Constants.NONE)
                     this.SB15Unit20 = qt1.Q5Unit;
+                this.SB1MathResult20 = qt1.ErrorMessage;
+                this.SB1MathResult20 += string.Concat("---", qt1.MathResult);
             }
             else
             {
