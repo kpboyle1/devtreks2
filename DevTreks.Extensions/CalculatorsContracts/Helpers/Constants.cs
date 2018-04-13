@@ -78,6 +78,14 @@ namespace DevTreks.Extensions
                 return DevTreksHelpers.GeneralHelpers.CSV_DELIMITERS;
             }
         }
+        public const string TAB_DELIMITER = DevTreksHelpers.GeneralHelpers.TAB_DELIMITER;
+        public static char[] TAB_DELIMITERS
+        {
+            get
+            {
+                return DevTreksHelpers.GeneralHelpers.TAB_DELIMITERS;
+            }
+        }
         public const string SPACE_DELIMITER = DevTreksHelpers.GeneralHelpers.SPACE_DELIMITER;
         public static char[] SPACE_DELIMITERS
         {

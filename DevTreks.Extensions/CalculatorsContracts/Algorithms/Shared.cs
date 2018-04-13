@@ -1215,8 +1215,8 @@ namespace DevTreks.Extensions.Algorithms
             {
                 string sScript = await CalculatorHelpers.ReadText(
                     calcParams.ExtensionDocToCalcURI, scriptFilePath);
-                //scripts configured to return ci ranges
-                if (sScript.Contains("predict(") && sScript.Contains("lm("))
+                //scripts configured to return ci ranges use "predict" as the clue
+                if (sScript.Contains("predict"))
                 {
                     mType = META_TYPE.row3_col4;
                 }
@@ -1248,6 +1248,7 @@ namespace DevTreks.Extensions.Algorithms
                 //last line of string should have the QTM vars
                 if (lastLines.Count > 0)
                 {
+                    string sNewLine = string.Empty;
                     for (int x = 0; x < lastLines.Count; x++)
                     {
                         string[] vars = lastLines[x].Split(Constants.CSV_DELIMITERS);
@@ -1260,15 +1261,18 @@ namespace DevTreks.Extensions.Algorithms
                             }
                             if (!bHasVars)
                             {
-                                //try space delimited
-                                vars = lastLines[x].Split(' ');
-                                bHasVars = true;
+                                //manipulate to get it to work
+                                sNewLine = lastLines[x].Replace(Constants.SPACE_DELIMITER, Constants.CSV_DELIMITER);
+                                //r issue with dataframes
+                                sNewLine = sNewLine.Replace(string.Concat(Constants.CSV_DELIMITER,Constants.CSV_DELIMITER), 
+                                    Constants.CSV_DELIMITER);
+                                vars = sNewLine.Split(Constants.CSV_DELIMITERS);
                             }
                             if (vars != null)
                             {
                                 if (vars.Count() != 4)
                                 {
-
+                                    break;
                                 }
                                 int iPos = vars.Count() - 3;
                                 if (x == 1)
