@@ -9,13 +9,16 @@ using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearRegression;
 using MathNet.Numerics.Statistics;
+//accord
+using accord = Accord.Statistics.Models.Regression.Linear;
+using accordmath = Accord.Math.Optimization;
 
 namespace DevTreks.Extensions.Algorithms
 {
     /// <summary>
     ///Purpose:		Regression analysis algorithm
     ///Author:		www.devtreks.org
-    ///Date:		2016, May
+    ///Date:		2018, April
     ///References:	CTA algo1 subalgo6
     ///</summary>
     public class Regression1 : Calculator1
@@ -110,32 +113,56 @@ namespace DevTreks.Extensions.Algorithms
                 Vector<double> y = Shared.GetYData(dataobs);
                 Matrix<double> x = Shared.GetDoubleMatrix(dataobs, _colNames, _depColNames);
                 Matrix<double> ci = Shared.GetDoubleMatrix(dataci, _colNames, _depColNames);
-                
-                //model expected values - get the coefficents
+                Vector<double> p = Vector<double>.Build.Dense(1);
+                Vector<double> yhat = Vector<double>.Build.Dense(1);
+                double d = 0;
+                double SSE = 0;
+                double rSquared = 0;
+                double SSR = 0;
                 //use normal equations regression
-                Vector<double> p = MultipleRegression.NormalEquations(x, y);
-                //but note that this runs without errors in more cases but still does not give good results
-                //Vector<double> p = MultipleRegression.QR(x, y);
-                
+                p = MultipleRegression.NormalEquations(x, y);
+                //get the predicted yhats
+                yhat = GetYHatandSetQTPred(y.Count, x, p, ci.Row(_scoreRows - 1).ToArray());
+                //get the durbin-watson d statistic
+                d = GetDurbinWatson(y, yhat);
+                //sum of the square of the error (between the predicted, p, and observed, y);
+                SSE = Distance.SSD(yhat, y);
+                rSquared = GoodnessOfFit.RSquared(yhat, y);
+                //sum of the square of the regression (between the predicted, p, and observed mean, statsY.Mean);
+                for (int i = 0; i < yhat.Count(); i++)
+                {
+                    SSR += Math.Pow((yhat[i] - y.Mean()), 2);
+                }
+                //retain Accord code for additional algo development
+                //    var ols = new accord.OrdinaryLeastSquares()
+                //    {
+                //        UseIntercept = true
+                //    };
+                //    accord.MultipleLinearRegression regression = ols.Learn(x.ToRowArrays(), y.ToArray());
+                //    List<double> plist = new List<double>();
+                //    plist.Add(regression.Intercept);
+                //    plist.AddRange(regression.Weights);
+                //    p = Vector<double>.Build.Dense(plist.ToArray());
+                //    // We can compute the predicted points using
+                //    double[] predicted = regression.Transform(x.ToRowArrays());
+                //    yhat = Vector<double>.Build.Dense(predicted);
+                //    //squared error loss using 
+                //    SSE = new accordmath.Losses.SquareLoss(y.ToArray()).Loss(predicted);
+                //    //coefficient of determination r²
+                //    rSquared = new accordmath.Losses.RSquaredLoss(numberOfInputs: 2, expected: y.ToArray()).Loss(predicted);
+                //    //adjusted or weighted versions of r² using
+                //    var r2loss = new accordmath.Losses.RSquaredLoss(numberOfInputs: 2, expected: y.ToArray())
+                //    {
+                //        Adjust = true,
+                //        // Weights = weights; // (if you have a weighted problem)
+                //    };
+                //    double ar2 = r2loss.Loss(predicted);
+                //}
                 if (p.Count() != ci.Row(_scoreRows - 1).Count())
                 {
                     //185 same as other analysis
                     ErrorMessage = "The scoring and training datasets have different numbers of columns.";
                     return bHasCompleted;
-                }
-                //get the predicted yhats
-                Vector<double> yhat = GetYHatandSetQTPred(y.Count, x, p, ci.Row(_scoreRows - 1).ToArray());
-                //get the durbin-watson d statistic
-                double d = GetDurbinWatson(y, yhat);
-                double SSE = 0;
-                //sum of the square of the error (between the predicted, p, and observed, y);
-                SSE = Distance.SSD(yhat, y);
-                double rSquared = GoodnessOfFit.RSquared(yhat, y);
-                //sum of the square of the regression (between the predicted, p, and observed mean, statsY.Mean);
-                double SSR = 0;
-                for (int i = 0; i < yhat.Count(); i++)
-                {
-                    SSR += Math.Pow((yhat[i] - y.Mean()), 2);
                 }
                 //set joint vars properties
                 //degrees freedom
@@ -614,87 +641,5 @@ namespace DevTreks.Extensions.Algorithms
                 QTU20 = QTPredicted20 + aFactor;
             }
         }
-        //185 deprecated in favor of using last 3 lines of dataset (same as other algos)
-        //private void SetQTIntervals(int q6Index, int dfE, double s, 
-        //    Matrix<double> xminus1, double[] qs)
-        //{
-        //    //the ci is proofed using matrix math on page 722 of mendenhall
-        //    //and the example 1 results are proofed using page 169 of same reference
-
-        //    //ci for q6
-        //    Vector<double> aT = Vector<double>.Build.Dense(_qs);
-        //    //at[0] is 0 but needs to be 1 (b0 * 1 = b))
-        //    //returns one row of matrix
-        //    Vector<double> aTxxminus1 = xminus1.Multiply(aT.ToRowMatrix().Row(0));
-        //    //returns one value in vector
-        //    double aP = 0;
-        //    for (var i = 0; i < aTxxminus1.Count(); i++)
-        //    {
-        //        //can't multiply a row vector by a column vector
-        //        aP += aTxxminus1[i] * aT[i];
-
-        //    }
-        //    double t025 = Shared.GetTStat95(dfE);
-        //    //ci factor
-        //    double aFactor = t025 * s * Math.Sqrt(aP);
-        //    if (q6Index == 0)
-        //    {
-        //        QTL = QTPredicted - aFactor;
-        //        QTU = QTPredicted + aFactor;
-        //        //pi factor
-        //        QTPI = t025 * s * Math.Sqrt(1 + aP);
-        //    }
-        //    else if (q6Index == 1)
-        //    {
-        //        QTPredicted10 = QTPredicted + (QTPredicted * 0.1);
-        //        QTL10 = QTPredicted10 - aFactor;
-        //        QTU10 = QTPredicted10 + aFactor;
-        //        //pi factor
-        //        QTPI10 = t025 * s * Math.Sqrt(1 + aP);
-        //    }
-        //    else if (q6Index == 2)
-        //    {
-        //        QTPredicted20 = QTPredicted + (QTPredicted * 0.2);
-        //        QTL20 = QTPredicted20 - aFactor;
-        //        QTU20 = QTPredicted20 + aFactor;
-        //        //pi factor
-        //        QTPI20 = t025 * s * Math.Sqrt(1 + aP);
-        //    }
-        //    if (q6Index == 0)
-        //    {
-        //        double[] q10s = new double[qs.Count()];
-        //        for (int i = 0; i < qs.Count(); i++)
-        //        {
-        //            if (i == 0)
-        //            {
-        //                //keep a constant intercept
-        //                q10s[0] = 1;
-        //            }
-        //            else
-        //            {
-        //                q10s[i] = qs[i] + (qs[i] * 0.10);
-        //            }
-        //        }
-                    
-        //        //add 10% to qs and generate new intervals
-        //        SetQTIntervals(1, dfE, s, xminus1, q10s);
-        //        //add 20% to qs and generate new intervals
-        //        double[] q20s = new double[qs.Count()];
-        //        for (int i = 0; i < qs.Count(); i++)
-        //        {
-        //            if (i == 0)
-        //            {
-        //                //keep a constant intercept
-        //                q20s[0] = 1;
-        //            }
-        //            else
-        //            {
-        //                q20s[i] = qs[i] + (qs[i] * 0.20);
-        //            }
-        //        }
-        //        SetQTIntervals(2, dfE, s, xminus1, q20s);
-        //    }
-
-        //}
     }
 }

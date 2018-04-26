@@ -6,6 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Accord" Version="3.8.2-alpha" />
+    <PackageReference Include="Accord.Fuzzy" Version="3.8.2-alpha" />
+    <PackageReference Include="Accord.Genetic" Version="3.8.2-alpha" />
+    <PackageReference Include="Accord.MachineLearning" Version="3.8.2-alpha" />
+    <PackageReference Include="Accord.Math" Version="3.8.2-alpha" />
+    <PackageReference Include="Accord.Math.Noncommercial" Version="3.8.2-alpha" />
+    <PackageReference Include="Accord.Neuro" Version="3.8.2-alpha" />
+    <PackageReference Include="MathNet.Numerics" Version="4.4.0" />
     <PackageReference Include="System.Composition" Version="1.1.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
@@ -14,7 +22,6 @@
     <ProjectReference Include="..\..\DevTreks.Data\DevTreks.Data.csproj" />
     <ProjectReference Include="..\..\DevTreks.Exceptions\DevTreks.Exceptions.csproj" />
     <ProjectReference Include="..\Jace\Jace.csproj" />
-    <ProjectReference Include="..\Numerics\Numerics.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

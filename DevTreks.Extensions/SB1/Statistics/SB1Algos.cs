@@ -116,6 +116,37 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return algoindicator;
         }
+        public async Task<string> SetAlgoIndicatorStatsML(string label, string mathType, string mathSubType,
+            List<List<string>> data1, List<List<string>> colData, List<string> lines2, string dataURL2)
+        {
+            //if the algo is used with the label, return it as affirmation
+            string algoindicator = string.Empty;
+            //assume additional algos will use this data format
+            string sPlatForm = CalculatorHelpers.GetPlatform(this.CalcParameters.ExtensionDocToCalcURI, dataURL2);
+            //if (sPlatForm == CalculatorHelpers.PLATFORM_TYPES.azure.ToString())
+            //{
+            //    if (this.HasMathType(label, MATH_TYPES.algorithm4))
+            //    {
+            //        //if its a good calc returns the string
+            //        algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
+            //    }
+            //}
+            //else
+            //{
+            //    if (this.HasMathType(label, MATH_TYPES.algorithm2)
+            //        || this.HasMathType(label, MATH_TYPES.algorithm3))
+            //    {
+            //        //if its a good calc returns the string
+            //        algoindicator = await SetScriptWebStats(label, colNames, dataURL, scriptURL);
+            //    }
+            //    else if (this.HasMathType(label, MATH_TYPES.algorithm4))
+            //    {
+            //        //always runs the cloud web servive (but response can vary)
+            //        algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
+            //    }
+            //}
+            return algoindicator;
+        }
         public async Task<string> SetAlgoIndicatorStats3(string label, List<List<string>> data,
             List<List<string>> colData, List<string> lines2, string[] colNames)
         {
