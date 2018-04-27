@@ -639,7 +639,7 @@ namespace DevTreks.Data.Helpers
         }
         
         public async Task<List<string>> ReadLinesAsync(ContentURI uri, 
-            string fullURIPath)
+            string fullURIPath, int rowIndex = -1)
         {
             List<string> lines = new List<string>();
             if (await URIAbsoluteExists(uri, fullURIPath) == false)
@@ -650,7 +650,7 @@ namespace DevTreks.Data.Helpers
             if (Path.IsPathRooted(fullURIPath))
             {
                 FileIO fileIO = new FileIO();
-                lines = await fileIO.ReadLinesAsync(fullURIPath);
+                lines = await fileIO.ReadLinesAsync(fullURIPath, rowIndex);
             }
             else
             {
@@ -658,12 +658,14 @@ namespace DevTreks.Data.Helpers
                 if (ePlatform == PLATFORM_TYPES.webserver)
                 {
                     WebServerFileIO wsfileIO = new WebServerFileIO();
-                    lines = await wsfileIO.ReadLinesAsync(fullURIPath);
+                    //214 optional row index
+                    lines = await wsfileIO.ReadLinesAsync2(fullURIPath, rowIndex);
+                    //lines = await wsfileIO.ReadLinesAsync(fullURIPath);
                 }
                 else if (ePlatform == PLATFORM_TYPES.azure)
                 {
                     AzureIOAsync azureIO = new AzureIOAsync(uri);
-                    lines = await azureIO.ReadLinesAsync(fullURIPath);
+                    lines = await azureIO.ReadLinesAsync(fullURIPath, rowIndex);
                 }
             }
             return lines;

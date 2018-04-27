@@ -12,7 +12,7 @@ namespace DevTreks.Extensions.SB1Statistics
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
     ///Date:		2018, April
-    ///NOTES        1. 
+    ///NOTES        1. 214 supported machine learning
     /// </summary> 
     public class SB1Algos : SB1Base
     {
@@ -116,37 +116,7 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return algoindicator;
         }
-        public async Task<string> SetAlgoIndicatorStatsML(string label, string mathType, string mathSubType,
-            List<List<string>> data1, List<List<string>> colData, List<string> lines2, string dataURL2)
-        {
-            //if the algo is used with the label, return it as affirmation
-            string algoindicator = string.Empty;
-            //assume additional algos will use this data format
-            string sPlatForm = CalculatorHelpers.GetPlatform(this.CalcParameters.ExtensionDocToCalcURI, dataURL2);
-            //if (sPlatForm == CalculatorHelpers.PLATFORM_TYPES.azure.ToString())
-            //{
-            //    if (this.HasMathType(label, MATH_TYPES.algorithm4))
-            //    {
-            //        //if its a good calc returns the string
-            //        algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
-            //    }
-            //}
-            //else
-            //{
-            //    if (this.HasMathType(label, MATH_TYPES.algorithm2)
-            //        || this.HasMathType(label, MATH_TYPES.algorithm3))
-            //    {
-            //        //if its a good calc returns the string
-            //        algoindicator = await SetScriptWebStats(label, colNames, dataURL, scriptURL);
-            //    }
-            //    else if (this.HasMathType(label, MATH_TYPES.algorithm4))
-            //    {
-            //        //always runs the cloud web servive (but response can vary)
-            //        algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
-            //    }
-            //}
-            return algoindicator;
-        }
+        
         public async Task<string> SetAlgoIndicatorStats3(string label, List<List<string>> data,
             List<List<string>> colData, List<string> lines2, string[] colNames)
         {
@@ -222,10 +192,85 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return algoindicator;
         }
-        
-        
+        public async Task<string> SetAlgoIndicatorStatsML(string label, string mathType, 
+            string mathSubType, string[] colNames, List<List<string>> data1, 
+            List<List<string>> colData, List<List<string>> data2, string dataURL2)
+        {
+            //if the algo is used with the label, return it as affirmation
+            string algoindicator = string.Empty;
+            //assume additional algos will use this data format
+            string sPlatForm = CalculatorHelpers.GetPlatform(this.CalcParameters.ExtensionDocToCalcURI, dataURL2);
+            if (sPlatForm == CalculatorHelpers.PLATFORM_TYPES.azure.ToString())
+            {
+                if (this.HasMathType(label, MATH_TYPES.algorithm4))
+                {
+                    //if its a good calc returns the string
+                    //algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
+                }
+            }
+            else
+            {
+                if (this.HasMathType(label, MATH_TYPES.algorithm1))
+                {
+                    //if its a good calc returns the string
+                    algoindicator = await SetMLIndicatorStats(label, mathType, mathSubType,
+                        colNames, data1, colData, data2);
+                }
+                else if (this.HasMathType(label, MATH_TYPES.algorithm4))
+                {
+                    //always runs the cloud web servive (but response can vary)
+                    //algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
+                }
+            }
+            return algoindicator;
+        }
+        private async Task<string> SetMLIndicatorStats(string label, 
+            string mathType, string mathSubType, string[] colNames, 
+            List<List<string>> data1, List<List<string>> colData, List<List<string>> data2)
+        {
+            string algoIndicator = string.Empty;
+            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            IndicatorQT1 qt1 = FillIndicator(label);
+            //mathterms define which qamount to send to algorith for predicting a given set of qxs
+            List<string> mathTerms = new List<string>();
+            //dependent var colNames found in MathExpression
+            List<string> depColNames = new List<string>();
+            GetDataToAnalyzeColNames(label, qt1.QMathExpression, colNames,
+                ref depColNames, ref mathTerms);
+            bool bHasCalcs = false;
+            if (mathSubType == MATHML_SUBTYPES.subalgorithm_01.ToString())
+            {
+                //init algo
+                DevTreks.Extensions.Algorithms.ML01 ml 
+                    = new Algorithms.ML01(this.IndicatorIndex, label,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), mathSubType, 
+                        this.SB1CILevel, this.SB1Iterations, this.SB1Random,
+                        qt1, this.CalcParameters);
+                //run algo
+                bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
+                FillBaseIndicator(ml.IndicatorQT, label, sLowerCI, sUpperCI);
+            }
+            else if (mathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
+            {
+                algoIndicator = label;
+            }
+            else if (mathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
+            {
+                algoIndicator = label;
+            }
+            if (bHasCalcs)
+            {
+                algoIndicator = label;
+            }
+            if (bHasCalcs)
+            {
+                algoIndicator = label;
+            }
+            return algoIndicator;
+        }
         private async Task<string> SetPRAIndicatorStats(string label, string[] colNames,
-            List<double> qTs, double[] data = null)
+        List<double> qTs, double[] data = null)
         {
             string algoIndicator = string.Empty;
             string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
@@ -5230,8 +5275,23 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return algoIndicator;
         }
-       
-        
+
+        //private DevTreks.Extensions.Algorithms.MLBase InitMLAlgo(
+        //    string label, string subalgo,string[] colNames, IndicatorQT1 qt1, 
+        //    int confidInt, int iterations, int random)
+        //{
+        //    //mathterms define which qamount to send to algorith for predicting a given set of qxs
+        //    List<string> mathTerms = new List<string>();
+        //    //dependent var colNames found in MathExpression
+        //    List<string> depColNames = new List<string>();
+        //    GetDataToAnalyzeColNames(label, qt1.QMathExpression, colNames, 
+        //        ref depColNames, ref mathTerms);
+        //    DevTreks.Extensions.Algorithms.MLBase mlBase
+        //            = new Algorithms.MLBase(this.IndicatorIndex, label, mathTerms.ToArray(), 
+        //                colNames, depColNames.ToArray(), subalgo, confidInt, 
+        //                iterations, random, qt1, this.CalcParameters);
+        //    return mlBase;
+        //}
         private DevTreks.Extensions.Algorithms.PRA1 InitPRA1Algo(string label, string subalgo,
             string[] colNames, IndicatorQT1 qt1, int confidInt, int iterations, int random, List<double> qTs)
         {

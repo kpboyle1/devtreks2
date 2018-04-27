@@ -287,6 +287,7 @@ namespace DevTreks.Extensions
             algorithm9 = 9,
             algorithm10 = 10
         }
+        //214 machine learning algos
         public enum MATH_SUBTYPES
         {
             none = 0,
@@ -310,6 +311,30 @@ namespace DevTreks.Extensions
             subalgorithm18 = 18,
             subalgorithm19 = 19,
             subalgorithm20 = 20
+        }
+        public enum MATHML_SUBTYPES
+        {
+            none = 0,
+            subalgorithm_01 = 1,
+            subalgorithm_02 = 2,
+            subalgorithm_03 = 3,
+            subalgorithm_04 = 4,
+            subalgorithm_05 = 5,
+            subalgorithm_06 = 6,
+            subalgorithm_07 = 7,
+            subalgorithm_08 = 8,
+            subalgorithm_09 = 9,
+            subalgorithm_010 = 10,
+            subalgorithm_11 = 11,
+            subalgorithm_12 = 12,
+            subalgorithm_13 = 13,
+            subalgorithm_14 = 14,
+            subalgorithm_15 = 15,
+            subalgorithm_16 = 16,
+            subalgorithm_17 = 17,
+            subalgorithm_18 = 18,
+            subalgorithm_19 = 19,
+            subalgorithm_20 = 20
         }
         public enum MATH_RESULT_TYPES
         {

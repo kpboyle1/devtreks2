@@ -240,11 +240,11 @@ namespace DevTreks.Data.Helpers
             }
             return sFile;
         }
-        public async Task<List<string>> ReadLinesAsync(string filePath)
+        public async Task<List<string>> ReadLinesAsync(string filePath, int rowIndex = -1)
         {
             List<string> lines = new List<string>();
             string sFile = await ReadTextAsync2(filePath);
-            lines = GeneralHelpers.GetLinesFromUTF8Encoding(sFile);
+            lines = GeneralHelpers.GetLinesFromUTF8Encoding(sFile, rowIndex);
             return lines;
         }
         public void WriteTextFileToWriter(ContentURI uri,

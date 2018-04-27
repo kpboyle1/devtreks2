@@ -45,6 +45,7 @@ namespace DevTreks.Extensions
         //don't analyze more than this.CalcParameters.UrisToAnalyze inds
         public string[] _indicators = new string[] { };
         public const string _score = "score";
+        public int IndicatorIndex = -1;
         //minus 1 because ++ syntax inits with jdata[0]
         private int _dataIndex = -1;
         //number of x data columns
@@ -13718,6 +13719,7 @@ namespace DevTreks.Extensions
             bool bHasIndicator1 = false;
             string sAlgo = string.Empty;
             List<double> qTs = new List<double>();
+            IndicatorIndex = indicatorIndex;
             if (indicatorIndex == 1)
             {
                 if (!string.IsNullOrEmpty(this.SB1Label1)
@@ -14040,7 +14042,7 @@ namespace DevTreks.Extensions
             bool bHasCalculations = false;
             if (HasMathTypeML(label, mathType, mathSubType))
             {
-                //214 pattern uses 2 TEXT files for algos 1, 2, 3, and 4
+                //214 pattern uses 2 TEXT files for training and testing with algos 1, 2, 3, and 4
                 string sDataURL1 = string.Empty;
                 string sDataURL2 = string.Empty;
                 string[] dataURLs = indicatorURL.Split(Constants.STRING_DELIMITERS);
@@ -14055,7 +14057,7 @@ namespace DevTreks.Extensions
                         sDataURL2 = dataURLs[i];
                     }
                 }
-                //214 machine learning
+                //214 machine learning (214: R and Python use ProcessAlgosAsync2, until more sophisticated algs are developed) 
                 sAlgo = await ProcessAlgosAsyncML(indicatorIndex, label, mathType, mathSubType, sDataURL1, sDataURL2);
             }
             else if (HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
@@ -14147,27 +14149,27 @@ namespace DevTreks.Extensions
                     }
                 }
             }
-            //else if (HasMathType(label, MATH_TYPES.algorithm2)
-            //    || HasMathType(label, MATH_TYPES.algorithm3)
-            //    || HasMathType(label, MATH_TYPES.algorithm4))
-            //{
-            //    //214 pattern puts script file first and data file second with semicolon delimiter
-            //    string sScriptURL = string.Empty;
-            //    string sDataURL = string.Empty;
-            //    string[] dataURLs = indicatorURL.Split(Constants.STRING_DELIMITERS);
-            //    for (int i = 0; i < dataURLs.Count(); i++)
-            //    {
-            //        if (i == 0)
-            //        {
-            //            sScriptURL = dataURLs[i];
-            //        }
-            //        else if (i == 1)
-            //        {
-            //            sDataURL = dataURLs[i];
-            //        }
-            //    }
-            //    sAlgo = await ProcessAlgosAsync2(label, sScriptURL, sDataURL);
-            //}
+            else if (HasMathType(label, MATH_TYPES.algorithm2)
+                || HasMathType(label, MATH_TYPES.algorithm3)
+                || HasMathType(label, MATH_TYPES.algorithm4))
+            {
+                //214 pattern puts script file first and data file second with semicolon delimiter
+                string sScriptURL = string.Empty;
+                string sDataURL = string.Empty;
+                string[] dataURLs = indicatorURL.Split(Constants.STRING_DELIMITERS);
+                for (int i = 0; i < dataURLs.Count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        sScriptURL = dataURLs[i];
+                    }
+                    else if (i == 1)
+                    {
+                        sDataURL = dataURLs[i];
+                    }
+                }
+                sAlgo = await ProcessAlgosAsync2(label, sScriptURL, sDataURL);
+            }
             else if (HasMathType(MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
             {
                 //properties filled in manually
@@ -15450,28 +15452,33 @@ namespace DevTreks.Extensions
             List<string> lines = new List<string>();
             List<string> lines2 = new List<string>();
             List<List<string>> data = new List<List<string>>();
+            List<List<string>> data2 = new List<List<string>>();
             List<List<string>> colSet = new List<List<string>>();
             if (HasMathType(MATH_TYPES.algorithm1))
             {
-                //train, test pattern
-                lines = GetDataLines(dataURL1);
-                lines2 = GetDataLines(dataURL2);
+                //training dataset
+                lines = await GetDataLinesAsync(dataURL1);
+                //test dataset
+                lines2 = await GetDataLinesAsync(dataURL2);
             }
             else if (HasMathType(MATH_TYPES.algorithm2)
                 || HasMathType(MATH_TYPES.algorithm3)
                 || HasMathType(MATH_TYPES.algorithm4))
             {
-                //data, script pattern
-                lines = GetDataLines(dataURL2);
+                //wrong algorithm: they use ProcessAlgosAsync2 until more sophisticated algos built
+                this.CalculatorDescription += "Version 214 does not support subalgorithm_01 syntax for R or Python.";
             }
-            if (lines != null)
+            if (lines != null && lines2 != null)
             {
                 //get the 1st dataset
-                data = GetDataSetML(label, lines);
-                colSet = GetColumnSetML(lines);
+                data = await GetDataSetML(label, lines);
+                //get the row identifiers
+                colSet = await GetColumnSetML(lines);
                 //if null already has an error message
                 if (data != null)
                 {
+                    //get the 2nd dataset
+                    data2 = await GetDataSetML(label, lines2);
                     List<string> algoIndicators = new List<string>();
                     string algoIndicator = string.Empty;
                     string sLabel = string.Empty;
@@ -15481,7 +15488,7 @@ namespace DevTreks.Extensions
                         && _indicators.Contains(sLabel) == false)
                     {
                         algoIndicator = await SetAlgoStatsML(sLabel, mathType, mathSubType,
-                            data, colSet, lines2, dataURL2);
+                            data, colSet, data2, dataURL2);
                         if (!string.IsNullOrEmpty(algoIndicator))
                         {
                             algoIndicators.Add(algoIndicator);
@@ -15499,59 +15506,48 @@ namespace DevTreks.Extensions
         private async Task<string> ProcessAlgosAsync2(string label, string scriptURL, string dataURL)
         {
             string sIndicatorsCSV = string.Empty;
-            //this algo uses r project data files passed directly to algo
-            List<string> lines = new List<string>();
+            //this algo uses r and python project data files passed directly to algo
+            bool bHasColNames = false;
             if (HasMathType(MATH_TYPES.algorithm2)
                 || HasMathType(MATH_TYPES.algorithm3)
                 || HasMathType(MATH_TYPES.algorithm4))
             {
-                //some algorithms will have to stream the lines to cut down on memory
-                lines = GetDataLines(dataURL);
+                //ok for algos that don't need to calculate qT from q1 to q10 vars
+                bHasColNames = await SetColumnNames(dataURL);
             }
-            if (lines != null)
+            //if false already has an error message
+            if (bHasColNames == true)
             {
-                bool bHasColNames = false;
-                if (HasMathType(MATH_TYPES.algorithm2)
-                    || HasMathType(MATH_TYPES.algorithm3)
-                    || HasMathType(MATH_TYPES.algorithm4))
+                //each data key is a different indicator
+                List<string> algoIndicators = new List<string>();
+                if (_indicators.Contains(label) == false)
                 {
-                    //ok for algos that don't need to calculate qT from q1 to q10 vars
-                    bHasColNames = SetColumnNames(lines);
-                }
-                //if false already has an error message
-                if (bHasColNames == true)
-                {
-                    //each data key is a different indicator
-                    List<string> algoIndicators = new List<string>();
-                    if (_indicators.Contains(label) == false)
+                    //this supports multiple algos that use the same pattern
+                    if (HasMathType(MATH_TYPES.algorithm2)
+                        || HasMathType(MATH_TYPES.algorithm3)
+                        || HasMathType(MATH_TYPES.algorithm4))
                     {
-                        //this supports multiple algos that use the same pattern
-                        if (HasMathType(MATH_TYPES.algorithm2)
-                            || HasMathType(MATH_TYPES.algorithm3)
-                            || HasMathType(MATH_TYPES.algorithm4))
+                        label = await SetAlgoStats2(label, dataURL, scriptURL);
+                    }
+                    if (!string.IsNullOrEmpty(label))
+                    {
+                        algoIndicators.Add(label);
+                    }
+                    else
+                    {
+                        this.CalculatorDescription += "Indicator properties are missing or wrong. Do indicator labels correspond to dataset labels? Do indicators have correct algorithms? Please recheck all indicator properties.";
+                    }
+                    foreach (var indicator in algoIndicators)
+                    {
+                        if (!string.IsNullOrEmpty(indicator))
                         {
-                            label = await SetAlgoStats2(label, dataURL, scriptURL);
+                            sIndicatorsCSV += string.Concat(indicator, Constants.CSV_DELIMITER);
                         }
-                        if (!string.IsNullOrEmpty(label))
-                        {
-                            algoIndicators.Add(label);
-                        }
-                        else
-                        {
-                            this.CalculatorDescription += "Indicator properties are missing or wrong. Do indicator labels correspond to dataset labels? Do indicators have correct algorithms? Please recheck all indicator properties.";
-                        }
-                        foreach (var indicator in algoIndicators)
-                        {
-                            if (!string.IsNullOrEmpty(indicator))
-                            {
-                                sIndicatorsCSV += string.Concat(indicator, Constants.CSV_DELIMITER);
-                            }
-                        }
-                        //remove the last delimiter
-                        if (sIndicatorsCSV.EndsWith(Constants.CSV_DELIMITER))
-                        {
-                            sIndicatorsCSV = sIndicatorsCSV.Remove(sIndicatorsCSV.Length - 1, 1);
-                        }
+                    }
+                    //remove the last delimiter
+                    if (sIndicatorsCSV.EndsWith(Constants.CSV_DELIMITER))
+                    {
+                        sIndicatorsCSV = sIndicatorsCSV.Remove(sIndicatorsCSV.Length - 1, 1);
                     }
                 }
             }
@@ -16312,10 +16308,10 @@ namespace DevTreks.Extensions
             }
             return scLabel;
         }
-        public async Task<List<string>> GetDataLinesAsync(string dataURL)
+        public async Task<List<string>> GetDataLinesAsync(string dataURL, int rowIndex = -1)
         {
             List<string> lines = new List<string>();
-            lines = await CalculatorHelpers.ReadLines(this.CalcParameters.ExtensionDocToCalcURI, dataURL);
+            lines = await CalculatorHelpers.ReadLines(this.CalcParameters.ExtensionDocToCalcURI, dataURL, rowIndex);
             if (lines == null)
             {
                 this.CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BAD"));
@@ -16333,10 +16329,33 @@ namespace DevTreks.Extensions
             }
             return lines;
         }
-        public List<string> GetDataLines(string dataURL)
+        //214 rowIndex added for columnnames only
+        public async Task<List<string>> GetDataRowAsync(string dataURL, int rowIndex)
         {
             List<string> lines = new List<string>();
-            lines = CalculatorHelpers.ReadLines(this.CalcParameters.ExtensionDocToCalcURI, dataURL).Result;
+            lines = await CalculatorHelpers.ReadLines(this.CalcParameters.ExtensionDocToCalcURI, dataURL, rowIndex);
+            if (lines == null)
+            {
+                this.CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BAD"));
+                return null;
+            }
+            if (lines.Count == 0)
+            {
+                this.CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BAD"));
+                return null;
+            }
+            if (lines.Count == 0)
+            {
+                //not an error no data set for the d = 0 to d < 15 iteration
+                return null;
+            }
+            return lines;
+        }
+        //214 rowIndex added for columnnames only
+        public List<string> GetDataLines(string dataURL, int rowIndex = -1)
+        {
+            List<string> lines = new List<string>();
+            lines = CalculatorHelpers.ReadLines(this.CalcParameters.ExtensionDocToCalcURI, dataURL, rowIndex).Result;
             if (lines == null)
             {
                 this.CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BAD"));
@@ -17012,7 +17031,7 @@ namespace DevTreks.Extensions
             return dataSets;
         }
         //214 convention stores data for machine learning data
-        public List<List<string>> GetDataSetML(string label, List<string> lines)
+        public async Task<List<List<string>>> GetDataSetML(string label, List<string> lines)
         {
             //matrix of string
             List<List<string>> dataSet = new List<List<string>>();
@@ -17043,41 +17062,47 @@ namespace DevTreks.Extensions
                         else
                         {
                             _rowNames = new string[lines.Count() - 1];
-                            //the indicator index
-                            //select all but the first row (the header row)
-                            List<string> cLines = lines
-                                .Skip(1)
-                                .Select(l => l.ToString()).ToList();
-                            if (cLines.Count > 0)
+                            ////the indicator index
+                            ////select all but the first row (the header row)
+                            //List<string> cLines = lines
+                            //    .Skip(1)
+                            //    .Select(l => l.ToString()).ToList();
+                            //if (cLines.Count > 0)
+                            //{
+                            //rowNames can be retrieved from second col in cLines
+                            //generate an enumerable collection of strings
+                            IEnumerable<IEnumerable<string>> qryQs =
+                                from line in lines
+                                let elements = line.Split(Constants.CSV_DELIMITERS)
+                                    //skip label, customcol1 and customcol2 columns
+                                    let amounts = elements.Skip(3)
+                                select (from a in amounts
+                                        select a);
+                            //execute the qry and get a list; qry is a List<IEnumerable<double>>
+                            var qs = await qryQs.ToAsyncEnumerable().ToList();
+                            if (qs.Count > 0)
                             {
-                                //rowNames can be retrieved from second col in cLines
-                                //generate an enumerable collection of strings
-                                IEnumerable<IEnumerable<string>> qryQs =
-                                    from line in cLines
-                                    let elements = line.Split(Constants.CSV_DELIMITERS)
-                                            //skip label, customcol1 and customcol2 columns
-                                            let amounts = elements.Skip(3)
-                                    select (from a in amounts
-                                            select a);
-                                //execute the qry and get a list; qry is a List<IEnumerable<double>>
-                                var qs = qryQs.ToList();
-                                if (qs.Count > 0)
+                                //List<List<double>> dataSet = new List<List<double>>();
+                                //set qx
+                                int j = 0;
+                                foreach (var qvector in qs)
                                 {
-                                    //List<List<double>> dataSet = new List<List<double>>();
-                                    //set qx
-                                    foreach (var qvector in qs)
+                                    //skip 1st row
+                                    if (j > 0)
                                     {
                                         //ok for algos that don't need to calculate qT from q1 to q10 vars
                                         dataSet.Add(qvector.ToList());
                                     }
-                                    //no need for any more iterations, just exist with all rows
-                                    return dataSet;
+                                    j++;
                                 }
+                                //no need for any more iterations, just exist with all rows
+                                return dataSet;
                             }
-                            else
-                            {
-                                CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BADDATA"));
-                            }
+                            //}
+                            //else
+                            //{
+                            //    CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BADDATA"));
+                            //}
                         }
                         i++;
                     }
@@ -17436,7 +17461,7 @@ namespace DevTreks.Extensions
             }
             return colSets;
         }
-        public List<List<string>> GetColumnSetML(List<string> lines)
+        public async Task<List<List<string>>> GetColumnSetML(List<string> lines)
         {
             //matrix of strings
             List<List<string>> colSets = new List<List<string>>();
@@ -17472,7 +17497,7 @@ namespace DevTreks.Extensions
                                     select (from a in amounts
                                             select a);
                                 //execute the qry and get a list; qry is a List<IEnumerable<double>>
-                                var qs = qryQs.ToList();
+                                var qs = await qryQs.ToAsyncEnumerable().ToList();
                                 if (qs.Count > 0)
                                 {
                                     foreach (var qvector in qs)
@@ -17497,44 +17522,80 @@ namespace DevTreks.Extensions
             }
             return colSets;
         }
-        public bool SetColumnNames(List<string> lines)
+        public async Task<bool> SetColumnNames(string dataURL)
         {
             bool bHasColNames = false;
-            int i = 0;
-            foreach (var row in lines)
+            //214 added optional rowIndex
+            int iRowIndex = 0;
+            List<string> lines = await GetDataLinesAsync(dataURL, iRowIndex);
+            if (lines != null)
             {
-                if (row.Length > 0 && i == 0)
+                if (lines.Count > 0)
                 {
-                    string[] cols = row.Split(Constants.CSV_DELIMITERS);
-                    if (cols.Length > 0)
+                    string sColumnNames = lines[0];
+                    if (!string.IsNullOrEmpty(sColumnNames))
                     {
-                        //first row is column names
-                        if (i == 0)
+                        string[] cols = sColumnNames.Split(Constants.CSV_DELIMITERS);
+                        if (cols.Length > 0)
                         {
                             //188
-                            this.DataColNames = row;
+                            this.DataColNames = sColumnNames;
                             //set the full colnames for the dataset
                             _colNames = new string[cols.Count()];
                             cols.CopyTo(_colNames, 0);
                             if (_colNames.Count() == 0)
                             {
                                 this.SB1ScoreMathResult += string.Concat(" ", Errors.MakeStandardErrorMsg("DATA_NOCOLUMNNAMES"));
+                                bHasColNames = false;
                             }
                             else
                             {
                                 bHasColNames = true;
-                                break;
                             }
                         }
                     }
                 }
-                else
-                {
-                    break;
-                }
             }
             return bHasColNames;
         }
+        //public bool SetColumnNames(List<string> lines)
+        //{
+        //    bool bHasColNames = false;
+        //    int i = 0;
+        //    foreach (var row in lines)
+        //    {
+        //        if (row.Length > 0 && i == 0)
+        //        {
+        //            string[] cols = row.Split(Constants.CSV_DELIMITERS);
+        //            if (cols.Length > 0)
+        //            {
+        //                //first row is column names
+        //                if (i == 0)
+        //                {
+        //                    //188
+        //                    this.DataColNames = row;
+        //                    //set the full colnames for the dataset
+        //                    _colNames = new string[cols.Count()];
+        //                    cols.CopyTo(_colNames, 0);
+        //                    if (_colNames.Count() == 0)
+        //                    {
+        //                        this.SB1ScoreMathResult += string.Concat(" ", Errors.MakeStandardErrorMsg("DATA_NOCOLUMNNAMES"));
+        //                    }
+        //                    else
+        //                    {
+        //                        bHasColNames = true;
+        //                        break;
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        else
+        //        {
+        //            break;
+        //        }
+        //    }
+        //    return bHasColNames;
+        //}
         private string GetIndicatorLabel(string[] cols)
         {
             string sIndLabel = string.Empty;
@@ -20593,15 +20654,15 @@ namespace DevTreks.Extensions
             return algindicator;
         }
         private async Task<string> SetAlgoStatsML(string label, string mathType, string mathSubType, 
-            List<List<string>> data, List<List<string>> colData, List<string> lines2, 
+            List<List<string>> data, List<List<string>> colData, List<List<string>> data2, 
             string dataURL2)
         {
             string sError = string.Empty;
             //init the algos using this
             SB1Statistics.SB1Algos algos = new SB1Statistics.SB1Algos(this);
             string algindicator
-                = await algos.SetAlgoIndicatorStatsML(label, mathType, mathSubType,  
-                    data, colData, lines2, dataURL2);
+                = await algos.SetAlgoIndicatorStatsML(label, mathType, mathSubType, _colNames,
+                    data, colData, data2, dataURL2);
             //copy all of the results back to this
             this.CopySB1BaseProperties(algos);
             return algindicator;

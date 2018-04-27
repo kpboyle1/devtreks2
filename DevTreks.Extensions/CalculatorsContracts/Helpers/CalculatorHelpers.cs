@@ -19,7 +19,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Helper utilities used by the DoStepsAddInView's extension calculators.
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2018, April
     ///References:	
     ///NOTES:
     ///             1. This class is an extension's only communication link 
@@ -3873,12 +3873,13 @@ namespace DevTreks.Extensions
                 extURI.URIDataManager.InitialDocToCalcURI, baseURL, apiKey,
                 inputBlob1Location, inputBlob2Location, outputBlob1Location, outputBlob2Location).ConfigureAwait(false);
         }
+        //214 optional rowIndex for column headers only
         public static async Task<List<string>> ReadLines(ExtensionContentURI extURI,
-            string fromFile)
+            string fromFile, int rowIndex = -1)
         {
             DevTreksHelpers.FileStorageIO fs = new DevTreksHelpers.FileStorageIO();
             List<string> lines = await fs.ReadLinesAsync(extURI.URIDataManager.InitialDocToCalcURI,
-                fromFile);
+                fromFile, rowIndex);
             return lines;
         }
         public static List<string> GetLinesandSkip(string delimitedlines, int skipLines)
@@ -3913,10 +3914,10 @@ namespace DevTreks.Extensions
                 statScript);
             return bHasResult;
         }
-        public static List<string> GetLinesFromUTF8Encoding(string content)
+        public static List<string> GetLinesFromUTF8Encoding(string content, int rowIndex = -1)
         {
             List<string> lines = DevTreksHelpers.GeneralHelpers.GetLinesFromUTF8Encoding(
-                content);
+                content, rowIndex);
             return lines;
         }
         public static void SetLocalsCalculation(

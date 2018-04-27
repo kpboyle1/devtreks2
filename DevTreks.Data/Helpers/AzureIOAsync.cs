@@ -22,7 +22,7 @@ namespace DevTreks.Data.Helpers
     /// <summary>
     ///Purpose:		General utilities for Azure cloud storage
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2018, April
     ///NOTE:        uriPath below can be the absolute URI to the blob, 
     ///             or a relative URI beginning with the container name.
     ///             Don't use catch-trys -these should be debugged to the 
@@ -1025,13 +1025,14 @@ namespace DevTreks.Data.Helpers
             }
             return sContent;
         }
-        public async Task<List<string>> ReadLinesAsync(string blobURIPath)
+        //214 optional rowindex added (i.e. columnnames only)
+        public async Task<List<string>> ReadLinesAsync(string blobURIPath, int rowIndex = -1)
         {
             List<string> lines = new List<string>();
             if (!string.IsNullOrEmpty(blobURIPath))
             {
                 string sFile = await ReadTextAsync(blobURIPath);
-                lines = GeneralHelpers.GetLinesFromUTF8Encoding(sFile);
+                lines = GeneralHelpers.GetLinesFromUTF8Encoding(sFile, rowIndex);
             }
             return lines;
         }

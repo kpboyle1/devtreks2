@@ -1885,7 +1885,8 @@ namespace DevTreks.Data.Helpers
             }
             return sSubString;
         }
-        public static List<string> GetLinesFromUTF8Encoding(string utf8String)
+        //214 optional rowindex for columnnames only
+        public static List<string> GetLinesFromUTF8Encoding(string utf8String, int rowIndex = -1)
         {
             List<string> lines = new List<string>();
             //utf8 uses tabreturn and newline
@@ -1895,8 +1896,16 @@ namespace DevTreks.Data.Helpers
                 //get rid of tab return chars
                 string sNoTabs = utf8String.Replace(TAB_DELIMITER, string.Empty);
                 string[] flines = sNoTabs.Split(LINE_DELIMITERS);
-                //210: avoid empty last lines in file
-                lines = new List<string>(flines.Where(l => !string.IsNullOrEmpty(l)).ToArray());
+                if (rowIndex == -1)
+                {
+                    //210: avoid empty last lines in file
+                    lines = new List<string>(flines.Where(l => !string.IsNullOrEmpty(l)).ToArray());
+                }
+                else
+                {
+                    string sRow = flines[rowIndex];
+                    lines.Add(sRow);
+                }
             }
             return lines;
         }

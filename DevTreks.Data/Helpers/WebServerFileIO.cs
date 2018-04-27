@@ -13,7 +13,7 @@ namespace DevTreks.Data.Helpers
     /// <summary>
     ///Purpose:	    webserver (http://localhost) file managment utilities
     ///Author:		www.devtreks.org
-    ///Date:		2017, September
+    ///Date:		2018, April
     ///References:	
     ///Notes:
     /// </summary>
@@ -85,17 +85,19 @@ namespace DevTreks.Data.Helpers
             }
             return lines;
         }
-        public async Task<List<string>> ReadLinesAsync(string dataURL)
+        public async Task<List<string>> ReadLinesAsync(string dataURL, int rowIndex = -1)
         {
             List<string> lines = new List<string>();
             string sFile = await ReadTextAsync(dataURL);
-            lines = GeneralHelpers.GetLinesFromUTF8Encoding(sFile);
+            lines = GeneralHelpers.GetLinesFromUTF8Encoding(sFile, rowIndex);
             return lines;
         }
-        public async Task<List<string>> ReadLinesAsync2(string dataURL)
+        //if optional row index is included, return the row only in the list
+        public async Task<List<string>> ReadLinesAsync2(string dataURL, int rowIndex = -1)
         {
             //use HttpClient as an async alternative
             List<string> lines = new List<string>();
+            int i = 0;
             if (!string.IsNullOrEmpty(dataURL))
             {
                 try
@@ -114,8 +116,20 @@ namespace DevTreks.Data.Helpers
                                     sNoEndingBlankLines = await stream.ReadLineAsync();
                                     if (!string.IsNullOrEmpty(sNoEndingBlankLines))
                                     {
-                                        lines.Add(stream.ReadLine());
+                                        if (rowIndex == -1)
+                                        {
+                                            lines.Add(sNoEndingBlankLines);
+                                        }
+                                        else
+                                        {
+                                            if (rowIndex == i)
+                                            {
+                                                lines.Add(sNoEndingBlankLines);
+                                                break;
+                                            }
+                                        }
                                     }
+                                    i++;
                                 }
                             }
                         }
