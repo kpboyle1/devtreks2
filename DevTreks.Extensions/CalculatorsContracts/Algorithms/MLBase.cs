@@ -37,17 +37,17 @@ namespace DevTreks.Extensions.Algorithms
             Params = calcParams;
         }
         public CalculatorParameters Params { get; set; }
-        private string[] _colNames { get; set; }
+        public static string[] _colNames { get; set; }
         //all of the the dependent var column names including intercept
-        private string[] _depColNames { get; set; }
+        public static string[] _depColNames { get; set; }
         //corresponding Ix.Qx names (1 less count because no dependent var)
-        private string[] _mathTerms { get; set; }
+        public static string[] _mathTerms { get; set; }
         //which regression algorithm is being run?
-        private string _subalgorithm { get; set; }
-        private string _label { get; set; }
-        private int _ciLevel { get; set; }
-        private int _iterations { get; set; }
-        private int _random { get; set; }
+        public static string _subalgorithm { get; set; }
+        public static string _label { get; set; }
+        public static int _ciLevel { get; set; }
+        public static int _iterations { get; set; }
+        public static int _random { get; set; }
         //output
         public IndicatorQT1 IndicatorQT { get; set; }
 

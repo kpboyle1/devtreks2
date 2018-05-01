@@ -1156,6 +1156,23 @@ namespace DevTreks.Extensions.Algorithms
             }
             return todata;
         }
+        public static string[] GetAttributeGroups(int colIndex, List<List<string>> data)
+        {
+            List<string> groups = new List<string>();
+            string sAttribute = string.Empty;
+            foreach (List<string> row in data)
+            {
+                if (colIndex < row.Count)
+                {
+                    sAttribute = row[colIndex];
+                    if (!groups.Contains(sAttribute))
+                    {
+                        groups.Add(sAttribute);
+                    }
+                }
+            }
+            return groups.ToArray();
+        }
         public static double GetPopulationStartCount(double popStartCount,
             double popStartAllocation)
         {
