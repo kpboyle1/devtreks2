@@ -11,7 +11,7 @@ namespace DevTreks.Extensions.SB1Statistics
     ///<summary>
     ///Purpose:		Run algorithms
     ///Author:		www.devtreks.org
-    ///Date:		2018, April
+    ///Date:		2018, May
     ///NOTES        1. 214 supported machine learning
     /// </summary> 
     public class SB1Algos : SB1Base
@@ -192,8 +192,8 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return algoindicator;
         }
-        public async Task<string> SetAlgoIndicatorStatsML(string label, string mathType, 
-            string mathSubType, string[] colNames, List<List<string>> data1, 
+        public async Task<string> SetAlgoIndicatorStatsML(IndicatorQT1 qt1, 
+            string[] colNames, List<List<string>> data1, 
             List<List<string>> colData, List<List<string>> data2, string dataURL2)
         {
             //if the algo is used with the label, return it as affirmation
@@ -202,7 +202,7 @@ namespace DevTreks.Extensions.SB1Statistics
             string sPlatForm = CalculatorHelpers.GetPlatform(this.CalcParameters.ExtensionDocToCalcURI, dataURL2);
             if (sPlatForm == CalculatorHelpers.PLATFORM_TYPES.azure.ToString())
             {
-                if (this.HasMathType(label, MATH_TYPES.algorithm4))
+                if (this.HasMathType(qt1.Label, MATH_TYPES.algorithm4))
                 {
                     //if its a good calc returns the string
                     //algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
@@ -210,13 +210,13 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             else
             {
-                if (this.HasMathType(label, MATH_TYPES.algorithm1))
+                if (this.HasMathType(qt1.Label, MATH_TYPES.algorithm1))
                 {
                     //if its a good calc returns the string
-                    algoindicator = await SetMLIndicatorStats(label, mathType, mathSubType,
+                    algoindicator = await SetMLIndicatorStats(qt1,
                         colNames, data1, colData, data2);
                 }
-                else if (this.HasMathType(label, MATH_TYPES.algorithm4))
+                else if (this.HasMathType(qt1.Label, MATH_TYPES.algorithm4))
                 {
                     //always runs the cloud web servive (but response can vary)
                     //algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
@@ -224,48 +224,43 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             return algoindicator;
         }
-        private async Task<string> SetMLIndicatorStats(string label, 
-            string mathType, string mathSubType, string[] colNames, 
+        private async Task<string> SetMLIndicatorStats(IndicatorQT1 qt1, string[] colNames, 
             List<List<string>> data1, List<List<string>> colData, List<List<string>> data2)
         {
             string algoIndicator = string.Empty;
             string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
             string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            IndicatorQT1 qt1 = FillIndicator(label);
+            //IndicatorQT1 qt1 = FillIndicator(label, );
             //mathterms define which qamount to send to algorith for predicting a given set of qxs
             List<string> mathTerms = new List<string>();
             //dependent var colNames found in MathExpression
             List<string> depColNames = new List<string>();
-            GetDataToAnalyzeColNames(label, qt1.QMathExpression, colNames,
+            GetDataToAnalyzeColNames(qt1.Label, qt1.QMathExpression, colNames,
                 ref depColNames, ref mathTerms);
             bool bHasCalcs = false;
-            if (mathSubType == MATHML_SUBTYPES.subalgorithm_01.ToString())
+            if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_01.ToString())
             {
                 //init algo
                 DevTreks.Extensions.Algorithms.ML01 ml 
-                    = new Algorithms.ML01(this.IndicatorIndex, label,
-                        mathTerms.ToArray(), colNames, depColNames.ToArray(), mathSubType, 
+                    = new Algorithms.ML01(this.IndicatorIndex, qt1.Label,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType, 
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random,
                         qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
-                FillBaseIndicator(ml.IndicatorQT, label, sLowerCI, sUpperCI);
+                FillBaseIndicator(ml.IndicatorQT, qt1.Label, sLowerCI, sUpperCI);
             }
-            else if (mathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
+            else if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
             {
-                algoIndicator = label;
+                algoIndicator = qt1.Label;
             }
-            else if (mathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
+            else if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
             {
-                algoIndicator = label;
-            }
-            if (bHasCalcs)
-            {
-                algoIndicator = label;
+                algoIndicator = qt1.Label;
             }
             if (bHasCalcs)
             {
-                algoIndicator = label;
+                algoIndicator = qt1.Label;
             }
             return algoIndicator;
         }
@@ -279,7 +274,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1ScoreMathExpression))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(label);
+                IndicatorQT1 qt1 = FillIndicator(label, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1ScoreMathSubType, colNames, qt1, this.SB1CILevel,
                         this.SB1Iterations, this.SB1Random, qTs);
@@ -298,7 +293,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression1))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label1);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label1, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType1, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -316,7 +311,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression2))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label2);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label2, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType2, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -334,7 +329,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression3))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label3);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label3, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType3, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -352,7 +347,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression4))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label4);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label4, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType4, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -370,7 +365,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression5))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label5);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label5, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType5, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -388,7 +383,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression6))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label6);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label6, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType6, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -406,7 +401,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression7))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label7);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label7, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType7, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -424,7 +419,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression8))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label8);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label8, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType8, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -442,7 +437,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression9))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label9);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label9, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType9, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -460,7 +455,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression10))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label10);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label10, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType10, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -478,7 +473,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression11))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label11);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label11, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType11, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -496,7 +491,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression12))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label12);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label12, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType12, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -514,7 +509,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression13))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label13);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label13, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType13, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -532,7 +527,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression14))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label14);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label14, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType14, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -550,7 +545,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression15))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label15);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label15, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType15, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -568,7 +563,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression16))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label16);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label16, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType16, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -586,7 +581,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression17))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label17);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label17, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType17, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -604,7 +599,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression18))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label18);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label18, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType18, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -622,7 +617,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression19))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label19);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label19, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType19, colNames, qt1, this.SB1CILevel,
                     this.SB1Iterations, this.SB1Random, qTs);
@@ -640,7 +635,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 && HasMathExpression(this.SB1MathExpression20))
             {
                 algoIndicator = label;
-                IndicatorQT1 qt1 = FillIndicator(this.SB1Label20);
+                IndicatorQT1 qt1 = FillIndicator(this.SB1Label20, this);
                 DevTreks.Extensions.Algorithms.PRA1 pra
                     = InitPRA1Algo(label, this.SB1MathSubType20, colNames, qt1, this.SB1CILevel,
                    this.SB1Iterations, this.SB1Random, qTs);
@@ -695,127 +690,127 @@ namespace DevTreks.Extensions.SB1Statistics
                 if (i == 0
                     && HasMathExpression(this.SB1ScoreMathExpression))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(_score); 
+                    IndicatorQT1 qt1 = FillIndicator(_score, this); 
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 1
                     && HasMathExpression(this.SB1MathExpression1))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label1); 
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label1, this); 
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 2
                     && HasMathExpression(this.SB1MathExpression2))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label2);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label2, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 3
                     && HasMathExpression(this.SB1MathExpression3))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label3);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label3, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 4
                     && HasMathExpression(this.SB1MathExpression4))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label4);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label4, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 5
                     && HasMathExpression(this.SB1MathExpression5))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label5);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label5, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 6
                     && HasMathExpression(this.SB1MathExpression6))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label6);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label6, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 7
                     && HasMathExpression(this.SB1MathExpression7))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label7);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label7, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 8
                     && HasMathExpression(this.SB1MathExpression8))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label8);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label8, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 9
                     && HasMathExpression(this.SB1MathExpression9))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label9);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label9, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 10
                     && HasMathExpression(this.SB1MathExpression10))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label10);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label10, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 11
                     && HasMathExpression(this.SB1MathExpression11))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label11);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label11, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 12
                     && HasMathExpression(this.SB1MathExpression12))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label12);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label12, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 13
                     && HasMathExpression(this.SB1MathExpression13))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label13);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label13, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 14
                     && HasMathExpression(this.SB1MathExpression14))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label14);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label14, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 15
                     && HasMathExpression(this.SB1MathExpression15))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label15);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label15, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 16
                     && HasMathExpression(this.SB1MathExpression16))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label16);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label16, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 17
                     && HasMathExpression(this.SB1MathExpression17))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label17);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label17, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 18
                     && HasMathExpression(this.SB1MathExpression18))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label18);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label18, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 19
                     && HasMathExpression(this.SB1MathExpression19))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label19);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label19, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else if (i == 20
                     && HasMathExpression(this.SB1MathExpression20))
                 {
-                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label20);
+                    IndicatorQT1 qt1 = FillIndicator(this.SB1Label20, this);
                     qt.IndicatorQT1s.Add(qt1);
                 }
                 else
@@ -826,13 +821,14 @@ namespace DevTreks.Extensions.SB1Statistics
             return qt;
         }
         
-        private IndicatorQT1 FillIndicator(string label)
+        public IndicatorQT1 FillIndicator(string label, 
+            Calculator1 baseCalculator)
         {
             IndicatorQT1 qt = new IndicatorQT1();
             if (label == _score
                 && HasMathExpression(this.SB1ScoreMathExpression))
             {
-                qt = new IndicatorQT1(_score, this.SB1ScoreM, this.SB1ScoreLAmount, SB1ScoreUAmount,
+                qt = new IndicatorQT1(baseCalculator, _score, this.SB1ScoreM, this.SB1ScoreLAmount, SB1ScoreUAmount,
                     this.SB1Score, this.SB1ScoreD1Amount, this.SB1ScoreD2Amount, this.SB1ScoreMUnit, this.SB1ScoreLUnit, this.SB1ScoreUUnit,
                     this.SB1ScoreUnit, this.SB1ScoreD1Unit, this.SB1ScoreD2Unit, this.SB1ScoreMathType, this.SB1ScoreMathSubType,
                     this.SB1ScoreDistType, this.SB1ScoreMathExpression, this.SB1ScoreMathResult,
@@ -841,7 +837,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label1
                 && HasMathExpression(this.SB1MathExpression1))
             {
-                qt = new IndicatorQT1(this.SB1Label1, this.SB1TMAmount1, this.SB1TLAmount1, SB1TUAmount1,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label1, this.SB1TMAmount1, this.SB1TLAmount1, SB1TUAmount1,
                     this.SB1TAmount1, this.SB1TD1Amount1, this.SB1TD2Amount1, this.SB1TMUnit1, this.SB1TLUnit1, this.SB1TUUnit1,
                     this.SB1TUnit1, this.SB1TD1Unit1, this.SB1TD2Unit1, this.SB1MathType1, this.SB1MathSubType1,
                     this.SB1Type1, this.SB1MathExpression1, this.SB1MathResult1,
@@ -851,7 +847,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label2
                 && HasMathExpression(this.SB1MathExpression2))
             {
-                qt = new IndicatorQT1(this.SB1Label2, this.SB1TMAmount2, this.SB1TLAmount2, SB1TUAmount2,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label2, this.SB1TMAmount2, this.SB1TLAmount2, SB1TUAmount2,
                     this.SB1TAmount2, this.SB1TD1Amount2, this.SB1TD2Amount2, this.SB1TMUnit2, this.SB1TLUnit2, this.SB1TUUnit2,
                     this.SB1TUnit2, this.SB1TD1Unit2, this.SB1TD2Unit2, this.SB1MathType2, this.SB1MathSubType2,
                     this.SB1Type2, this.SB1MathExpression2, this.SB1MathResult2,
@@ -861,7 +857,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label3
                 && HasMathExpression(this.SB1MathExpression3))
             {
-                qt = new IndicatorQT1(this.SB1Label3, this.SB1TMAmount3, this.SB1TLAmount3, SB1TUAmount3,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label3, this.SB1TMAmount3, this.SB1TLAmount3, SB1TUAmount3,
                     this.SB1TAmount3, this.SB1TD1Amount3, this.SB1TD2Amount3, this.SB1TMUnit3, this.SB1TLUnit3, this.SB1TUUnit3,
                     this.SB1TUnit3, this.SB1TD1Unit3, this.SB1TD2Unit3, this.SB1MathType3, this.SB1MathSubType3,
                     this.SB1Type3, this.SB1MathExpression3, this.SB1MathResult3,
@@ -871,7 +867,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label4
                 && HasMathExpression(this.SB1MathExpression4))
             {
-                qt = new IndicatorQT1(this.SB1Label4, this.SB1TMAmount4, this.SB1TLAmount4, SB1TUAmount4,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label4, this.SB1TMAmount4, this.SB1TLAmount4, SB1TUAmount4,
                     this.SB1TAmount4, this.SB1TD1Amount4, this.SB1TD2Amount4, this.SB1TMUnit4, this.SB1TLUnit4, this.SB1TUUnit4,
                     this.SB1TUnit4, this.SB1TD1Unit4, this.SB1TD2Unit4, this.SB1MathType4, this.SB1MathSubType4,
                     this.SB1Type4, this.SB1MathExpression4, this.SB1MathResult4,
@@ -881,7 +877,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label5
                 && HasMathExpression(this.SB1MathExpression5))
             {
-                qt = new IndicatorQT1(this.SB1Label5, this.SB1TMAmount5, this.SB1TLAmount5, SB1TUAmount5,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label5, this.SB1TMAmount5, this.SB1TLAmount5, SB1TUAmount5,
                     this.SB1TAmount5, this.SB1TD1Amount5, this.SB1TD2Amount5, this.SB1TMUnit5, this.SB1TLUnit5, this.SB1TUUnit5,
                     this.SB1TUnit5, this.SB1TD1Unit5, this.SB1TD2Unit5, this.SB1MathType5, this.SB1MathSubType5,
                     this.SB1Type5, this.SB1MathExpression5, this.SB1MathResult5,
@@ -891,7 +887,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label6
                 && HasMathExpression(this.SB1MathExpression6))
             {
-                qt = new IndicatorQT1(this.SB1Label6, this.SB1TMAmount6, this.SB1TLAmount6, SB1TUAmount6,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label6, this.SB1TMAmount6, this.SB1TLAmount6, SB1TUAmount6,
                     this.SB1TAmount6, this.SB1TD1Amount6, this.SB1TD2Amount6, this.SB1TMUnit6, this.SB1TLUnit6, this.SB1TUUnit6,
                     this.SB1TUnit6, this.SB1TD1Unit6, this.SB1TD2Unit6, this.SB1MathType6, this.SB1MathSubType6,
                     this.SB1Type6, this.SB1MathExpression6, this.SB1MathResult6,
@@ -901,7 +897,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label7
                 && HasMathExpression(this.SB1MathExpression7))
             {
-                qt = new IndicatorQT1(this.SB1Label7, this.SB1TMAmount7, this.SB1TLAmount7, SB1TUAmount7,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label7, this.SB1TMAmount7, this.SB1TLAmount7, SB1TUAmount7,
                     this.SB1TAmount7, this.SB1TD1Amount7, this.SB1TD2Amount7, this.SB1TMUnit7, this.SB1TLUnit7, this.SB1TUUnit7,
                     this.SB1TUnit7, this.SB1TD1Unit7, this.SB1TD2Unit7, this.SB1MathType7, this.SB1MathSubType7,
                     this.SB1Type7, this.SB1MathExpression7, this.SB1MathResult7,
@@ -911,7 +907,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label8
                 && HasMathExpression(this.SB1MathExpression8))
             {
-                qt = new IndicatorQT1(this.SB1Label8, this.SB1TMAmount8, this.SB1TLAmount8, SB1TUAmount8,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label8, this.SB1TMAmount8, this.SB1TLAmount8, SB1TUAmount8,
                     this.SB1TAmount8, this.SB1TD1Amount8, this.SB1TD2Amount8, this.SB1TMUnit8, this.SB1TLUnit8, this.SB1TUUnit8,
                     this.SB1TUnit8, this.SB1TD1Unit8, this.SB1TD2Unit8, this.SB1MathType8, this.SB1MathSubType8,
                     this.SB1Type8, this.SB1MathExpression8, this.SB1MathResult8,
@@ -921,7 +917,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label9
                 && HasMathExpression(this.SB1MathExpression9))
             {
-                qt = new IndicatorQT1(this.SB1Label9, this.SB1TMAmount9, this.SB1TLAmount9, SB1TUAmount9,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label9, this.SB1TMAmount9, this.SB1TLAmount9, SB1TUAmount9,
                     this.SB1TAmount9, this.SB1TD1Amount9, this.SB1TD2Amount9, this.SB1TMUnit9, this.SB1TLUnit9, this.SB1TUUnit9,
                     this.SB1TUnit9, this.SB1TD1Unit9, this.SB1TD2Unit9, this.SB1MathType9, this.SB1MathSubType9,
                     this.SB1Type9, this.SB1MathExpression9, this.SB1MathResult9,
@@ -931,7 +927,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label10
                 && HasMathExpression(this.SB1MathExpression10))
             {
-                qt = new IndicatorQT1(this.SB1Label10, this.SB1TMAmount10, this.SB1TLAmount10, SB1TUAmount10,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label10, this.SB1TMAmount10, this.SB1TLAmount10, SB1TUAmount10,
                     this.SB1TAmount10, this.SB1TD1Amount10, this.SB1TD2Amount10, this.SB1TMUnit10, this.SB1TLUnit10, this.SB1TUUnit10,
                     this.SB1TUnit10, this.SB1TD1Unit10, this.SB1TD2Unit10, this.SB1MathType10, this.SB1MathSubType10,
                     this.SB1Type10, this.SB1MathExpression10, this.SB1MathResult10,
@@ -941,7 +937,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label11
                 && HasMathExpression(this.SB1MathExpression11))
             {
-                qt = new IndicatorQT1(this.SB1Label11, this.SB1TMAmount11, this.SB1TLAmount11, SB1TUAmount11,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label11, this.SB1TMAmount11, this.SB1TLAmount11, SB1TUAmount11,
                     this.SB1TAmount11, this.SB1TD1Amount11, this.SB1TD2Amount11, this.SB1TMUnit11, this.SB1TLUnit11, this.SB1TUUnit11,
                     this.SB1TUnit11, this.SB1TD1Unit11, this.SB1TD2Unit11, this.SB1MathType11, this.SB1MathSubType11,
                     this.SB1Type11, this.SB1MathExpression11, this.SB1MathResult11,
@@ -951,7 +947,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label12
                 && HasMathExpression(this.SB1MathExpression12))
             {
-                qt = new IndicatorQT1(this.SB1Label12, this.SB1TMAmount12, this.SB1TLAmount12, SB1TUAmount12,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label12, this.SB1TMAmount12, this.SB1TLAmount12, SB1TUAmount12,
                     this.SB1TAmount12, this.SB1TD1Amount12, this.SB1TD2Amount12, this.SB1TMUnit12, this.SB1TLUnit12, this.SB1TUUnit12,
                     this.SB1TUnit12, this.SB1TD1Unit12, this.SB1TD2Unit12, this.SB1MathType12, this.SB1MathSubType12,
                     this.SB1Type12, this.SB1MathExpression12, this.SB1MathResult12,
@@ -961,7 +957,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label13
                 && HasMathExpression(this.SB1MathExpression13))
             {
-                qt = new IndicatorQT1(this.SB1Label13, this.SB1TMAmount13, this.SB1TLAmount13, SB1TUAmount13,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label13, this.SB1TMAmount13, this.SB1TLAmount13, SB1TUAmount13,
                     this.SB1TAmount13, this.SB1TD1Amount13, this.SB1TD2Amount13, this.SB1TMUnit13, this.SB1TLUnit13, this.SB1TUUnit13,
                     this.SB1TUnit13, this.SB1TD1Unit13, this.SB1TD2Unit13, this.SB1MathType13, this.SB1MathSubType13,
                     this.SB1Type13, this.SB1MathExpression13, this.SB1MathResult13,
@@ -971,7 +967,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label14
                 && HasMathExpression(this.SB1MathExpression14))
             {
-                qt = new IndicatorQT1(this.SB1Label14, this.SB1TMAmount14, this.SB1TLAmount14, SB1TUAmount14,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label14, this.SB1TMAmount14, this.SB1TLAmount14, SB1TUAmount14,
                     this.SB1TAmount14, this.SB1TD1Amount14, this.SB1TD2Amount14, this.SB1TMUnit14, this.SB1TLUnit14, this.SB1TUUnit14,
                     this.SB1TUnit14, this.SB1TD1Unit14, this.SB1TD2Unit14, this.SB1MathType14, this.SB1MathSubType14,
                     this.SB1Type14, this.SB1MathExpression14, this.SB1MathResult14,
@@ -981,7 +977,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label15
                 && HasMathExpression(this.SB1MathExpression15))
             {
-                qt = new IndicatorQT1(this.SB1Label15, this.SB1TMAmount15, this.SB1TLAmount15, SB1TUAmount15,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label15, this.SB1TMAmount15, this.SB1TLAmount15, SB1TUAmount15,
                     this.SB1TAmount15, this.SB1TD1Amount15, this.SB1TD2Amount15, this.SB1TMUnit15, this.SB1TLUnit15, this.SB1TUUnit15,
                     this.SB1TUnit15, this.SB1TD1Unit15, this.SB1TD2Unit15, this.SB1MathType15, this.SB1MathSubType15,
                     this.SB1Type15, this.SB1MathExpression15, this.SB1MathResult15,
@@ -991,7 +987,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label16
                 && HasMathExpression(this.SB1MathExpression16))
             {
-                qt = new IndicatorQT1(this.SB1Label16, this.SB1TMAmount16, this.SB1TLAmount16, SB1TUAmount16,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label16, this.SB1TMAmount16, this.SB1TLAmount16, SB1TUAmount16,
                     this.SB1TAmount16, this.SB1TD1Amount16, this.SB1TD2Amount16, this.SB1TMUnit16, this.SB1TLUnit16, this.SB1TUUnit16,
                     this.SB1TUnit16, this.SB1TD1Unit16, this.SB1TD2Unit16, this.SB1MathType16, this.SB1MathSubType16,
                     this.SB1Type16, this.SB1MathExpression16, this.SB1MathResult16,
@@ -1001,7 +997,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label17
                 && HasMathExpression(this.SB1MathExpression17))
             {
-                qt = new IndicatorQT1(this.SB1Label17, this.SB1TMAmount17, this.SB1TLAmount17, SB1TUAmount17,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label17, this.SB1TMAmount17, this.SB1TLAmount17, SB1TUAmount17,
                     this.SB1TAmount17, this.SB1TD1Amount17, this.SB1TD2Amount17, this.SB1TMUnit17, this.SB1TLUnit17, this.SB1TUUnit17,
                     this.SB1TUnit17, this.SB1TD1Unit17, this.SB1TD2Unit17, this.SB1MathType17, this.SB1MathSubType17,
                     this.SB1Type17, this.SB1MathExpression17, this.SB1MathResult17,
@@ -1011,7 +1007,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label18
                 && HasMathExpression(this.SB1MathExpression18))
             {
-                qt = new IndicatorQT1(this.SB1Label18, this.SB1TMAmount18, this.SB1TLAmount18, SB1TUAmount18,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label18, this.SB1TMAmount18, this.SB1TLAmount18, SB1TUAmount18,
                     this.SB1TAmount18, this.SB1TD1Amount18, this.SB1TD2Amount18, this.SB1TMUnit18, this.SB1TLUnit18, this.SB1TUUnit18,
                     this.SB1TUnit18, this.SB1TD1Unit18, this.SB1TD2Unit18, this.SB1MathType18, this.SB1MathSubType18,
                     this.SB1Type18, this.SB1MathExpression18, this.SB1MathResult18,
@@ -1021,7 +1017,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label19
                 && HasMathExpression(this.SB1MathExpression19))
             {
-                qt = new IndicatorQT1(this.SB1Label19, this.SB1TMAmount19, this.SB1TLAmount19, SB1TUAmount19,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label19, this.SB1TMAmount19, this.SB1TLAmount19, SB1TUAmount19,
                     this.SB1TAmount19, this.SB1TD1Amount19, this.SB1TD2Amount19, this.SB1TMUnit19, this.SB1TLUnit19, this.SB1TUUnit19,
                     this.SB1TUnit19, this.SB1TD1Unit19, this.SB1TD2Unit19, this.SB1MathType19, this.SB1MathSubType19,
                     this.SB1Type19, this.SB1MathExpression19, this.SB1MathResult19,
@@ -1031,7 +1027,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label20
                 && HasMathExpression(this.SB1MathExpression20))
             {
-                qt = new IndicatorQT1(this.SB1Label20, this.SB1TMAmount20, this.SB1TLAmount20, SB1TUAmount20,
+                qt = new IndicatorQT1(baseCalculator, this.SB1Label20, this.SB1TMAmount20, this.SB1TLAmount20, SB1TUAmount20,
                     this.SB1TAmount20, this.SB1TD1Amount20, this.SB1TD2Amount20, this.SB1TMUnit20, this.SB1TLUnit20, this.SB1TUUnit20,
                     this.SB1TUnit20, this.SB1TD1Unit20, this.SB1TD2Unit20, this.SB1MathType20, this.SB1MathSubType20,
                     this.SB1Type20, this.SB1MathExpression20, this.SB1MathResult20,
@@ -4096,7 +4092,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1ScoreMathExpression))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(1, label, colNames, qt1, this.SB1ScoreMathExpression, this.SB1ScoreMathSubType,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4106,7 +4102,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression1))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(1, label, colNames, qt1, this.SB1MathExpression1, this.SB1MathSubType1,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4116,7 +4112,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression2))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(2, label, colNames, qt1, this.SB1MathExpression2, this.SB1MathSubType2,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4126,7 +4122,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression3))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(3, label, colNames, qt1, this.SB1MathExpression3, this.SB1MathSubType3,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4136,7 +4132,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression4))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(4, label, colNames, qt1, this.SB1MathExpression4, this.SB1MathSubType4,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4146,7 +4142,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression5))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(5, label, colNames, qt1, this.SB1MathExpression5, this.SB1MathSubType5,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4156,7 +4152,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression6))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(6, label, colNames, qt1, this.SB1MathExpression6, this.SB1MathSubType6,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4166,7 +4162,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression7))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(7, label, colNames, qt1, this.SB1MathExpression7, this.SB1MathSubType7,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4176,7 +4172,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression8))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(8, label, colNames, qt1, this.SB1MathExpression8, this.SB1MathSubType8,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4186,7 +4182,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression9))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(9, label, colNames, qt1, this.SB1MathExpression9, this.SB1MathSubType9,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4196,7 +4192,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression10))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(10, label, colNames, qt1, this.SB1MathExpression10, this.SB1MathSubType10,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4206,7 +4202,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression11))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(11, label, colNames, qt1, this.SB1MathExpression11, this.SB1MathSubType11,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4216,7 +4212,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression12))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(12, label, colNames, qt1, this.SB1MathExpression12, this.SB1MathSubType12,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4226,7 +4222,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression13))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(13, label, colNames, qt1, this.SB1MathExpression13, this.SB1MathSubType13,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4236,7 +4232,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression14))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(14, label, colNames, qt1, this.SB1MathExpression14, this.SB1MathSubType14,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4246,7 +4242,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression15))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(15, label, colNames, qt1, this.SB1MathExpression15, this.SB1MathSubType15,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4256,7 +4252,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression16))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(16, label, colNames, qt1, this.SB1MathExpression16, this.SB1MathSubType16,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4266,7 +4262,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression17))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(17, label, colNames, qt1, this.SB1MathExpression17, this.SB1MathSubType17,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4276,7 +4272,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression18))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(18, label, colNames, qt1, this.SB1MathExpression18, this.SB1MathSubType18,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4286,7 +4282,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression19))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(19, label, colNames, qt1, this.SB1MathExpression19, this.SB1MathSubType19,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4296,7 +4292,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression20))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     drr = InitDRR1Algo(20, label, colNames, qt1, this.SB1MathExpression20, this.SB1MathSubType20,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await drr.RunAlgorithmAsync(data, colData, lines2);
@@ -4332,7 +4328,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1ScoreMathExpression))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     //this must to use a zero index
                     rmi = InitDRR2Algo(0, label, colNames, qt1, this.SB1ScoreMathExpression, this.SB1ScoreMathSubType,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
@@ -4348,7 +4344,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression1))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     //this must use a 1 index
                     rmi = InitDRR2Algo(1, label, colNames, qt1, this.SB1MathExpression1, this.SB1MathSubType1,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
@@ -4359,7 +4355,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression2))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(2, label, colNames, qt1, this.SB1MathExpression2, this.SB1MathSubType2,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4369,7 +4365,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression3))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(3, label, colNames, qt1, this.SB1MathExpression3, this.SB1MathSubType3,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4379,7 +4375,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression4))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(4, label, colNames, qt1, this.SB1MathExpression4, this.SB1MathSubType4,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4389,7 +4385,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression5))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(5, label, colNames, qt1, this.SB1MathExpression5, this.SB1MathSubType5,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4399,7 +4395,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression6))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(6, label, colNames, qt1, this.SB1MathExpression6, this.SB1MathSubType6,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4409,7 +4405,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression7))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(7, label, colNames, qt1, this.SB1MathExpression7, this.SB1MathSubType7,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4419,7 +4415,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression8))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(8, label, colNames, qt1, this.SB1MathExpression8, this.SB1MathSubType8,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4429,7 +4425,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression9))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(9, label, colNames, qt1, this.SB1MathExpression9, this.SB1MathSubType9,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4439,7 +4435,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression10))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(10, label, colNames, qt1, this.SB1MathExpression10, this.SB1MathSubType10,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4449,7 +4445,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression11))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(11, label, colNames, qt1, this.SB1MathExpression11, this.SB1MathSubType11,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4459,7 +4455,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression12))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(12, label, colNames, qt1, this.SB1MathExpression12, this.SB1MathSubType12,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4469,7 +4465,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression13))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(13, label, colNames, qt1, this.SB1MathExpression13, this.SB1MathSubType13,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4479,7 +4475,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression14))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(14, label, colNames, qt1, this.SB1MathExpression14, this.SB1MathSubType14,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4489,7 +4485,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression15))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(15, label, colNames, qt1, this.SB1MathExpression15, this.SB1MathSubType15,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4499,7 +4495,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression16))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(16, label, colNames, qt1, this.SB1MathExpression16, this.SB1MathSubType16,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4509,7 +4505,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression17))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(17, label, colNames, qt1, this.SB1MathExpression17, this.SB1MathSubType17,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4519,7 +4515,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression18))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(18, label, colNames, qt1, this.SB1MathExpression18, this.SB1MathSubType18,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4529,7 +4525,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression19))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(19, label, colNames, qt1, this.SB1MathExpression19, this.SB1MathSubType19,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -4539,7 +4535,7 @@ namespace DevTreks.Extensions.SB1Statistics
                     && HasMathExpression(this.SB1MathExpression20))
                 {
                     algoIndicator = label;
-                    IndicatorQT1 qt1 = FillIndicator(label);
+                    IndicatorQT1 qt1 = FillIndicator(label, this);
                     rmi = InitDRR2Algo(20, label, colNames, qt1, this.SB1MathExpression20, this.SB1MathSubType20,
                         this.SB1CILevel, this.SB1Iterations, this.SB1Random, this.Observations);
                     await rmi.RunAlgorithmAsync2(data, colData, lines2);
@@ -5398,7 +5394,7 @@ namespace DevTreks.Extensions.SB1Statistics
             //dependent var colNames found in MathExpression
             List<string> depColNames = new List<string>();
             //214 more manual control of results
-            IndicatorQT1 meta = FillIndicator(label);
+            IndicatorQT1 meta = FillIndicator(label, this);
             GetDataToAnalyzeColNames(label, mathExpression, colNames, ref depColNames, ref mathTerms);
             List<double> qs = GetQsForMathTerms(label, mathTerms);
             DevTreks.Extensions.Algorithms.Script1 script1

@@ -50,6 +50,8 @@ namespace DevTreks.Extensions.Algorithms
         public static int _random { get; set; }
         //output
         public IndicatorQT1 IndicatorQT { get; set; }
+        //store the results of calculations
+        public List<List<string>> DataResults = new List<List<string>>();
 
     }
 }

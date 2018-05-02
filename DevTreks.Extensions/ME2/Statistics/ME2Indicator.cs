@@ -13,7 +13,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Add monitoring and evaluation indicators to DevTreks input, 
     ///             output, operation/component, outcome, and budget elements. 
-    ///Date:		2018, April
+    ///Date:		2018, May
     ///References:	Monitoring and Evaluation Tutorials
     ///NOTES:       Version 2.0.4 upgraded to similar properties and methods as 
     ///             the ResourceStockCalculator to promote consistency in the use 
@@ -23,6 +23,7 @@ namespace DevTreks.Extensions
     ///             In preparation for the machine learning algorithms, Version 2.1.4 made 
     ///             this pattern more flexible with more emphasis on Indicator.URL and 
     ///             less emphasis on Score.DataURL
+    ///             Version 2.1.4 added machine learning algo and simplified calc patterns
     /// </summary>   
     public class ME2Indicator : CostBenefitCalculator
     {
@@ -1029,6 +1030,580 @@ namespace DevTreks.Extensions
             bHasCalculations = true;
             return bHasCalculations;
         }
+        public async Task<bool> CalculateIndicators(int indicatorIndex)
+        {
+            bool bHasCalculation = false;
+            bool bHasIndicator1 = false;
+            string sAlgo = string.Empty;
+            ME2Statistics.ME2Algos algos = new ME2Statistics.ME2Algos(this);
+            IndicatorQT1 qt1 = algos.FillIndicator(indicatorIndex, this);
+            List<double> qTs = new List<double>();
+            if (indicatorIndex == 1)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[1].IndLabel)
+                    && (ME2Indicators[1].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 1))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex, 
+                            ME2Indicators[1].IndURL, qt1);
+                        bHasIndicator1 = true;
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 2)
+            {
+                if (!bHasIndicator1)
+                {
+                    if (!string.IsNullOrEmpty(ME2Indicators[1].IndLabel)
+                        && (ME2Indicators[1].IndLabel != Constants.NONE))
+                    {
+                        //bad dataruls generate an error and come back in using ind=2
+                        //still need to try to process ind1
+                        if (!_indicators.Any(o => o == 1))
+                        {
+                            sAlgo = await ProcessIndicators(indicatorIndex,
+                                ME2Indicators[1].IndURL, qt1);
+                        }
+                    }
+                }
+                //everything above needs to be done first, otherwise no way to know if the conditions are satisfied
+                //can each of the following ifs can be done as a Task.WhenAll() with indicatornum++??
+                //handle ind2 normally
+                if (!string.IsNullOrEmpty(ME2Indicators[2].IndLabel)
+                    && (ME2Indicators[2].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 2))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[2].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 3)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[3].IndLabel)
+                    && (ME2Indicators[3].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 3))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[3].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 4)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[4].IndLabel)
+                    && (ME2Indicators[4].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 4))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[4].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 5)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[5].IndLabel)
+                    && (ME2Indicators[5].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 5))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[5].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 6)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[6].IndLabel)
+                    && (ME2Indicators[6].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 6))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[6].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 7)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[7].IndLabel)
+                    && (ME2Indicators[7].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 7))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[7].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 8)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[8].IndLabel)
+                    && (ME2Indicators[8].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 8))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[8].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 9)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[9].IndLabel)
+                    && (ME2Indicators[9].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 9))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[9].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 10)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[10].IndLabel)
+                    && (ME2Indicators[10].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 10))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[10].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 11)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[11].IndLabel)
+                    && (ME2Indicators[11].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 11))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[11].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 12)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[12].IndLabel)
+                    && (ME2Indicators[12].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 12))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[12].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 13)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[13].IndLabel)
+                    && (ME2Indicators[13].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 13))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[13].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 14)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[14].IndLabel)
+                    && (ME2Indicators[14].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 14))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[14].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 15)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[15].IndLabel)
+                    && (ME2Indicators[15].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 15))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[15].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 16)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[16].IndLabel)
+                    && (ME2Indicators[16].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 16))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[16].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 17)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[17].IndLabel)
+                    && (ME2Indicators[17].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 17))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[17].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 18)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[18].IndLabel)
+                    && (ME2Indicators[18].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 18))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[18].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 19)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[19].IndLabel)
+                    && (ME2Indicators[19].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 19))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[19].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (indicatorIndex == 20)
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[20].IndLabel)
+                    && (ME2Indicators[20].IndLabel != Constants.NONE))
+                {
+                    if (!_indicators.Any(o => o == 19))
+                    {
+                        sAlgo = await ProcessIndicators(indicatorIndex,
+                            ME2Indicators[20].IndURL, qt1);
+                    }
+                }
+                indicatorIndex++;
+            }
+            if (!string.IsNullOrEmpty(ME2Indicators[0].IndMathExpression)
+                && (ME2Indicators[0].IndMathExpression != Constants.NONE))
+            {
+                //don't set scores that have already been calculated (using indicator data sets)
+                if (!_indicators.Any(o => o == 0))
+                {
+                    //convention is to use score = 0
+                    indicatorIndex = 0;
+                    sAlgo = await ProcessIndicators(indicatorIndex,
+                       ME2Indicators[0].IndURL, qt1);
+                }
+            }
+            //if it gets through try catch it's a good calc
+            bHasCalculation = true;
+            return bHasCalculation;
+        }
+        public async Task<string> ProcessIndicators(int indicatorIndex, string indicatorURL, 
+            IndicatorQT1 qt1)
+        {
+            string sAlgo = string.Empty;
+            int iAlgo = -1;
+
+            List<double> qTs = new List<double>();
+            bool bHasCalculations = false;
+            if (HasMathTypeML(qt1.Label, qt1.QMathType, qt1.QMathSubType))
+            {
+                //214 pattern uses 2 TEXT files for training and testing with algos 1, 2, 3, and 4
+                string sDataURL1 = string.Empty;
+                string sDataURL2 = string.Empty;
+                string[] dataURLs = indicatorURL.Split(Constants.STRING_DELIMITERS);
+                for (int i = 0; i < dataURLs.Count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        sDataURL1 = dataURLs[i];
+                    }
+                    else if (i == 1)
+                    {
+                        sDataURL2 = dataURLs[i];
+                    }
+                }
+                //214 machine learning (214: R and Python use ProcessAlgosAsync2, until more sophisticated algs are developed) 
+                sAlgo = await ProcessAlgosAsyncML(indicatorIndex, qt1, sDataURL1, sDataURL2);
+            }
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            {
+
+                if (!string.IsNullOrEmpty(ME2Indicators[indicatorIndex].IndURL)
+                    && ME2Indicators[indicatorIndex].IndURL != Constants.NONE)
+                {
+                    //214 pattern puts script file first and data file second
+                    string sScriptURL = string.Empty;
+                    string sDataURL = string.Empty;
+                    string[] dataURLs = ME2Indicators[indicatorIndex].IndURL.Split(Constants.STRING_DELIMITERS);
+                    for (int i = 0; i < dataURLs.Count(); i++)
+                    {
+                        if (i == 0)
+                        {
+                            sScriptURL = dataURLs[i];
+                        }
+                        else if (i == 1)
+                        {
+                            sDataURL = dataURLs[i];
+                        }
+                    }
+                    sAlgo = await ProcessAlgoCorrAsync(sScriptURL, sDataURL);
+                }
+            }
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+            {
+                if (!string.IsNullOrEmpty(ME2Indicators[indicatorIndex].IndURL)
+                   && ME2Indicators[indicatorIndex].IndURL != Constants.NONE)
+                {
+                    sAlgo = await ProcessAlgosAsync(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
+                }
+                else
+                {
+                    //214: legacy pattern fills in indicators using dataurl only
+                    if (HasDataMatrix())
+                    {
+                        bHasCalculations = await ProcessIndicatorsUsingDataURL(indicatorIndex);
+                    }
+                }
+            }
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
+            {
+                if (indicatorIndex == 2
+                    || indicatorIndex == 5)
+                {
+                    sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
+                }
+                else if (indicatorIndex == 0
+                    && HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
+                {
+                    sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
+                }
+                else
+                {
+                    sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
+                }
+            }
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
+            {
+                //212 Score analysis
+                if (indicatorIndex == 0
+                    && HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
+                {
+                    List<List<string>> colData = IndicatorQT1.GetDefaultData();
+                    iAlgo = await SetAlgoStats4(indicatorIndex, colData, colData, new List<string>());
+                }
+                else
+                {
+                    if (indicatorIndex == 3
+                        && (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)))
+                    {
+                        sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
+                    }
+                    else
+                    {
+                        sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
+                    }
+                }
+            }
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
+            {
+                //214 pattern puts script file first and data file second
+                string sScriptURL = string.Empty;
+                string sDataURL = string.Empty;
+                string[] dataURLs = ME2Indicators[indicatorIndex].IndURL.Split(Constants.STRING_DELIMITERS);
+                for (int i = 0; i < dataURLs.Count(); i++)
+                {
+                    if (i == 0)
+                    {
+                        sScriptURL = dataURLs[i];
+                    }
+                    else if (i == 1)
+                    {
+                        sDataURL = dataURLs[i];
+                    }
+                }
+                sAlgo = await ProcessAlgosAsync2(indicatorIndex, sScriptURL, sDataURL);
+            }
+            else if (HasMathType(MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
+            {
+                //properties filled in manually
+                _indicators = GetIndicatorsDisplay();
+            }
+            else
+            {
+                SetTotalMathTypeStock(indicatorIndex);
+                if (ME2Indicators[indicatorIndex].IndMathSubType != Constants.NONE
+                    && (!string.IsNullOrEmpty(ME2Indicators[indicatorIndex].IndMathSubType)))
+                {
+                    iAlgo = await SetAlgoPRAStats(indicatorIndex, qTs);
+                }
+            }
+            return sAlgo;
+        }
+        //214 deprecated this pattern but hold for legacy use
+        public async Task<bool> ProcessIndicatorsUsingDataURL(int indicatorIndex)
+        {
+            bool bHasCalculations = false;
+            string[] dataURLs = new string[] { };
+            Task<string>[] runAlgosTasks = new Task<string>[] { };
+            //v192: changed this from an if else clause 
+            //to allow sibling calcs to run different algos (same as CalculatedInds)
+            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm1))
+            {
+                dataURLs = DataURL.Split(Constants.STRING_DELIMITERS);
+                // Create a query. 
+                IEnumerable<Task<string>> runAlgosTasksQuery =
+                    from dataURL in dataURLs select ProcessAlgosAsync(indicatorIndex, dataURL);
+                // Use ToArray to execute the query and start the download tasks.
+                runAlgosTasks = runAlgosTasksQuery.ToArray();
+                //return the indicators
+                string[] indicatorscsvs = await Task.WhenAll(runAlgosTasks);
+                _indicators = GetIndicators(indicatorscsvs);
+                bHasCalculations = true;
+            }
+            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+            {
+                //these algos must have data urls
+                if (!string.IsNullOrEmpty(DataURL)
+                    && (DataURL != Constants.NONE))
+                {
+                    //these use numeric double datasets
+                    dataURLs = DataURL.Split(Constants.STRING_DELIMITERS);
+                    // Create a query. 
+                    IEnumerable<Task<string>> runAlgosTasksQuery =
+                        from dataURL in dataURLs select ProcessAlgosAsync(indicatorIndex, dataURL);
+                    // Use ToArray to execute the query and start the download tasks.
+                    runAlgosTasks = runAlgosTasksQuery.ToArray();
+                    //return the indicators
+                    string[] indicatorscsvs = await Task.WhenAll(runAlgosTasks);
+                    _indicators = GetIndicators(indicatorscsvs);
+                    bHasCalculations = true;
+                }
+                else
+                {
+                    //missing correlation matrix 
+                    CalculatorDescription += string.Concat("----", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
+                }
+            }
+            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
+            {
+                //these algos must have joint data urls with standard dataset format
+                if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
+                    && (ME2Indicators[0].IndURL != Constants.NONE))
+                {
+                    dataURLs = ME2Indicators[0].IndURL.Split(Constants.STRING_DELIMITERS);
+                    // Create a query. 
+                    IEnumerable<Task<string>> runAlgosTasksQuery =
+                        from dataURL in dataURLs select ProcessAlgosAsync(indicatorIndex, dataURL);
+                    // Use ToArray to execute the query and start the download tasks.
+                    runAlgosTasks = runAlgosTasksQuery.ToArray();
+                    //return the indicators
+                    string[] indicatorscsvs = await Task.WhenAll(runAlgosTasks);
+                    _indicators = GetIndicators(indicatorscsvs);
+                    bHasCalculations = true;
+                }
+                else
+                {
+                    //missing correlation matrix 
+                    CalculatorDescription += string.Concat("----", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
+                }
+            }
+            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            {
+                //these algos must have joint urls but these are not standard dataset format
+                if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
+                    && (ME2Indicators[0].IndURL != Constants.NONE))
+                {
+                    //process the joint data urls
+                    dataURLs = ME2Indicators[0].IndURL.Split(Constants.STRING_DELIMITERS);
+                    //set up a list of tasks to run
+                    List<Task<string>> runTasks = new List<Task<string>>();
+                    string sScriptURL = string.Empty;
+                    string sDataURL = string.Empty;
+                    for (int i = 0; i < dataURLs.Count(); i++)
+                    {
+                        if (i == 0)
+                        {
+                            sScriptURL = dataURLs[i];
+                        }
+                        else if (i == 1)
+                        {
+                            sScriptURL = dataURLs[i];
+                        }
+                        //214 deprecated this pattern
+                        ////i corresponds to jointdataurl index
+                        ////add the tasks to the collection
+                        //runTasks.Add(ProcessAlgoCorrAsync(i, dataURLs[i]));
+                    }
+                    runTasks.Add(ProcessAlgoCorrAsync(sScriptURL, sDataURL));
+                    //return a csv string of indicators when all of the tasks are completed
+                    string[] indicatorscsvs = await Task.WhenAll(runTasks);
+                    _indicators = GetIndicators(indicatorscsvs);
+                    bHasCalculations = true;
+                }
+                else
+                {
+                    //missing correlation matrix 
+                    ME2Indicators[0].IndMathResult += string.Concat("----", Errors.MakeStandardErrorMsg("JOINTURL_MISSING"));
+                }
+                return bHasCalculations;
+            }
+            return bHasCalculations;
+        }
         private bool HasDataMatrix()
         {
             bool bHasMatrix = false;
@@ -1398,6 +1973,24 @@ namespace DevTreks.Extensions
             }
             return bHasMathType;
         }
+        public bool HasMathTypeML(string label, string algorithm, string subAlgorithm)
+        {
+            bool bHasMathType = false;
+            //214: uniform processing of machine learning algorithms (subalgo_xx)
+            bool bIsMLAlgorithm = subAlgorithm.Contains(Constants.FILENAME_DELIMITER) ? true : false;
+            if ((algorithm == MATH_TYPES.algorithm1.ToString()
+                && bIsMLAlgorithm == true)
+                || (algorithm == MATH_TYPES.algorithm2.ToString()
+                && bIsMLAlgorithm == true)
+                || (algorithm == MATH_TYPES.algorithm3.ToString()
+                && bIsMLAlgorithm == true)
+                || (algorithm == MATH_TYPES.algorithm4.ToString()
+                && bIsMLAlgorithm == true))
+            {
+                return true;
+            }
+            return bHasMathType;
+        }
         public bool HasMathType(int index, Calculator1.MATH_TYPES algorithm)
         {
             bool bHasMathType = false;
@@ -1509,534 +2102,7 @@ namespace DevTreks.Extensions
             }
             return bHasMathType;
         }
-        public async Task<bool> CalculateIndicators(int indicatorIndex)
-        {
-            bool bHasCalculation = false;
-            bool bHasIndicator1 = false;
-            string sAlgo = string.Empty;
-            List<double> qTs = new List<double>();
-            if (indicatorIndex == 1)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[1].IndLabel)
-                    && (ME2Indicators[1].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 1))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                        bHasIndicator1 = true;
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 2)
-            {
-                if (!bHasIndicator1)
-                {
-                    if (!string.IsNullOrEmpty(ME2Indicators[1].IndLabel)
-                        && (ME2Indicators[1].IndLabel != Constants.NONE))
-                    {
-                        //bad dataruls generate an error and come back in using ind=2
-                        //still need to try to process ind1
-                        if (!_indicators.Any(o => o == 1))
-                        {
-                            sAlgo = await ProcessIndicators(indicatorIndex);
-                        }
-                    }
-                }
-                //everything above needs to be done first, otherwise no way to know if the conditions are satisfied
-                //can each of the following ifs can be done as a Task.WhenAll() with indicatornum++??
-                //handle ind2 normally
-                if (!string.IsNullOrEmpty(ME2Indicators[2].IndLabel)
-                    && (ME2Indicators[2].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 2))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 3)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[3].IndLabel)
-                    && (ME2Indicators[3].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 3))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 4)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[4].IndLabel)
-                    && (ME2Indicators[4].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 4))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 5)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[5].IndLabel)
-                    && (ME2Indicators[5].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 5))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 6)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[6].IndLabel)
-                    && (ME2Indicators[6].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 6))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 7)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[7].IndLabel)
-                    && (ME2Indicators[7].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 7))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 8)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[8].IndLabel)
-                    && (ME2Indicators[8].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 8))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 9)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[9].IndLabel)
-                    && (ME2Indicators[9].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 9))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 10)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[10].IndLabel)
-                    && (ME2Indicators[10].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 10))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 11)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[11].IndLabel)
-                    && (ME2Indicators[11].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 11))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 12)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[12].IndLabel)
-                    && (ME2Indicators[12].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 12))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 13)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[13].IndLabel)
-                    && (ME2Indicators[13].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 13))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 14)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[14].IndLabel)
-                    && (ME2Indicators[14].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 14))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 15)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[15].IndLabel)
-                    && (ME2Indicators[15].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 15))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 16)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[16].IndLabel)
-                    && (ME2Indicators[16].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 16))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 17)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[17].IndLabel)
-                    && (ME2Indicators[17].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 17))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 18)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[18].IndLabel)
-                    && (ME2Indicators[18].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 18))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 19)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[19].IndLabel)
-                    && (ME2Indicators[19].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 19))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (indicatorIndex == 20)
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[20].IndLabel)
-                    && (ME2Indicators[20].IndLabel != Constants.NONE))
-                {
-                    if (!_indicators.Any(o => o == 19))
-                    {
-                        sAlgo = await ProcessIndicators(indicatorIndex);
-                    }
-                }
-                indicatorIndex++;
-            }
-            if (!string.IsNullOrEmpty(ME2Indicators[0].IndMathExpression)
-                && (ME2Indicators[0].IndMathExpression != Constants.NONE))
-            {
-                //don't set scores that have already been calculated (using indicator data sets)
-                if (!_indicators.Any(o => o == 0))
-                {
-                    //convention is to use score = 0
-                    indicatorIndex = 0;
-                    sAlgo = await ProcessIndicators(indicatorIndex);
-                }
-            }
-            //if it gets through try catch it's a good calc
-            bHasCalculation = true;
-            return bHasCalculation;
-        }
-        public async Task<string> ProcessIndicators(int indicatorIndex)
-        {
-            string sAlgo = string.Empty;
-            int iAlgo = -1;
-            List<double> qTs = new List<double>();
-            bool bHasCalculations = false;
-            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
-            {
-                
-                if (!string.IsNullOrEmpty(ME2Indicators[indicatorIndex].IndURL)
-                    && ME2Indicators[indicatorIndex].IndURL != Constants.NONE)
-                {
-                    //214 pattern puts script file first and data file second
-                    string sScriptURL = string.Empty;
-                    string sDataURL = string.Empty;
-                    string[] dataURLs = ME2Indicators[indicatorIndex].IndURL.Split(Constants.STRING_DELIMITERS);
-                    for (int i = 0; i < dataURLs.Count(); i++)
-                    {
-                        if (i == 0)
-                        {
-                            sScriptURL = dataURLs[i];
-                        }
-                        else if (i == 1)
-                        {
-                            sDataURL = dataURLs[i];
-                        }
-                    }
-                    sAlgo = await ProcessAlgoCorrAsync(sScriptURL, sDataURL);
-                }
-            }
-            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
-            {
-                if (!string.IsNullOrEmpty(ME2Indicators[indicatorIndex].IndURL)
-                   && ME2Indicators[indicatorIndex].IndURL != Constants.NONE)
-                {
-                    sAlgo = await ProcessAlgosAsync(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
-                }
-                else
-                {
-                    //214: legacy pattern fills in indicators using dataurl only
-                    if (HasDataMatrix())
-                    {
-                        bHasCalculations = await ProcessIndicatorsUsingDataURL(indicatorIndex);
-                    }
-                }
-            }
-            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm9)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
-            {
-                if (indicatorIndex == 2
-                    || indicatorIndex == 5)
-                {
-                    sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
-                }
-                else if (indicatorIndex == 0
-                    && HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm10))
-                {
-                    sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
-                }
-                else
-                {
-                    sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
-                }
-            }
-            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
-            {
-                //212 Score analysis
-                if (indicatorIndex == 0 
-                    && HasMathType(0, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15))
-                {
-                    List<List<string>> colData = IndicatorQT1.GetDefaultData();
-                    iAlgo = await SetAlgoStats4(indicatorIndex, colData, colData, new List<string>());
-                }
-                else
-                {
-                    if (indicatorIndex == 3
-                        && (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)))
-                    {
-                        sAlgo = await ProcessAlgosAsync3(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
-                    }
-                    else
-                    {
-                        sAlgo = await ProcessAlgosAsync4(indicatorIndex, ME2Indicators[indicatorIndex].IndURL);
-                    }
-                }
-            }
-            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
-                || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
-            {
-                //214 pattern puts script file first and data file second
-                string sScriptURL = string.Empty;
-                string sDataURL = string.Empty;
-                string[] dataURLs = ME2Indicators[indicatorIndex].IndURL.Split(Constants.STRING_DELIMITERS);
-                for (int i = 0; i < dataURLs.Count(); i++)
-                {
-                    if (i == 0)
-                    {
-                        sScriptURL = dataURLs[i];
-                    }
-                    else if (i == 1)
-                    {
-                        sDataURL = dataURLs[i];
-                    }
-                }
-                sAlgo = await ProcessAlgosAsync2(indicatorIndex, sScriptURL, sDataURL);
-            }
-            else if (HasMathType(MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
-            {
-                //properties filled in manually
-                _indicators = GetIndicatorsDisplay();
-            }
-            else
-            {
-                SetTotalMathTypeStock(indicatorIndex);
-                if (ME2Indicators[indicatorIndex].IndMathSubType != Constants.NONE
-                    && (!string.IsNullOrEmpty(ME2Indicators[indicatorIndex].IndMathSubType)))
-                {
-                    iAlgo = await SetAlgoPRAStats(indicatorIndex, qTs);
-                }
-            }
-            return sAlgo;
-        }
-        //214 deprecated this pattern but hold for legacy use
-        public async Task<bool> ProcessIndicatorsUsingDataURL(int indicatorIndex)
-        {
-            bool bHasCalculations = false;
-            string[] dataURLs = new string[] { };
-            Task<string>[] runAlgosTasks = new Task<string>[] { };
-            //v192: changed this from an if else clause 
-            //to allow sibling calcs to run different algos (same as CalculatedInds)
-            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm1))
-            {
-                dataURLs = DataURL.Split(Constants.STRING_DELIMITERS);
-                // Create a query. 
-                IEnumerable<Task<string>> runAlgosTasksQuery =
-                    from dataURL in dataURLs select ProcessAlgosAsync(indicatorIndex, dataURL);
-                // Use ToArray to execute the query and start the download tasks.
-                runAlgosTasks = runAlgosTasksQuery.ToArray();
-                //return the indicators
-                string[] indicatorscsvs = await Task.WhenAll(runAlgosTasks);
-                _indicators = GetIndicators(indicatorscsvs);
-                bHasCalculations = true;
-            }
-            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
-            {
-                //these algos must have data urls
-                if (!string.IsNullOrEmpty(DataURL)
-                    && (DataURL != Constants.NONE))
-                {
-                    //these use numeric double datasets
-                    dataURLs = DataURL.Split(Constants.STRING_DELIMITERS);
-                    // Create a query. 
-                    IEnumerable<Task<string>> runAlgosTasksQuery =
-                        from dataURL in dataURLs select ProcessAlgosAsync(indicatorIndex, dataURL);
-                    // Use ToArray to execute the query and start the download tasks.
-                    runAlgosTasks = runAlgosTasksQuery.ToArray();
-                    //return the indicators
-                    string[] indicatorscsvs = await Task.WhenAll(runAlgosTasks);
-                    _indicators = GetIndicators(indicatorscsvs);
-                    bHasCalculations = true;
-                }
-                else
-                {
-                    //missing correlation matrix 
-                    CalculatorDescription += string.Concat("----", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
-                }
-            }
-            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
-            {
-                //these algos must have joint data urls with standard dataset format
-                if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
-                    && (ME2Indicators[0].IndURL != Constants.NONE))
-                {
-                    dataURLs = ME2Indicators[0].IndURL.Split(Constants.STRING_DELIMITERS);
-                    // Create a query. 
-                    IEnumerable<Task<string>> runAlgosTasksQuery =
-                        from dataURL in dataURLs select ProcessAlgosAsync(indicatorIndex, dataURL);
-                    // Use ToArray to execute the query and start the download tasks.
-                    runAlgosTasks = runAlgosTasksQuery.ToArray();
-                    //return the indicators
-                    string[] indicatorscsvs = await Task.WhenAll(runAlgosTasks);
-                    _indicators = GetIndicators(indicatorscsvs);
-                    bHasCalculations = true;
-                }
-                else
-                {
-                    //missing correlation matrix 
-                    CalculatorDescription += string.Concat("----", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
-                }
-            }
-            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
-            {
-                //these algos must have joint urls but these are not standard dataset format
-                if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
-                    && (ME2Indicators[0].IndURL != Constants.NONE))
-                {
-                    //process the joint data urls
-                    dataURLs = ME2Indicators[0].IndURL.Split(Constants.STRING_DELIMITERS);
-                    //set up a list of tasks to run
-                    List<Task<string>> runTasks = new List<Task<string>>();
-                    string sScriptURL = string.Empty;
-                    string sDataURL = string.Empty;
-                    for (int i = 0; i < dataURLs.Count(); i++)
-                    {
-                        if (i == 0)
-                        {
-                            sScriptURL = dataURLs[i];
-                        }
-                        else if (i == 1)
-                        {
-                            sScriptURL = dataURLs[i];
-                        }
-                        //214 deprecated this pattern
-                        ////i corresponds to jointdataurl index
-                        ////add the tasks to the collection
-                        //runTasks.Add(ProcessAlgoCorrAsync(i, dataURLs[i]));
-                    }
-                    runTasks.Add(ProcessAlgoCorrAsync(sScriptURL, sDataURL));
-                    //return a csv string of indicators when all of the tasks are completed
-                    string[] indicatorscsvs = await Task.WhenAll(runTasks);
-                    _indicators = GetIndicators(indicatorscsvs);
-                    bHasCalculations = true;
-                }
-                else
-                {
-                    //missing correlation matrix 
-                    ME2Indicators[0].IndMathResult += string.Concat("----", Errors.MakeStandardErrorMsg("JOINTURL_MISSING"));
-                }
-                return bHasCalculations;
-            }
-            return bHasCalculations;
-        }
+        
         private void SetTotalMathTypeStock(int indicatorIndex)
         {
             if (indicatorIndex == 0)
@@ -2653,6 +2719,60 @@ namespace DevTreks.Extensions
                 }
             }
             return sIndicatorCSV;
+        }
+        private async Task<string> ProcessAlgosAsyncML(int indicatorIndex, IndicatorQT1 qt1,
+            string dataURL1, string dataURL2)
+        {
+            string sIndicatorsCSV = string.Empty;
+            List<string> lines = new List<string>();
+            List<string> lines2 = new List<string>();
+            List<List<string>> data = new List<List<string>>();
+            List<List<string>> data2 = new List<List<string>>();
+            List<List<string>> colSet = new List<List<string>>();
+            if (HasMathType(MATH_TYPES.algorithm1))
+            {
+                //training dataset
+                lines = await GetDataLinesAsync(dataURL1);
+                //test dataset
+                lines2 = await GetDataLinesAsync(dataURL2);
+            }
+            else if (HasMathType(MATH_TYPES.algorithm2)
+                || HasMathType(MATH_TYPES.algorithm3)
+                || HasMathType(MATH_TYPES.algorithm4))
+            {
+                //wrong algorithm: they use ProcessAlgosAsync2 until more sophisticated algos built
+                this.CalculatorDescription += "Version 214 does not support subalgorithm_01 syntax for R or Python.";
+            }
+            if (lines != null && lines2 != null)
+            {
+                //get the 1st dataset
+                data = await GetDataSetML(lines);
+                //get the row identifiers from the test dataset
+                colSet = await CalculatorHelpers.GetColumnSetML(lines2, this);
+                //if null already has an error message
+                if (data != null)
+                {
+                    //get the 2nd dataset
+                    data2 = await GetDataSetML(lines2);
+                    List<int> algoIndicators = new List<int>();
+                    int algoIndicator = -1;
+                    if (_indicators.Contains(indicatorIndex) == false)
+                    {
+                        algoIndicator = await SetAlgoStatsML(indicatorIndex, qt1,
+                            data, colSet, data2, dataURL2);
+                        if (algoIndicator != -1)
+                        {
+                            algoIndicators.Add(algoIndicator);
+                        }
+                        else
+                        {
+                            this.CalculatorDescription += "Indicator properties are missing or wrong. Do indicator labels correspond to dataset labels? Do indicators have correct algorithms? Please recheck all indicator properties.";
+                        }
+                    }
+                    sIndicatorsCSV = GetIndicatorsCSV(algoIndicators);
+                }
+            }
+            return sIndicatorsCSV;
         }
         //214: both the script file and the datafile are added to the Indicator.URL as a semicolon
         //delimited string
@@ -3892,7 +4012,6 @@ namespace DevTreks.Extensions
             }
             return dataSets;
         }
-
         public IDictionary<int, List<List<double>>> GetDataSetFull(List<string> lines)
         {
             //standard format is:
@@ -4264,6 +4383,77 @@ namespace DevTreks.Extensions
             }
             return dataSets;
         }
+        //214 convention stores data for machine learning data
+        public async Task<List<List<string>>> GetDataSetML(List<string> lines)
+        {
+            //matrix of string
+            List<List<string>> dataSet = new List<List<string>>();
+            string rowName = string.Empty;
+            //second iteration fills dataset with complete doubles and exits loop
+            int i = 0;
+            foreach (var row in lines)
+            {
+                if (row.Length > 0)
+                {
+                    string[] cols = row.Split(Constants.CSV_DELIMITERS);
+                    if (cols.Length > 0)
+                    {
+                        //first row is column names
+                        if (i == 0)
+                        {
+                            //188
+                            DataColNames = row;
+                            //set the full colnames for the dataset
+                            _colNames = new string[cols.Count()];
+                            cols.CopyTo(_colNames, 0);
+                            if (_colNames.Count() == 0)
+                            {
+                                CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATA_NOCOLUMNNAMES"));
+                                return null;
+                            }
+                        }
+                        else
+                        {
+                            _rowNames = new string[lines.Count() - 1];
+                            //rowNames can be retrieved from second col in cLines
+                            //generate an enumerable collection of strings
+                            IEnumerable<IEnumerable<string>> qryQs =
+                                from line in lines
+                                let elements = line.Split(Constants.CSV_DELIMITERS)
+                                //skip label, customcol1 and customcol2 columns
+                                let amounts = elements.Skip(3)
+                                select (from a in amounts
+                                        select a);
+                            //execute the qry and get a list; qry is a List<IEnumerable<double>>
+                            var qs = await qryQs.ToAsyncEnumerable().ToList();
+                            if (qs.Count > 0)
+                            {
+                                //set qx
+                                int j = 0;
+                                foreach (var qvector in qs)
+                                {
+                                    //skip 1st row
+                                    if (j > 0)
+                                    {
+                                        //ok for algos that don't need to calculate qT from q1 to q10 vars
+                                        dataSet.Add(qvector.ToList());
+                                    }
+                                    j++;
+                                }
+                                //no need for any more iterations, just exist with all rows
+                                return dataSet;
+                            }
+                        }
+                        i++;
+                    }
+                    else
+                    {
+                        CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BADDATA"));
+                    }
+                }
+            }
+            return dataSet;
+        }
         public IDictionary<int, List<List<string>>> GetColumnSet(List<string> lines)
         {
             //matrix of strings
@@ -4424,6 +4614,7 @@ namespace DevTreks.Extensions
             }
             return colSets;
         }
+        
         public bool SetColumnNames(List<string> lines)
         {
             bool bHasColNames = false;
@@ -7960,6 +8151,20 @@ namespace DevTreks.Extensions
                 this.CopyData(algos.Data3ToAnalyze);
             }
             return iIndicatorIndex;
+        }
+        private async Task<int> SetAlgoStatsML(int index, IndicatorQT1 qt1,
+            List<List<string>> data, List<List<string>> colData, List<List<string>> data2,
+            string dataURL2)
+        {
+            string sError = string.Empty;
+            //init the algos using this
+            ME2Statistics.ME2Algos algos = new ME2Statistics.ME2Algos(this);
+            int algindicator
+                = await algos.SetAlgoIndicatorStatsML(index, qt1, _colNames,
+                    data, colData, data2, dataURL2);
+            //copy all of the results back to this
+            CopyME2IndicatorsProperties(algos);
+            return algindicator;
         }
         private async Task<int> SetAlgoCalcs(int index, List<List<double>> data)
         {

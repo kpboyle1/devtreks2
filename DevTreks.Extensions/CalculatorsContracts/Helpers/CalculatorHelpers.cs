@@ -4602,6 +4602,119 @@ namespace DevTreks.Extensions
                 }
             }
         }
+        public static void SetIndMathResult(StringBuilder sb,
+            List<List<string>> rowNames, List<List<string>> DataResults)
+        {
+            StringBuilder rb = new StringBuilder();
+            int iRowCount = 0;
+            int iColCount = 0;
+            foreach (var row in rowNames)
+            {
+                iColCount = 0;
+                string sRowName = string.Empty;
+                foreach (var colc in row)
+                {
+                    sRowName = colc;
+                    rb.Append(string.Concat(sRowName, Constants.CSV_DELIMITER));
+                }
+                if (DataResults.Count() > iRowCount)
+                {
+                    var resultrow = DataResults[iRowCount];
+                    iColCount = 0;
+                    foreach (var resultcolumn in resultrow)
+                    {
+                        if (!string.IsNullOrEmpty(resultcolumn))
+                        {
+                            if (iColCount == resultrow.Count - 1)
+                            {
+                                rb.Append(resultcolumn.ToString());
+                            }
+                            else
+                            {
+                                rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
+                            }
+                        }
+                        else
+                        {
+                            if (iColCount == resultrow.Count - 1)
+                            {
+                                rb.Append(Constants.NONE);
+                            }
+                            else
+                            {
+                                rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
+                            }
+                        }
+                        iColCount++;
+                    }
+                }
+                sb.AppendLine(rb.ToString());
+                rb = new StringBuilder();
+                iRowCount++;
+            }
+        }
+        public static async Task<List<List<string>>> GetColumnSetML(List<string> lines, Calculator1 calc)
+        {
+            //matrix of strings
+            List<List<string>> colSets = new List<List<string>>();
+            string rowName = string.Empty;
+            string sKey = string.Empty;
+            List<string> cKeysUsed = new List<string>();
+            int i = 0;
+            foreach (var row in lines)
+            {
+                if (row.Length > 0)
+                {
+                    string[] cols = row.Split(Constants.CSV_DELIMITERS);
+                    if (cols.Length > 0)
+                    {
+                        //first row is column names
+                        if (i == 0)
+                        {
+                            //skip it
+                        }
+                        else
+                        {
+                            List<string> cLines = lines
+                                .Skip(1)
+                                .Select(l => l.ToString()).ToList();
+                            if (cLines.Count > 0)
+                            {
+                                //generate an enumerable collection of strings
+                                IEnumerable<IEnumerable<string>> qryQs =
+                                    from line in cLines
+                                    let elements = line.Split(Constants.CSV_DELIMITERS)
+                                    //take label, customcol1 and customcol2 columns
+                                    let amounts = elements.Take(3)
+                                    select (from a in amounts
+                                            select a);
+                                //execute the qry and get a list; qry is a List<IEnumerable<double>>
+                                var qs = await qryQs.ToAsyncEnumerable().ToList();
+                                if (qs.Count > 0)
+                                {
+                                    foreach (var qvector in qs)
+                                    {
+                                        colSets.Add(qvector.ToList());
+                                    }
+                                    //finished so return
+                                    return colSets;
+                                }
+                            }
+                            else
+                            {
+                                calc.CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BADDATA"));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        calc.CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_BADDATA"));
+                    }
+                }
+                i++;
+            }
+            return colSets;
+        }
         #endregion
     }
 }

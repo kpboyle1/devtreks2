@@ -6363,7 +6363,7 @@ namespace DevTreks.Extensions.Algorithms
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                 {
-                    SetIndMathResult(sb, rowNames);
+                    CalculatorHelpers.SetIndMathResult(sb, rowNames, DataResults);
                 }
                 else
                 {
@@ -6372,7 +6372,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             else
             {
-                SetIndMathResult(sb, rowNames);
+                CalculatorHelpers.SetIndMathResult(sb, rowNames, DataResults);
             }
             if (IndicatorQT.MathResult.ToLower().StartsWith("http"))
             {
@@ -6392,57 +6392,57 @@ namespace DevTreks.Extensions.Algorithms
             bHasSet = true;
             return bHasSet;
         }
-        private void SetIndMathResult(StringBuilder sb,  
-            List<List<string>> rowNames)
-        {
-            StringBuilder rb = new StringBuilder();
-            int iRowCount = 0;
-            int iColCount = 0;
-            foreach (var row in rowNames)
-            {
-                iColCount = 0;
-                string sRowName = string.Empty;
-                foreach (var colc in row)
-                {
-                    sRowName = colc;
-                    rb.Append(string.Concat(sRowName, Constants.CSV_DELIMITER));
-                }
-                if (DataResults.Count() > iRowCount)
-                {
-                    var resultrow = DataResults[iRowCount];
-                    iColCount = 0;
-                    foreach (var resultcolumn in resultrow)
-                    {
-                        if (!string.IsNullOrEmpty(resultcolumn))
-                        {
-                            if (iColCount == resultrow.Count - 1)
-                            {
-                                rb.Append(resultcolumn.ToString());
-                            }
-                            else
-                            {
-                                rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
-                            }
-                        }
-                        else
-                        {
-                            if (iColCount == resultrow.Count - 1)
-                            {
-                                rb.Append(Constants.NONE);
-                            }
-                            else
-                            {
-                                rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
-                            }
-                        }
-                        iColCount++;
-                    }
-                }
-                sb.AppendLine(rb.ToString());
-                rb = new StringBuilder();
-                iRowCount++;
-            }
-        }
+        //private void SetIndMathResult(StringBuilder sb,  
+        //    List<List<string>> rowNames)
+        //{
+        //    StringBuilder rb = new StringBuilder();
+        //    int iRowCount = 0;
+        //    int iColCount = 0;
+        //    foreach (var row in rowNames)
+        //    {
+        //        iColCount = 0;
+        //        string sRowName = string.Empty;
+        //        foreach (var colc in row)
+        //        {
+        //            sRowName = colc;
+        //            rb.Append(string.Concat(sRowName, Constants.CSV_DELIMITER));
+        //        }
+        //        if (DataResults.Count() > iRowCount)
+        //        {
+        //            var resultrow = DataResults[iRowCount];
+        //            iColCount = 0;
+        //            foreach (var resultcolumn in resultrow)
+        //            {
+        //                if (!string.IsNullOrEmpty(resultcolumn))
+        //                {
+        //                    if (iColCount == resultrow.Count - 1)
+        //                    {
+        //                        rb.Append(resultcolumn.ToString());
+        //                    }
+        //                    else
+        //                    {
+        //                        rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    if (iColCount == resultrow.Count - 1)
+        //                    {
+        //                        rb.Append(Constants.NONE);
+        //                    }
+        //                    else
+        //                    {
+        //                        rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
+        //                    }
+        //                }
+        //                iColCount++;
+        //            }
+        //        }
+        //        sb.AppendLine(rb.ToString());
+        //        rb = new StringBuilder();
+        //        iRowCount++;
+        //    }
+        //}
         private void SetInd5MathResult(StringBuilder sb, List<List<string>> rowNames)
         {
             StringBuilder rb = new StringBuilder();

@@ -8,7 +8,7 @@ namespace DevTreks.Extensions
     ///             The algorithm results are passed back to SB1Base-based objects, 
     ///             who then fill in the original SB1Base with the results. 
     ///Author:		www.devtreks.org
-    ///Date:		2017, August
+    ///Date:		2018, May
     ///NOTES        1. Most data manipulation takes place using the collection property.
     ///             2. By convention, the first member of a this collection is the Score, and the 
     ///             remaining are the indexed Indicators.
@@ -21,13 +21,14 @@ namespace DevTreks.Extensions
             InitCalculatorProperties();
             InitIndicatorQT1sProperties();
         }
-        public IndicatorQT1(string label, double qTM, double qTL, double qTU, double qT, double qTD1, double qTD2,
+        public IndicatorQT1(Calculator1 calculator, string label, 
+            double qTM, double qTL, double qTU, double qT, double qTD1, double qTD2,
             string qTMUnit, string qTLUnit, string qTUUnit, string qTUnit, string qTD1Unit, string qTD2Unit,
             string qMathType, string qMathSubType, string qDistributionType,
             string qMathExpression, string qMathResult,
             double q1, double q2, double q3, double q4, double q5,
             string q1Unit, string q2Unit, string q3Unit, string q4Unit, string q5Unit)
-            : base()
+            : base(calculator)
         {
             this.Label = label;
             this.QTM = CalculatorHelpers.CheckForNaNandRound4(qTM);
