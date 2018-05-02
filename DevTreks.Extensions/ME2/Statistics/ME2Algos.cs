@@ -48,15 +48,16 @@ namespace DevTreks.Extensions.ME2Statistics
             return algoindicator;
         }
         
-        public async Task<string> SetAlgoCorrIndicatorStats(string scriptURL, IDictionary<int, List<List<double>>> data,
+        public async Task<string> SetAlgoCorrIndicatorStats(int index, 
+            string scriptURL, IDictionary<int, List<List<double>>> data,
             string[] colNames)
         {
             //if the algo is used with the label, return it as affirmation
             string algoindicators = string.Empty;
             //init the algo using the new indicator
-            if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            if (HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
                 algoindicators = await SetPRACorrIndicatorStats(scriptURL, colNames, data);
             }
@@ -194,9 +195,9 @@ namespace DevTreks.Extensions.ME2Statistics
             }
             return algoindicator;
         }
-        public async Task<int> SetAlgoIndicatorStatsML(int index, IndicatorQT1 qt1,
-            string[] colNames, List<List<string>> data1,
-            List<List<string>> colData, List<List<string>> data2, string dataURL2)
+        public async Task<int> SetAlgoIndicatorStatsML(int index, string[] colNames, 
+            List<List<string>> data1, List<List<string>> colData, 
+            List<List<string>> data2, string dataURL2)
         {
             //if the algo is used with the label, return it as affirmation
             int algoindicator = -1;
@@ -215,7 +216,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 if (this.HasMathType(index, MATH_TYPES.algorithm1))
                 {
                     //if its a good calc returns the string
-                    algoindicator = await SetMLIndicatorStats(index, qt1,
+                    algoindicator = await SetMLIndicatorStats(index,
                         colNames, data1, colData, data2);
                 }
                 else if (this.HasMathType(index, MATH_TYPES.algorithm4))
@@ -226,36 +227,39 @@ namespace DevTreks.Extensions.ME2Statistics
             }
             return algoindicator;
         }
-        private async Task<int> SetMLIndicatorStats(int index, IndicatorQT1 qt1, string[] colNames,
+        private async Task<int> SetMLIndicatorStats(int index, string[] colNames,
             List<List<string>> data1, List<List<string>> colData, List<List<string>> data2)
         {
             int algoIndicator = -1;
-            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), 
+                this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), 
+                this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
             //mathterms define which qamount to send to algorith for predicting a given set of qxs
             List<string> mathTerms = new List<string>();
             //dependent var colNames found in MathExpression
             List<string> depColNames = new List<string>();
-            GetDataToAnalyzeColNames(index, qt1.QMathExpression, colNames,
+            GetDataToAnalyzeColNames(index, this.ME2Indicators[index].IndMathExpression, colNames,
                 ref depColNames, ref mathTerms);
             bool bHasCalcs = false;
-            if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_01.ToString())
+            if (this.ME2Indicators[index].IndMathSubType == MATHML_SUBTYPES.subalgorithm_01.ToString())
             {
                 //init algo
+                IndicatorQT1 qt1 = FillIndicator(index, this);
                 DevTreks.Extensions.Algorithms.ML01 ml
-                    = new Algorithms.ML01(index, qt1.Label,
-                        mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType,
-                        this.ME2Indicators[0].IndCILevel, this.ME2Indicators[0].IndIterations, 
-                        this.ME2Indicators[0].IndRandom, qt1, this.CalcParameters);
+                    = new Algorithms.ML01(index, this.ME2Indicators[index].IndLabel,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), this.ME2Indicators[index].IndMathSubType,
+                        this.ME2Indicators[index].IndCILevel, this.ME2Indicators[index].IndIterations, 
+                        this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
                 FillBaseIndicator(ml.IndicatorQT, index, sLowerCI, sUpperCI);
             }
-            else if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
+            else if (this.ME2Indicators[index].IndMathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
             {
                 algoIndicator = index;
             }
-            else if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
+            else if (this.ME2Indicators[index].IndMathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
             {
                 algoIndicator = index;
             }
@@ -1223,12 +1227,12 @@ namespace DevTreks.Extensions.ME2Statistics
         {
             bool bNeedsDistribution = true;
             //208
-            if (this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
+            if (this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
+                || this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
+                || this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                || this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                || this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                || this.HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
             {
                 lowerci = qt1.QTLUnit;
                 upperci = qt1.QTUUnit;
@@ -4290,34 +4294,7 @@ namespace DevTreks.Extensions.ME2Statistics
                         qs.ToArray(), algorithm, subalgorithm, this.CalcParameters, meta);
             return script1;
         }
-        //keep for reference
-        //private DevTreks.Extensions.Algorithms.BayesMNRegress1 InitBayesRegress1Algo(int index, string[] colNames,
-        //   string mathExpression)
-        //{
-        //    //mathterms define which qamount to send to algorith for predicting a given set of qxs
-        //    List<string> mathTerms = new List<string>();
-        //    //dependent var colNames found in MathExpression
-        //    List<string> depColNames = new List<string>();
-        //    GetDataToAnalyzeColNames(index, mathExpression, colNames, ref depColNames, ref mathTerms);
-        //    List<double> qs = GetQsForMathTerms(index, mathTerms);
-        //    DevTreks.Extensions.Algorithms.BayesMNRegress1 bayes1
-        //            = new Algorithms.BayesMNRegress1(mathTerms.ToArray(), colNames, depColNames.ToArray(), qs.ToArray(), 
-        //                this.ME2Indicators[0].IndIterations);
-        //    return bayes1;
-        //}
-        //private DevTreks.Extensions.Algorithms.BayesInfer1 InitBayes1Algo(int index, string[] colNames,
-        //    string mathExpression)
-        //{
-        //    //mathterms define which qamount to send to algorith for predicting a given set of qxs
-        //    List<string> mathTerms = new List<string>();
-        //    //dependent var colNames found in MathExpression
-        //    List<string> depColNames = new List<string>();
-        //    GetDataToAnalyzeColNames(index, mathExpression, colNames, ref depColNames, ref mathTerms);
-        //    List<double> qs = GetQsForMathTerms(index, mathTerms);
-        //    DevTreks.Extensions.Algorithms.BayesInfer1 bayes1
-        //            = new Algorithms.BayesInfer1(mathTerms.ToArray(), colNames, depColNames.ToArray(), qs.ToArray());
-        //    return bayes1;
-        //}
+        
         //can't be async so byref is ok
         public void GetDataToAnalyzeColNames(int index, string mathExpression, string[] colNames, 
             ref List<string> depColNames, ref List<string> mathTerms)

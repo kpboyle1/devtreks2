@@ -10,7 +10,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		MLBase algorithm
     ///Author:		www.devtreks.org
-    ///Date:		2018, April
+    ///Date:		2018, May
     ///References:	base machine learning algorithm
     ///</summary>
     public class MLBase : Calculator1
@@ -48,8 +48,9 @@ namespace DevTreks.Extensions.Algorithms
         public static int _ciLevel { get; set; }
         public static int _iterations { get; set; }
         public static int _random { get; set; }
-        //output
+        //input and output
         public IndicatorQT1 IndicatorQT { get; set; }
+        //output
         //store the results of calculations
         public List<List<string>> DataResults = new List<List<string>>();
 

@@ -1173,6 +1173,61 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
+        public static string[] GetAttributeGroups(int colIndex, List<List<string>> data, 
+            IndicatorQT1 qt1)
+        {
+            List<string> groups = new List<string>();
+            string sAttribute = string.Empty;
+            foreach (List<string> row in data)
+            {
+                if (colIndex < row.Count)
+                {
+                    sAttribute = row[colIndex];
+                    //need to bin double dependent variable data under these conditions
+                    if (colIndex == 0)
+                    {
+                        sAttribute = GetLabelAttributeIndex(sAttribute, qt1);
+                    }
+                    if (!string.IsNullOrEmpty(sAttribute))
+                    {
+                        if (!groups.Contains(sAttribute))
+                        {
+                            groups.Add(sAttribute);
+                        }
+                    }
+                }
+            }
+            return groups.ToArray();
+        }
+        public static string GetLabelAttributeIndex(string attribute, IndicatorQT1 qt1)
+        {
+            string sAttribute = attribute;
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                double dbAttribute = CalculatorHelpers.ConvertStringToDouble(sAttribute);
+                if (dbAttribute < qt1.Q1)
+                {
+                    sAttribute = qt1.Q1Unit;
+                }
+                else if (dbAttribute < qt1.Q2)
+                {
+                    sAttribute = qt1.Q2Unit;
+                }
+                else if (dbAttribute < qt1.Q3)
+                {
+                    sAttribute = qt1.Q3Unit;
+                }
+                else if (dbAttribute < qt1.Q4)
+                {
+                    sAttribute = qt1.Q4Unit;
+                }
+                else if (dbAttribute < qt1.Q5)
+                {
+                    sAttribute = qt1.Q5Unit;
+                }
+            }
+            return sAttribute;
+        }
         public static double GetPopulationStartCount(double popStartCount,
             double popStartAllocation)
         {

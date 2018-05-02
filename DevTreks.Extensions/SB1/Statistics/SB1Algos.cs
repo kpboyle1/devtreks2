@@ -46,15 +46,15 @@ namespace DevTreks.Extensions.SB1Statistics
             return algoindicator;
         }
         
-        public async Task<string> SetAlgoCorrIndicatorStats(string scriptURL, IDictionary<string, List<List<double>>> data,
-            string[] colNames)
+        public async Task<string> SetAlgoCorrIndicatorStats(int index, string scriptURL, 
+            IDictionary<string, List<List<double>>> data, string[] colNames)
         {
             //if the algo is used with the label, return it as affirmation
             string algoindicators = string.Empty;
             //init the algo using the new indicator
-            if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            if (HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(index, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
                 algoindicators = await SetPRACorrIndicatorStats(scriptURL, colNames, data);
             }
@@ -1161,12 +1161,12 @@ namespace DevTreks.Extensions.SB1Statistics
         {
             bool bNeedsDistribution = true;
             //208
-            if (this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
-                || this.HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
+            if (this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14)
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                || this.HasMathType(label, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
             {
                 lowerci = qt1.QTLUnit;
                 upperci = qt1.QTUUnit;

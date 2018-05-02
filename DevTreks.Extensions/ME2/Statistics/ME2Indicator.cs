@@ -356,6 +356,14 @@ namespace DevTreks.Extensions
                         ME2Indicators.Add(ind1);
                     }
                 }
+                if (i == 0
+                    && ME2Indicators.Count == 0)
+                {
+                    //214: skipping the score.label causes all indicators to be indexed 1 off
+                    ME2Indicator ind1 = new ME2Indicator();
+                    SetME2IndicatorProperties(ind1, sAttNameExtension, calculator);
+                    ME2Indicators.Add(ind1);
+                }
                 sHasAttribute = string.Empty;
             }
             AdjustIndicators();
@@ -1035,8 +1043,6 @@ namespace DevTreks.Extensions
             bool bHasCalculation = false;
             bool bHasIndicator1 = false;
             string sAlgo = string.Empty;
-            ME2Statistics.ME2Algos algos = new ME2Statistics.ME2Algos(this);
-            IndicatorQT1 qt1 = algos.FillIndicator(indicatorIndex, this);
             List<double> qTs = new List<double>();
             if (indicatorIndex == 1)
             {
@@ -1045,8 +1051,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 1))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex, 
-                            ME2Indicators[1].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                         bHasIndicator1 = true;
                     }
                 }
@@ -1063,8 +1068,7 @@ namespace DevTreks.Extensions
                         //still need to try to process ind1
                         if (!_indicators.Any(o => o == 1))
                         {
-                            sAlgo = await ProcessIndicators(indicatorIndex,
-                                ME2Indicators[1].IndURL, qt1);
+                            sAlgo = await ProcessIndicators(indicatorIndex);
                         }
                     }
                 }
@@ -1076,8 +1080,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 2))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[2].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1089,8 +1092,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 3))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[3].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1102,8 +1104,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 4))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[4].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1115,8 +1116,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 5))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[5].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1128,8 +1128,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 6))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[6].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1141,8 +1140,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 7))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[7].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1154,8 +1152,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 8))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[8].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1167,8 +1164,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 9))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[9].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1180,8 +1176,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 10))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[10].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1193,8 +1188,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 11))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[11].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1206,8 +1200,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 12))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[12].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1219,8 +1212,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 13))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[13].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1232,8 +1224,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 14))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[14].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1245,8 +1236,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 15))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[15].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1258,8 +1248,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 16))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[16].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1271,8 +1260,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 17))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[17].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1284,8 +1272,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 18))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[18].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1297,8 +1284,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 19))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[19].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1310,8 +1296,7 @@ namespace DevTreks.Extensions
                 {
                     if (!_indicators.Any(o => o == 19))
                     {
-                        sAlgo = await ProcessIndicators(indicatorIndex,
-                            ME2Indicators[20].IndURL, qt1);
+                        sAlgo = await ProcessIndicators(indicatorIndex);
                     }
                 }
                 indicatorIndex++;
@@ -1324,28 +1309,27 @@ namespace DevTreks.Extensions
                 {
                     //convention is to use score = 0
                     indicatorIndex = 0;
-                    sAlgo = await ProcessIndicators(indicatorIndex,
-                       ME2Indicators[0].IndURL, qt1);
+                    sAlgo = await ProcessIndicators(indicatorIndex);
                 }
             }
             //if it gets through try catch it's a good calc
             bHasCalculation = true;
             return bHasCalculation;
         }
-        public async Task<string> ProcessIndicators(int indicatorIndex, string indicatorURL, 
-            IndicatorQT1 qt1)
+        public async Task<string> ProcessIndicators(int indicatorIndex)
         {
             string sAlgo = string.Empty;
             int iAlgo = -1;
 
             List<double> qTs = new List<double>();
             bool bHasCalculations = false;
-            if (HasMathTypeML(qt1.Label, qt1.QMathType, qt1.QMathSubType))
+            if (HasMathTypeML(ME2Indicators[indicatorIndex].IndLabel, 
+                ME2Indicators[indicatorIndex].IndMathType, ME2Indicators[indicatorIndex].IndMathSubType))
             {
                 //214 pattern uses 2 TEXT files for training and testing with algos 1, 2, 3, and 4
                 string sDataURL1 = string.Empty;
                 string sDataURL2 = string.Empty;
-                string[] dataURLs = indicatorURL.Split(Constants.STRING_DELIMITERS);
+                string[] dataURLs = ME2Indicators[indicatorIndex].IndURL.Split(Constants.STRING_DELIMITERS);
                 for (int i = 0; i < dataURLs.Count(); i++)
                 {
                     if (i == 0)
@@ -1358,7 +1342,7 @@ namespace DevTreks.Extensions
                     }
                 }
                 //214 machine learning (214: R and Python use ProcessAlgosAsync2, until more sophisticated algs are developed) 
-                sAlgo = await ProcessAlgosAsyncML(indicatorIndex, qt1, sDataURL1, sDataURL2);
+                sAlgo = await ProcessAlgosAsyncML(indicatorIndex, sDataURL1, sDataURL2);
             }
             else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
                 || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
@@ -1383,7 +1367,7 @@ namespace DevTreks.Extensions
                             sDataURL = dataURLs[i];
                         }
                     }
-                    sAlgo = await ProcessAlgoCorrAsync(sScriptURL, sDataURL);
+                    sAlgo = await ProcessAlgoCorrAsync(indicatorIndex, sScriptURL, sDataURL);
                 }
             }
             else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
@@ -1399,7 +1383,7 @@ namespace DevTreks.Extensions
                 else
                 {
                     //214: legacy pattern fills in indicators using dataurl only
-                    if (HasDataMatrix())
+                    if (HasDataMatrix(indicatorIndex))
                     {
                         bHasCalculations = await ProcessIndicatorsUsingDataURL(indicatorIndex);
                     }
@@ -1474,7 +1458,7 @@ namespace DevTreks.Extensions
                 }
                 sAlgo = await ProcessAlgosAsync2(indicatorIndex, sScriptURL, sDataURL);
             }
-            else if (HasMathType(MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
             {
                 //properties filled in manually
                 _indicators = GetIndicatorsDisplay();
@@ -1511,8 +1495,8 @@ namespace DevTreks.Extensions
                 _indicators = GetIndicators(indicatorscsvs);
                 bHasCalculations = true;
             }
-            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
             {
                 //these algos must have data urls
                 if (!string.IsNullOrEmpty(DataURL)
@@ -1536,8 +1520,8 @@ namespace DevTreks.Extensions
                     CalculatorDescription += string.Concat("----", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
                 }
             }
-            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
             {
                 //these algos must have joint data urls with standard dataset format
                 if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
@@ -1560,9 +1544,9 @@ namespace DevTreks.Extensions
                     CalculatorDescription += string.Concat("----", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
                 }
             }
-            else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
                 //these algos must have joint urls but these are not standard dataset format
                 if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
@@ -1589,7 +1573,7 @@ namespace DevTreks.Extensions
                         ////add the tasks to the collection
                         //runTasks.Add(ProcessAlgoCorrAsync(i, dataURLs[i]));
                     }
-                    runTasks.Add(ProcessAlgoCorrAsync(sScriptURL, sDataURL));
+                    runTasks.Add(ProcessAlgoCorrAsync(indicatorIndex, sScriptURL, sDataURL));
                     //return a csv string of indicators when all of the tasks are completed
                     string[] indicatorscsvs = await Task.WhenAll(runTasks);
                     _indicators = GetIndicators(indicatorscsvs);
@@ -1604,7 +1588,7 @@ namespace DevTreks.Extensions
             }
             return bHasCalculations;
         }
-        private bool HasDataMatrix()
+        private bool HasDataMatrix(int indicatorIndex)
         {
             bool bHasMatrix = false;
             if (!string.IsNullOrEmpty(DataURL)
@@ -1615,14 +1599,14 @@ namespace DevTreks.Extensions
             if (!string.IsNullOrEmpty(ME2Indicators[0].IndURL)
                 && (ME2Indicators[0].IndURL != Constants.NONE))
             {
-                if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
+                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
                 {
                     return true;
                 }
-                else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+                else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
                 {
                     return true;
                 }
@@ -1639,207 +1623,7 @@ namespace DevTreks.Extensions
             ME2Indicators[0].IndMathType = MathType;
             ME2Indicators[0].IndCILevel = MathCILevel;
         }
-        public bool HasMathType(Calculator1.MATH_TYPES algorithm, Calculator1.MATH_SUBTYPES subAlgorithm)
-        {
-            bool bHasMathType = false;
-
-            if (ME2Indicators[0].IndMathType == algorithm.ToString()
-                && ME2Indicators[0].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[1].IndMathType == algorithm.ToString()
-                && ME2Indicators[1].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[2].IndMathType == algorithm.ToString()
-                && ME2Indicators[2].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[3].IndMathType == algorithm.ToString()
-                && ME2Indicators[3].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[4].IndMathType == algorithm.ToString()
-                && ME2Indicators[4].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[5].IndMathType == algorithm.ToString()
-                && ME2Indicators[5].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[6].IndMathType == algorithm.ToString()
-                && ME2Indicators[6].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[7].IndMathType == algorithm.ToString()
-                && ME2Indicators[7].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[8].IndMathType == algorithm.ToString()
-                && ME2Indicators[8].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[9].IndMathType == algorithm.ToString()
-                && ME2Indicators[9].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[10].IndMathType == algorithm.ToString()
-                && ME2Indicators[10].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[11].IndMathType == algorithm.ToString()
-                && ME2Indicators[11].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[12].IndMathType == algorithm.ToString()
-                && ME2Indicators[12].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[13].IndMathType == algorithm.ToString()
-                && ME2Indicators[13].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[14].IndMathType == algorithm.ToString()
-                && ME2Indicators[14].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[15].IndMathType == algorithm.ToString()
-                && ME2Indicators[15].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[16].IndMathType == algorithm.ToString()
-                && ME2Indicators[16].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[17].IndMathType == algorithm.ToString()
-                && ME2Indicators[17].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[18].IndMathType == algorithm.ToString()
-                && ME2Indicators[18].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[19].IndMathType == algorithm.ToString()
-                && ME2Indicators[19].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[20].IndMathType == algorithm.ToString()
-                && ME2Indicators[20].IndMathSubType == subAlgorithm.ToString())
-            {
-                return true;
-            }
-            return bHasMathType;
-        }
-        public bool HasMathType(Calculator1.MATH_TYPES algorithm)
-        {
-            bool bHasMathType = false;
-
-            if (ME2Indicators[0].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[1].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[2].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[3].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[4].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[5].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[6].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[7].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[8].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[9].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[10].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[11].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[12].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[13].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[14].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[15].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[16].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[17].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[18].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[19].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            else if (ME2Indicators[20].IndMathType == algorithm.ToString())
-            {
-                return true;
-            }
-            return bHasMathType;
-        }
+        
         public bool HasMathType(int index, Calculator1.MATH_TYPES algorithm,
             Calculator1.MATH_SUBTYPES subAlgorithm)
         {
@@ -2421,10 +2205,10 @@ namespace DevTreks.Extensions
                 //reset the data
                 data = new Dictionary<int, List<List<double>>>();
                 //it's ok for subsequent datasets to overwrite previous results (by design)
-                if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
                 {
                     //214 uses regular R and Python-style datasets for compatibility
                     data = GetDataSetRandPy(indicatorIndex, lines);
@@ -2436,7 +2220,7 @@ namespace DevTreks.Extensions
                 {
                     //algo1 calls this
                     //182: this is used with algos2-4, but they don't call it from here (they call it from PRA)
-                    data = GetDataSetwithQT(lines);
+                    data = GetDataSetwithQT(indicatorIndex, lines);
                 }
                 //if null already has an error message
                 if (data != null)
@@ -2537,20 +2321,20 @@ namespace DevTreks.Extensions
             sIndicatorsCSV = algoIndicator;
             return sIndicatorsCSV;
         }
-        private async Task<string> ProcessAlgoCorrAsync(string scriptURL, string dataURL)
+        private async Task<string> ProcessAlgoCorrAsync(int indicatorIndex, string scriptURL, string dataURL)
         {
 
             string sIndicatorIndexes = string.Empty;
             string sError = string.Empty;
             //see if there is a corresponding dataset
             //this requires a 1 to 1 relation between dataurls and jointdataurls
-            IDictionary<int, List<List<double>>> data = await GetDataSet1(dataURL);
+            IDictionary<int, List<List<double>>> data = await GetDataSet1(indicatorIndex, dataURL);
             //has to replace the algo code above
-            if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
-                sIndicatorIndexes = await SetAlgoCorrStats(scriptURL, data);
+                sIndicatorIndexes = await SetAlgoCorrStats(indicatorIndex, scriptURL, data);
             }
             return sIndicatorIndexes;
         }
@@ -2577,8 +2361,8 @@ namespace DevTreks.Extensions
             {
                 if (indicatorIndex == 3)
                 {
-                    if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                        || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12))
+                    if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12))
                     {
                         //ind 3 has the rmis
                         lines = await GetMathResultLines(1);
@@ -2667,9 +2451,9 @@ namespace DevTreks.Extensions
                 }
                 else
                 {
-                    if (HasMathType(MATH_TYPES.algorithm1,
+                    if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm11)
-                        || HasMathType(MATH_TYPES.algorithm1,
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm12))
                     {
                         if (indicatorIndex == 2)
@@ -2677,7 +2461,7 @@ namespace DevTreks.Extensions
                             lines2 = await GetDataLines(1, urls);
                         }
                     }
-                    else if (HasMathType(MATH_TYPES.algorithm1,
+                    else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm17))
                     {
                         //1st url is sdg and 2nd is pop
@@ -2720,7 +2504,7 @@ namespace DevTreks.Extensions
             }
             return sIndicatorCSV;
         }
-        private async Task<string> ProcessAlgosAsyncML(int indicatorIndex, IndicatorQT1 qt1,
+        private async Task<string> ProcessAlgosAsyncML(int indicatorIndex, 
             string dataURL1, string dataURL2)
         {
             string sIndicatorsCSV = string.Empty;
@@ -2729,16 +2513,16 @@ namespace DevTreks.Extensions
             List<List<string>> data = new List<List<string>>();
             List<List<string>> data2 = new List<List<string>>();
             List<List<string>> colSet = new List<List<string>>();
-            if (HasMathType(MATH_TYPES.algorithm1))
+            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1))
             {
                 //training dataset
                 lines = await GetDataLinesAsync(dataURL1);
                 //test dataset
                 lines2 = await GetDataLinesAsync(dataURL2);
             }
-            else if (HasMathType(MATH_TYPES.algorithm2)
-                || HasMathType(MATH_TYPES.algorithm3)
-                || HasMathType(MATH_TYPES.algorithm4))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
             {
                 //wrong algorithm: they use ProcessAlgosAsync2 until more sophisticated algos built
                 this.CalculatorDescription += "Version 214 does not support subalgorithm_01 syntax for R or Python.";
@@ -2758,7 +2542,7 @@ namespace DevTreks.Extensions
                     int algoIndicator = -1;
                     if (_indicators.Contains(indicatorIndex) == false)
                     {
-                        algoIndicator = await SetAlgoStatsML(indicatorIndex, qt1,
+                        algoIndicator = await SetAlgoStatsML(indicatorIndex,
                             data, colSet, data2, dataURL2);
                         if (algoIndicator != -1)
                         {
@@ -2781,9 +2565,9 @@ namespace DevTreks.Extensions
             string sIndicatorCSV = string.Empty;
             //this algo uses r project data files passed directly to algo
             List<string> lines = new List<string>();
-            if (HasMathType(MATH_TYPES.algorithm2)
-                || HasMathType(MATH_TYPES.algorithm3)
-                || HasMathType(MATH_TYPES.algorithm4))
+            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
             {
                 //some algorithms will have to stream the lines to cut down on memory
                 lines = await GetDataLinesAsync(dataURL);
@@ -2791,9 +2575,9 @@ namespace DevTreks.Extensions
             if (lines != null)
             {
                 bool bHasColNames = false;
-                if (HasMathType(MATH_TYPES.algorithm2)
-                    || HasMathType(MATH_TYPES.algorithm3)
-                    || HasMathType(MATH_TYPES.algorithm4))
+                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
                 {
                     //ok for algos that don't need to calculate qT from q1 to q10 vars
                     bHasColNames = SetColumnNames(lines);
@@ -2809,9 +2593,9 @@ namespace DevTreks.Extensions
                     if (_indicators.Contains(indicatorIndex) == false)
                     {
                         //this supports multiple algos that use the same pattern
-                        if (HasMathType(MATH_TYPES.algorithm2)
-                            || HasMathType(MATH_TYPES.algorithm3)
-                            || HasMathType(MATH_TYPES.algorithm4))
+                        if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
                         {
                             indicatorIndex = await SetAlgoStats2(indicatorIndex, dataURL, scriptURL);
                         }
@@ -2829,9 +2613,7 @@ namespace DevTreks.Extensions
             }
             return sIndicatorCSV;
         }
-
-
-        public async Task<string> ProcessAlgosForAnalyzersAsync(List<ME2Stock> stocks)
+        public async Task<string> ProcessAlgosForAnalyzersAsync(int indicatorIndex, List<ME2Stock> stocks)
         {
             string sIndicatorCSV = string.Empty;
             int i = 0;
@@ -2866,14 +2648,14 @@ namespace DevTreks.Extensions
                     iKey = CalculatorHelpers.ConvertStringToInt(ds.Key);
                     AddIndicatorToHoldTotals(i, ds.Key);
                     //this supports multiple algos that use the same pattern
-                    if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                        || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+                    if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
                     {
                         //regression
                         iIndicatorIndex = await SetAlgoStats1(iKey, ds.Value);
                     }
-                    else if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                        || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
+                    else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
                     {
                         //HasDataMatrix checked to make sure they have a good jointdataurl property
                         //process dataurls first (no effect on indicatornum because key is checked)
@@ -5304,7 +5086,7 @@ namespace DevTreks.Extensions
             }
             return sIndLabel;
         }
-        public IDictionary<int, List<List<string>>> GetDataSet2(List<string> lines)
+        public IDictionary<int, List<List<string>>> GetDataSet2(int indicatorIndex, List<string> lines)
         {
             //standard format is:
             //colNames = Indicator Label, Col1, Col2, QT Amount, Q1 Amount,	Q2 Amount, Q3 Amount, Q4 Amount, Q5 Amount, up to 11 numeric cols
@@ -5367,9 +5149,9 @@ namespace DevTreks.Extensions
                                             foreach (var qvector in qs)
                                             {
                                                 //ok for algos that don't need to calculate qT from q1 to q10 vars
-                                                if (HasMathType(MATH_TYPES.algorithm2)
-                                                    || HasMathType(MATH_TYPES.algorithm3)
-                                                    || HasMathType(MATH_TYPES.algorithm4))
+                                                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                                                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                                                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
                                                 {
                                                     dataSet.Add(qvector.ToList());
                                                 }
@@ -5398,7 +5180,7 @@ namespace DevTreks.Extensions
             }
             return dataSets;
         }
-        private async Task <IDictionary<int, List<List<double>>>> GetDataSet1(string dataURL)
+        private async Task <IDictionary<int, List<List<double>>>> GetDataSet1(int indicatorIndex, string dataURL)
         {
             //ok to return data with 0 members
             IDictionary<int, List<List<double>>> data = new Dictionary<int, List<List<double>>>();
@@ -5406,9 +5188,9 @@ namespace DevTreks.Extensions
                 && dataURL != Constants.NONE)
             {
                 List<string> dlines = new List<string>();
-                if (HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                    || HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
                 {
                     dlines = await GetDataLinesAsync(dataURL);
                     //214 deprecated
@@ -5419,7 +5201,7 @@ namespace DevTreks.Extensions
                     //reset the data
                     data = new Dictionary<int, List<List<double>>>();
                     //it's ok for subsequent datasets to overwrite previous results (by design)
-                    data = GetDataSetwithQT(dlines);
+                    data = GetDataSetwithQT(indicatorIndex, dlines);
                     //if null already has an error message
                     if (data != null)
                     {
@@ -5447,7 +5229,7 @@ namespace DevTreks.Extensions
             }
             return data;
         }
-        public IDictionary<int, List<List<double>>> GetDataSetwithQT(List<string> lines)
+        public IDictionary<int, List<List<double>>> GetDataSetwithQT(int indicatorIndex, List<string> lines)
         {
             //standard format is:
             //colNames = Indicator Label, Col1, Col2, QT Amount, Q1 Amount,	Q2 Amount, Q3 Amount, Q4 Amount, Q5 Amount, up to 11 numeric cols
@@ -5643,7 +5425,8 @@ namespace DevTreks.Extensions
                                                 //ignore the row
                                             }
                                             //has to also calc qT for each row
-                                            List<List<double>> dataSet = FillDataSet(sKey, qs, depColNames, mathTerms);
+                                            List<List<double>> dataSet = FillDataSet(indicatorIndex,
+                                                sKey, qs, depColNames, mathTerms);
                                             dataSets.Add(iKey, dataSet);
                                         }
                                     }
@@ -5669,7 +5452,7 @@ namespace DevTreks.Extensions
             return dataSets;
         }
 
-        private List<List<double>> FillDataSet(string key, List<IEnumerable<double>> qs, List<string> depColNames, List<string> mathTerms)
+        private List<List<double>> FillDataSet(int indicatorIndex, string key, List<IEnumerable<double>> qs, List<string> depColNames, List<string> mathTerms)
         {
             //new dataset holding qs
             List<List<double>> dataSet = new List<List<double>>();
@@ -5761,13 +5544,13 @@ namespace DevTreks.Extensions
                 }
                 //don't set QT for alg 6: regression must store an actual QT in the dataset
                 //other algos have different rules
-                if (!HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                    && !HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                    && !HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
-                    && !HasMathType(MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8)
-                    && !HasMathType(MATH_TYPES.algorithm2)
-                    && !HasMathType(MATH_TYPES.algorithm3)
-                    && !HasMathType(MATH_TYPES.algorithm4))
+                if (!HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                    && !HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                    && !HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
+                    && !HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8)
+                    && !HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                    && !HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                    && !HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
                 {
                     int iKey = CalculatorHelpers.ConvertStringToInt(key);
                     qT = GetQT(iKey, qT, qCalcs, depColNames, mathTerms);
@@ -8079,11 +7862,12 @@ namespace DevTreks.Extensions
             CalcParameters.MathResult = MathResult;
             return iIndicatorIndex;
         }
-        private async Task<string> SetAlgoCorrStats(string scriptURL, IDictionary<int, List<List<double>>> data)
+        private async Task<string> SetAlgoCorrStats(int index, string scriptURL, IDictionary<int, List<List<double>>> data)
         {
             string sError = string.Empty;
             ME2Statistics.ME2Algos algos = new ME2Statistics.ME2Algos(this);
-            string sIndicatorIndexes = await algos.SetAlgoCorrIndicatorStats(scriptURL, data, _colNames);
+            string sIndicatorIndexes = await algos.SetAlgoCorrIndicatorStats(index,
+                scriptURL, data, _colNames);
             //copy all of the results back to this
             CopyME2IndicatorsProperties(algos);
             //188 added support for analyzers
@@ -8152,7 +7936,7 @@ namespace DevTreks.Extensions
             }
             return iIndicatorIndex;
         }
-        private async Task<int> SetAlgoStatsML(int index, IndicatorQT1 qt1,
+        private async Task<int> SetAlgoStatsML(int index, 
             List<List<string>> data, List<List<string>> colData, List<List<string>> data2,
             string dataURL2)
         {
@@ -8160,7 +7944,7 @@ namespace DevTreks.Extensions
             //init the algos using this
             ME2Statistics.ME2Algos algos = new ME2Statistics.ME2Algos(this);
             int algindicator
-                = await algos.SetAlgoIndicatorStatsML(index, qt1, _colNames,
+                = await algos.SetAlgoIndicatorStatsML(index, _colNames,
                     data, colData, data2, dataURL2);
             //copy all of the results back to this
             CopyME2IndicatorsProperties(algos);
