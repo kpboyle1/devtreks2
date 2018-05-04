@@ -6348,7 +6348,7 @@ namespace DevTreks.Extensions.Algorithms
                 //11, 12, and 13 don't change
                 //ColNames[11] = "quantity";
             }
-            sb.AppendLine(GetColumnNameRow());
+            //sb.AppendLine(GetColumnNameRow());
             
             if (IndicatorIndex == 5
                 || (_subalgorithm == MATH_SUBTYPES.subalgorithm11.ToString()
@@ -6363,7 +6363,7 @@ namespace DevTreks.Extensions.Algorithms
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm17.ToString()
                     || _subalgorithm == MATH_SUBTYPES.subalgorithm18.ToString())
                 {
-                    CalculatorHelpers.SetIndMathResult(sb, rowNames, DataResults);
+                    CalculatorHelpers.SetIndMathResult(sb, ColNames, rowNames, DataResults);
                 }
                 else
                 {
@@ -6372,7 +6372,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             else
             {
-                CalculatorHelpers.SetIndMathResult(sb, rowNames, DataResults);
+                CalculatorHelpers.SetIndMathResult(sb, ColNames, rowNames, DataResults);
             }
             if (IndicatorQT.MathResult.ToLower().StartsWith("http"))
             {

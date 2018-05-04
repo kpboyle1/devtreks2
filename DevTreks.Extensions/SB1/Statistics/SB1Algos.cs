@@ -252,11 +252,27 @@ namespace DevTreks.Extensions.SB1Statistics
             }
             else if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
             {
-                algoIndicator = qt1.Label;
+                //init algo
+                DevTreks.Extensions.Algorithms.ML02 ml
+                    = new Algorithms.ML02(this.IndicatorIndex, qt1.Label,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType,
+                        this.SB1CILevel, this.SB1Iterations, this.SB1Random,
+                        qt1, this.CalcParameters);
+                //run algo
+                bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
+                FillBaseIndicator(ml.IndicatorQT, qt1.Label, sLowerCI, sUpperCI);
             }
             else if (qt1.QMathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
             {
-                algoIndicator = qt1.Label;
+                //init algo
+                DevTreks.Extensions.Algorithms.ML03 ml
+                    = new Algorithms.ML03(this.IndicatorIndex, qt1.Label,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType,
+                        this.SB1CILevel, this.SB1Iterations, this.SB1Random,
+                        qt1, this.CalcParameters);
+                //run algo
+                bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
+                FillBaseIndicator(ml.IndicatorQT, qt1.Label, sLowerCI, sUpperCI);
             }
             if (bHasCalcs)
             {

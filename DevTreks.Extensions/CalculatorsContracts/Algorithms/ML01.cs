@@ -49,7 +49,7 @@ namespace DevTreks.Extensions.Algorithms
                     bHasCalculations = await SetMathResult(rowNames);
 
                     //debug first with reference dataset and show debugging messages in results
-                    //sResults = DebugClassify(trainData, rowNames, testData);
+                    //sResults = await DebugClassify(trainData, rowNames, testData);
                     //put the results in MathResult
                     //bHasCalculations = await SetMathResult(rowNames, sResults);
                 }
@@ -69,13 +69,14 @@ namespace DevTreks.Extensions.Algorithms
             try
             {
                 //make a new list with same matrix, to be replaced with results
+                int iRowCount = Shared.GetRowCount(_iterations, testData.Count);
                 int iColCount = testData[0].Count;
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_01.ToString().ToString())
                 {
                     //subalgo01 needs qtm and percent probability of qtm
                     iColCount = testData[0].Count + 2;
                 }
-                DataResults = CalculatorHelpers.GetList(testData.Count, iColCount);
+                DataResults = CalculatorHelpers.GetList(iRowCount, iColCount);
                 // trainData columns define number of rows (depcolumns.Length + 1)
                 string[][] attributeValues = new string[trainData[0].Count][];
                 //for each column of trainData, fill in the unique attribute names (i.e. gender = 2 unique atts)
@@ -93,7 +94,10 @@ namespace DevTreks.Extensions.Algorithms
                 foreach (List<string> data in testData)
                 {
                     //prepare mathresults
-                    DataResults[row].AddRange(data);
+                    for (int i = 0; i < data.Count; i++)
+                    {
+                        DataResults[row][i] = data[i];
+                    }
                     int c = await Classify(row, attributeValues, data.ToArray(),
                         jointCounts, dependentCounts, withLaplacian, attributeValues.Length - 1);
                     for (int l = 0; l < attributeValues[0].Length; l++)
@@ -467,7 +471,7 @@ namespace DevTreks.Extensions.Algorithms
                     newColNames[_colNames.Length] = "label";
                     newColNames[_colNames.Length + 1] = "probability";
                     _colNames = newColNames;
-                    CalculatorHelpers.SetIndMathResult(sb, rowNames, DataResults);
+                    CalculatorHelpers.SetIndMathResult(sb, _colNames, rowNames, DataResults);
                 }
 
             }

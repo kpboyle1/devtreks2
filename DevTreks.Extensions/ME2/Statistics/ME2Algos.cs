@@ -257,11 +257,29 @@ namespace DevTreks.Extensions.ME2Statistics
             }
             else if (this.ME2Indicators[index].IndMathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
             {
-                algoIndicator = index;
+                //init algo
+                IndicatorQT1 qt1 = FillIndicator(index, this);
+                DevTreks.Extensions.Algorithms.ML02 ml
+                    = new Algorithms.ML02(index, this.ME2Indicators[index].IndLabel,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), this.ME2Indicators[index].IndMathSubType,
+                        this.ME2Indicators[index].IndCILevel, this.ME2Indicators[index].IndIterations,
+                        this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
+                //run algo
+                bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
+                FillBaseIndicator(ml.IndicatorQT, index, sLowerCI, sUpperCI);
             }
             else if (this.ME2Indicators[index].IndMathSubType == MATHML_SUBTYPES.subalgorithm_03.ToString())
             {
-                algoIndicator = index;
+                //init algo
+                IndicatorQT1 qt1 = FillIndicator(index, this);
+                DevTreks.Extensions.Algorithms.ML03 ml
+                    = new Algorithms.ML03(index, this.ME2Indicators[index].IndLabel,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), this.ME2Indicators[index].IndMathSubType,
+                        this.ME2Indicators[index].IndCILevel, this.ME2Indicators[index].IndIterations,
+                        this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
+                //run algo
+                bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
+                FillBaseIndicator(ml.IndicatorQT, index, sLowerCI, sUpperCI);
             }
             if (bHasCalcs)
             {

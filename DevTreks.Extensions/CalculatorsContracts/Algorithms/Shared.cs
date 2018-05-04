@@ -1228,6 +1228,104 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sAttribute;
         }
+        public static string GetLabelAttributeIndex(int index, IndicatorQT1 qt1)
+        {
+            string sAttribute = Constants.NONE;
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                if (index == 0)
+                {
+                    sAttribute = qt1.Q1Unit;
+                }
+                else if (index == 1)
+                {
+                    sAttribute = qt1.Q2Unit;
+                }
+                else if (index == 2)
+                {
+                    sAttribute = qt1.Q3Unit;
+                }
+                else if (index == 3)
+                {
+                    sAttribute = qt1.Q4Unit;
+                }
+                else if (index == 4)
+                {
+                    sAttribute = qt1.Q5Unit;
+                }
+            }
+            return sAttribute;
+        }
+        public static double GetLabelAttributeValue(int index, IndicatorQT1 qt1)
+        {
+            double dbAttribute = 0;
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                if (index == 0)
+                {
+                    //return midpoints
+                    dbAttribute = qt1.Q1 / 2;
+                }
+                else if (index == 1)
+                {
+                    dbAttribute = (qt1.Q2 - (qt1.Q2 - qt1.Q1));
+                }
+                else if (index == 2)
+                {
+                    dbAttribute = (qt1.Q3 - (qt1.Q3 - qt1.Q2));
+                }
+                else if (index == 3)
+                {
+                    dbAttribute = (qt1.Q4 - (qt1.Q4 - qt1.Q3));
+                }
+                else if (index == 4)
+                {
+                    dbAttribute = (qt1.Q5 - (qt1.Q5 - qt1.Q4));
+                }
+            }
+            return dbAttribute;
+        }
+        public static double[] ConvertAttributeToOutputs(string attribute, IndicatorQT1 qt1, int numOutputs)
+        {
+            double[] outputs = new double[numOutputs];
+            int iIndexPosition = 0;
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                double dbAttribute = CalculatorHelpers.ConvertStringToDouble(attribute);
+                if (dbAttribute < qt1.Q1)
+                {
+                    iIndexPosition = 0;
+                }
+                else if (dbAttribute < qt1.Q2)
+                {
+                    iIndexPosition = 1;
+                }
+                else if (dbAttribute < qt1.Q3)
+                {
+                    iIndexPosition = 2;
+                }
+                else if (dbAttribute < qt1.Q4)
+                {
+                    iIndexPosition = 3;
+                }
+                else if (dbAttribute < qt1.Q5)
+                {
+                    iIndexPosition = 4; 
+                }
+            }
+            for (int i = 0; i < numOutputs; i++)
+            {
+                if (i == iIndexPosition)
+                {
+                    outputs[i] = 1;
+                }
+                else
+                {
+                    outputs[i] = 0;
+                }
+            }
+            return outputs;
+        }
         public static double GetPopulationStartCount(double popStartCount,
             double popStartAllocation)
         {
@@ -1315,7 +1413,11 @@ namespace DevTreks.Extensions.Algorithms
             {
                 meta.MathResult = sb.ToString();
             }
-            if (metaType == META_TYPE.row3_col4)
+            if (metaType == META_TYPE.none)
+            {
+
+            }
+            else if (metaType == META_TYPE.row3_col4)
             {
                 //last line of string should have the QTM vars
                 if (lastLines.Count > 0)
@@ -1336,7 +1438,7 @@ namespace DevTreks.Extensions.Algorithms
                                 //manipulate to get it to work
                                 sNewLine = lastLines[x].Replace(Constants.SPACE_DELIMITER, Constants.CSV_DELIMITER);
                                 //r issue with dataframes
-                                sNewLine = sNewLine.Replace(string.Concat(Constants.CSV_DELIMITER,Constants.CSV_DELIMITER), 
+                                sNewLine = sNewLine.Replace(string.Concat(Constants.CSV_DELIMITER, Constants.CSV_DELIMITER),
                                     Constants.CSV_DELIMITER);
                                 vars = sNewLine.Split(Constants.CSV_DELIMITERS);
                             }
@@ -1404,5 +1506,12 @@ namespace DevTreks.Extensions.Algorithms
             bHasMathResults = true;
             return bHasMathResults;
         }
+        public static int GetRowCount(int iterations, int testCount)
+        {
+            int iRowCount = (iterations > 0) ? iterations : testCount;
+            iRowCount = (testCount < iRowCount) ? iRowCount : 2000;
+            return iRowCount;
+        }
     }
+
 }

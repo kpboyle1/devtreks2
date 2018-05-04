@@ -1667,6 +1667,22 @@ namespace DevTreks.Extensions
             double dbCIR = Math.Round(dbCI, 4);
             return dbCIR;
         }
+        public static double GetConfidenceIntervalFromMSE(int percent, double n, double mse)
+        {
+            double dbCI = 0;
+            n = Math.Round(n, 0);
+            mse = Math.Round(mse, 4);
+            if (n == 0)
+            {
+                return dbCI;
+            }
+            //95% CI = Mean +-(1.96 * Standard Error (Standard deviation / N^0.5
+            double dbZ = GetZ(percent);
+            //se or rmse = square root of mse
+            dbCI = dbZ * (mse / (Math.Pow(n, 0.5)));
+            double dbCIR = Math.Round(dbCI, 4);
+            return dbCIR;
+        }
         public static double GetSDFromConfidenceInterval(int percent, 
             double n, double ci)
         {
@@ -4602,10 +4618,11 @@ namespace DevTreks.Extensions
                 }
             }
         }
-        public static void SetIndMathResult(StringBuilder sb,
+        public static void SetIndMathResult(StringBuilder sb, string[] colNames,
             List<List<string>> rowNames, List<List<string>> DataResults)
         {
             StringBuilder rb = new StringBuilder();
+            sb.AppendLine(GetColumnNameRow(colNames));
             int iRowCount = 0;
             int iColCount = 0;
             foreach (var row in rowNames)
@@ -4620,38 +4637,35 @@ namespace DevTreks.Extensions
                 if (DataResults.Count() > iRowCount)
                 {
                     var resultrow = DataResults[iRowCount];
-                    iColCount = 0;
                     foreach (var resultcolumn in resultrow)
                     {
                         if (!string.IsNullOrEmpty(resultcolumn))
                         {
-                            if (iColCount == resultrow.Count - 1)
-                            {
-                                rb.Append(resultcolumn.ToString());
-                            }
-                            else
-                            {
-                                rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
-                            }
+                            rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
                         }
                         else
                         {
-                            if (iColCount == resultrow.Count - 1)
-                            {
-                                rb.Append(Constants.NONE);
-                            }
-                            else
-                            {
-                                rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
-                            }
+                            rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
                         }
-                        iColCount++;
                     }
                 }
+                //get rid of last csv
+                rb = rb.Remove(rb.Length - 1, 1);
                 sb.AppendLine(rb.ToString());
                 rb = new StringBuilder();
                 iRowCount++;
             }
+        }
+        private static string GetColumnNameRow(string[] colNames)
+        {
+            StringBuilder rb = new StringBuilder();
+            foreach (var cn in colNames)
+            {
+                rb.Append(string.Concat(cn, Constants.CSV_DELIMITER));
+            }
+            //get rid of last csv
+            rb = rb.Remove(rb.Length - 1, 1);
+            return rb.ToString();
         }
         public static async Task<List<List<string>>> GetColumnSetML(List<string> lines, Calculator1 calc)
         {
