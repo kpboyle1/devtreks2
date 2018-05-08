@@ -252,7 +252,7 @@ namespace DevTreks.Extensions.Algorithms
             //labels are in atts[0]
             for (int j = 0; j < attributeValues[0].Length; j++)
             {
-                sAttribute = Shared.GetLabelAttributeIndex(attributeValue, this.IndicatorQT);
+                sAttribute = Shared.ConvertAttributeToLabel(attributeValue, this.IndicatorQT);
                 if (sAttribute.Equals(attributeValues[0][j]))
                 {
                     iAttributeIndex = j;

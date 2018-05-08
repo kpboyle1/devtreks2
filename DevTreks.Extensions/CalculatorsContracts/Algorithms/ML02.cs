@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace DevTreks.Extensions.Algorithms
 {
@@ -43,17 +44,15 @@ namespace DevTreks.Extensions.Algorithms
                 
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_02.ToString())
                 {
-
                     //classify testdata and return new dataset
                     bHasCalculations = await Classify(trainData, rowNames, testData);
                     bHasCalculations = await SetMathResult(rowNames);
 
-
+                    //StringBuilder sb = new StringBuilder();
                     //debug first with reference dataset and show debugging messages in results
-                    //StringBuilder sResults = new StringBuilder();
-                    //sResults = await DebugClassify(trainData, rowNames, testData);
-                    ////put the results in MathResult
-                    //bHasCalculations = await SetMathResult(rowNames, sResults);
+                    //put the results in MathResult
+                    //sb = await DebugClassify(trainData, rowNames, testData);
+                    //bHasCalculations = await SetMathResult(rowNames, sb);
                 }
 
             }
@@ -65,29 +64,42 @@ namespace DevTreks.Extensions.Algorithms
         }
 
         private async Task<bool> Classify(List<List<string>> trainData,
-            List<List<string>> rowNames, List<List<string>> testData)
+            List<List<string>> rowNames, List<List<string>> testData, StringBuilder sb = null)
         {
             bool bHasClassified = false;
             try
             {
                 //ml algo rule: long running calcs avoided by setting Score.Iterations
                 int iRowCount = Shared.GetRowCount(_iterations, testData.Count);
+                //dep var output count
+                string[] arrLabelCategories = Shared.GetAttributeGroups(0, trainData, this.IndicatorQT);
+                int numOutput = arrLabelCategories.Length;
+                //convert to normalized data using r and python colname conventions
+                int iCategoryLimit = 5;
+                //indexes for outputs and minmax for inputs
+                //converts rows to columns for normalization
+                List<List<double>> trainDB = Shared.GetNormalizedData(trainData,
+                    iCategoryLimit, this.IndicatorQT, _colNames, _depColNames,
+                    Shared.TRANSFORM_DATA_TYPE.indexes, Shared.TRANSFORM_DATA_TYPE.normalized,
+                    CalculatorHelpers.NORMALIZATION_TYPES.none, CalculatorHelpers.NORMALIZATION_TYPES.minmax);
+                List<List<double>> testDB = Shared.GetNormalizedData(testData,
+                    iCategoryLimit, this.IndicatorQT, _colNames, _depColNames,
+                    Shared.TRANSFORM_DATA_TYPE.indexes, Shared.TRANSFORM_DATA_TYPE.normalized,
+                    CalculatorHelpers.NORMALIZATION_TYPES.none, CalculatorHelpers.NORMALIZATION_TYPES.minmax);
                 //make a new list with same matrix, to be replaced with results
-                int iColCount = testData[0].Count;
+                int iColCount = testDB.Count;
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_02.ToString().ToString())
                 {
                     //subalgo02 needs qtm and percent probability of accuracy, mse, qtm, low ci, high ci
-                    iColCount = testData[0].Count + 7;
+                    iColCount = testDB.Count + 7;
                 }
-                DataResults = CalculatorHelpers.GetList(iRowCount, iColCount);
+                DataResults = CalculatorHelpers.GetList(testDB[0].Count, iColCount);
                 //less col[0]
-                int numInput = trainData[0].Count - 1;
+                int numInput = trainDB.Count - 1;
                 //dynamic?
                 int[] numHidden = new int[] { 10, 10, 10 };
-                string[] arrLabelCategories = Shared.GetAttributeGroups(0, trainData, this.IndicatorQT);
-                int numOutput = arrLabelCategories.Length;
-                double[][] trainArrData = MakeData(trainData, iRowCount, this.IndicatorQT, 
-                    numInput, numHidden, numOutput, 5);
+                double[][] trainArrData = MakeData(trainDB, iRowCount, this.IndicatorQT, 
+                    numInput, numHidden, numOutput, _random);
                 //build a 4-(10,10,10)-3 deep neural network (tanh & softmax)
                 DeepNet dn = new DeepNet(numInput, numHidden, numOutput);
 
@@ -95,14 +107,14 @@ namespace DevTreks.Extensions.Algorithms
                 double learnRate = 0.001;
                 double momentum = 0.01;
                 //start training using back-prop with mean squared error \n");
-                double[] wts = dn.Train(trainArrData, maxEpochs, learnRate, momentum, 10);
+                double[] wts = dn.Train(trainArrData, maxEpochs, learnRate, momentum, 10, sb);
                 bool bVerbose = false;
                 //final model MS error
-                double trainMSE = dn.Error(trainArrData, bVerbose);
+                double trainMSE = dn.Error(trainArrData, bVerbose, sb);
                 //final model accuracy
-                double trainAcc = dn.Accuracy(trainArrData, bVerbose);
+                double trainAcc = dn.Accuracy(trainArrData, bVerbose, sb);
                 //add classified test data to DataResults
-                bool bHasNewClassifs = await AddNewClassifications(dn, testData, 
+                bool bHasNewClassifs = await AddNewClassifications(dn, testDB, 
                     trainAcc, trainMSE, iRowCount, _ciLevel);
                 bHasClassified = true;
             }
@@ -155,7 +167,7 @@ namespace DevTreks.Extensions.Algorithms
                 //make predictions for first row of data
                 double[] predictors = new double[] { 2.24, 1.91, 2.52, 2.41, 0.00, 1.00, 0.00 };
                 double[] probs = dn.ComputeOutputs(predictors);  // 4.33362252510741
-                sb.AppendLine("\nPredicted savings for household x (t=145): ");
+                sb.AppendLine("\nPredicted savings for household x: ");
                 //sb.AppendLine((forecast[0] * 100).ToString("F0"));
                 double[] outputs = ProbsToClasses(probs);  // convert to outputs like [0, 0, 1, 0]
 
@@ -177,94 +189,9 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sb;
         }
-        //private async Task<StringBuilder> DebugClassify(List<List<string>> trainData,
-        //    List<List<string>> rowNames, List<List<string>> testData)
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    try
-        //    {
-        //        // trainData columns define number of rows (depcolumns.Length + 1)
-        //        string[][] attributeValues = new string[trainData[0].Count][];
-        //        //for each column of trainData, fill in the unique attribute names (i.e. gender = 2 unique atts)
-        //        for (int i = 0; i < trainData[0].Count; i++)
-        //        {
-        //            attributeValues[i] = Shared.GetAttributeGroups(i, trainData);
-        //        }
-        //        sb.AppendLine("First 4 lines of training data are:\n");
-        //        for (int i = 0; i < 4; ++i)
-        //        {
-        //            List<string> atts = trainData[i];
-        //            string sData = string.Empty;
-        //            foreach (string att in atts)
-        //            {
-        //                sData += string.Concat(" ", att);
-        //            }
-        //            sb.AppendLine(sData);
-        //        }
-        //        int[][][] jointCounts = MakeJointCounts(trainData, attributeValues);
-        //        int[] dependentCounts = MakeDependentCounts(jointCounts, attributeValues[0].Length);
-        //        for (int j = 0; j < dependentCounts.Length; j++)
-        //        {
-        //            if (attributeValues[0].Length > j)
-        //            {
-        //                string sDependent = attributeValues[0][j];
-        //                sb.AppendLine(string.Concat("Total for ",
-        //                    sDependent, "s  = " + dependentCounts[j]));
-        //            }
-        //        }
-        //        ShowJointCounts(sb, jointCounts, attributeValues);
-
-        //        // prevent joint counts with 0
-        //        bool withLaplacian = true;
-        //        sb.AppendLine("Using Naive Bayes " + (withLaplacian ? "with" : "without") + " Laplacian smoothing to classify when:");
-        //        //classify everything in test dataset and add result to new columns in test dataset
-        //        //display averages in Indicator metadata
-        //        int k = 0;
-        //        foreach (List<string> data in testData)
-        //        {
-        //            string sData2 = string.Empty;
-        //            if (k == 0)
-        //            {
-        //                for (int i = 1; i < data.Count; i++)
-        //                {
-        //                    if (i < (_depColNames.Length + 1))
-        //                    {
-        //                        sData2 += string.Concat(" ", _depColNames[i - 1], " = ", data[i]);
-        //                    }
-        //                    else
-        //                    {
-        //                        sData2 += string.Concat(" ", " = ", data[i]);
-        //                    }
-        //                }
-        //                sb.AppendLine(sData2);
-        //                //for debugging algo
-        //                int c = await Classify(k, attributeValues, testData[0].ToArray(),
-        //                    jointCounts, dependentCounts, withLaplacian,
-        //                    attributeValues.Length - 1, sb);
-        //                for (int l = 0; l < attributeValues[0].Length; l++)
-        //                {
-        //                    if (c == l)
-        //                    {
-        //                        sb.AppendLine(string.Concat("\nThe subject is most likely to be ",
-        //                                attributeValues[0][l].ToString()));
-        //                    }
-        //                }
-        //            }
-        //            else
-        //            {
-
-        //            }
-        //            k++;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        sb.AppendLine(ex.Message);
-        //    }
-        //    return sb;
-        //}
-        static double[][] MakeData(List<List<string>> trainData, int numItems, IndicatorQT1 qt1, 
-            int numInput, int[] numHidden, int numOutput, int seed)
+        
+        static double[][] MakeData(List<List<double>> trainData, int numItems, 
+            IndicatorQT1 qt1, int numInput, int[] numHidden, int numOutput, int seed)
         {
             //int numItems = trainData.Count;
             // generate data using a Deep NN (tanh hidden activation)
@@ -280,49 +207,35 @@ namespace DevTreks.Extensions.Algorithms
             for (int i = 0; i < nw; ++i)
                 wts[i] = (wtHi - wtLo) * rrnd.NextDouble() + wtLo;
             dn.SetWeights(wts);
-            // make the result matrix holder
+            // make the result matrix holder (now first index is row)
             double[][] result = new double[numItems][];  
             for (int r = 0; r < numItems; ++r)
                 // allocate the cols
                 result[r] = new double[numInput + numOutput];
-            // pseudo-Gaussian scaling
-            //double inLo = -4.0;    
-            //double inHi = 4.0;
-            // each row
-            string sInput = string.Empty;
+            //assume this is needed: pseudo-Gaussian scaling
+            double inLo = -4.0;
+            double inHi = 4.0;
+            double dbInput = 0;
             for (int r = 0; r < numItems; ++r)
             {
-                // [random] input values
                 double[] inputs = new double[numInput];
                 for (int i = 0; i < numInput; ++i)
                 {
-                    //ml datasets must be transformed (normalized) manually before being used in DevTreks
                     //skip col[0]
-                    sInput = trainData[r][i + 1];
-                    inputs[i] = CalculatorHelpers.ConvertStringToDouble(sInput);
-                    //inputs[i] = (inHi - inLo) * CalculatorHelpers.ConvertStringToDouble(sInput) + inLo;
-
-                    //for (int i = 0; i < numInput; ++i)
-                    //    inputs[i] = (inHi - inLo) * rrnd.NextDouble() + inLo;
+                    dbInput = trainData[i + 1][r];
+                    inputs[i] = (inHi - inLo) * dbInput + inLo;
                 }
                 //traindata has been categorized
-                double[] outputs = Shared.ConvertAttributeToOutputs(trainData[r][0], qt1, numOutput);
-                
-                //// compute the outputs (as softmax probs) like [0.10, 0.15, 0.55, 0.20]
-                //double[] probs = dn.ComputeOutputs(inputs);
-                //// convert to outputs like [0, 0, 1, 0]
-                //double[] outputs = ProbsToClasses(probs);
-
+                double[] outputs = Shared.ConvertIndexToOutputs(trainData[0][r], 
+                    qt1, numOutput);
                 int c = 0;
                 for (int i = 0; i < numInput; ++i)
                     result[r][c++] = inputs[i];
                 for (int i = 0; i < numOutput; ++i)
                     result[r][c++] = outputs[i];
-
             }
             return result;
-
-        } // MakeData
+        }
         static double[][] MakeData(int numItems, int numInput, int[] numHidden, int numOutput, int seed)
         {
             // generate data using a Deep NN (tanh hidden activation)
@@ -451,36 +364,37 @@ namespace DevTreks.Extensions.Algorithms
             }
             sb.AppendLine("");
         }
-        private async Task<bool> AddNewClassifications(DeepNet dn, List<List<string>> testData,
+        private async Task<bool> AddNewClassifications(DeepNet dn, List<List<double>> testData,
             double trainAccuracy, double trainMSE, int rowCount, int ciPercent)
         {
             bool bHasNewClassifs = false;
-            int row = 0;
-            int iRowLength = DataResults[row].Count;
+            int iRowLength = DataResults[0].Count;
             string sResult = string.Empty;
             List<double> predictors = new List<double>();
             double dbHighest = 0;
             int iIndex = 0;
             string sLabelClass = string.Empty;
             double dbProb = 0;
-            double dbCI = CalculatorHelpers.GetConfidenceIntervalFromMSE(ciPercent, rowCount, trainMSE);
-            foreach (List<string> data in testData)
+            double dbCI = CalculatorHelpers.GetConfidenceIntervalFromMSE(
+                ciPercent, rowCount, trainMSE);
+            //test data stores cols in testdata[0] first index
+            for (int r = 0; r < DataResults.Count; r++)
             {
+                predictors = new List<double>();
                 dbHighest = 0;
                 iIndex = 0;
-                //prepare mathresults
-                for (int i = 0; i < data.Count; i++)
+                for (int c = 0; c < testData.Count; c++)
                 {
-                    DataResults[row][i] = data[i];
-                }
-                foreach (string predictor in data)
-                {
-                    predictors.Add(CalculatorHelpers.ConvertStringToDouble(predictor));
+                    //prepare mathresults
+                    DataResults[r][c] = testData[c][r].ToString("F4");
+                    if (c > 0)
+                    {
+                        predictors.Add(testData[c][r]);
+                    }
                 }
                 //predict classifications
                 double[] probs = dn.ComputeOutputs(predictors.ToArray());  
                 double[] outputs = ProbsToClasses(probs);
-                
                 for (int i = 0; i < probs.Length; i++)
                 {
                     dbProb = 100 * probs[i];
@@ -490,14 +404,15 @@ namespace DevTreks.Extensions.Algorithms
                         iIndex = i;
                     }
                 }
-                DataResults[row][iRowLength - 7] = trainMSE.ToString("F4");
-                DataResults[row][iRowLength - 6] = trainAccuracy.ToString("F4");
-                DataResults[row][iRowLength - 5] = dbHighest.ToString("F4");
-                double dbMostLikelyQTM = Shared.GetLabelAttributeValue(iIndex, this.IndicatorQT);
-                DataResults[row][iRowLength - 4] = dbMostLikelyQTM.ToString("F4");
+                DataResults[r][iRowLength - 7] = trainMSE.ToString("F4");
+                DataResults[r][iRowLength - 6] = trainAccuracy.ToString("F4");
+                DataResults[r][iRowLength - 5] = dbHighest.ToString("F4");
+                double dbMostLikelyQTM = Shared.ConvertIndexToAttribute(
+                    iIndex, this.IndicatorQT);
+                DataResults[r][iRowLength - 4] = dbMostLikelyQTM.ToString("F4");
                 //fill in indicator from last row
-                sLabelClass = Shared.GetLabelAttributeIndex(iIndex, this.IndicatorQT);
-                if (row == testData.Count - 1)
+                sLabelClass = Shared.ConvertIndexToLabel(iIndex, this.IndicatorQT);
+                if (r == testData[0].Count - 1)
                 {
                     this.IndicatorQT.QTM = dbMostLikelyQTM;
                     if ((string.IsNullOrEmpty(this.IndicatorQT.QTMUnit)
@@ -510,14 +425,12 @@ namespace DevTreks.Extensions.Algorithms
                     this.IndicatorQT.QTU = dbMostLikelyQTM + dbCI;
                 }
                 //convert output with a 1 to text classification
-                DataResults[row][iRowLength - 3] = sLabelClass;
+                DataResults[r][iRowLength - 3] = sLabelClass;
                 //low estimation
-                DataResults[row][iRowLength - 2] = (dbMostLikelyQTM - dbCI).ToString("F4");
+                DataResults[r][iRowLength - 2] = (dbMostLikelyQTM - dbCI).ToString("F4");
                 //high estimation
-                DataResults[row][iRowLength - 1] = (dbMostLikelyQTM + dbCI).ToString("F4");
-                row++;
+                DataResults[r][iRowLength - 1] = (dbMostLikelyQTM + dbCI).ToString("F4");
             }
-
             return bHasNewClassifs;
         }
         private async Task<bool> SetMathResult(List<List<string>> rowNames, StringBuilder sb = null)

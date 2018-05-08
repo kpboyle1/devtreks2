@@ -16,7 +16,13 @@ namespace DevTreks.Extensions.Algorithms
     ///</summary>
     public static class Shared
     {
-
+        public enum TRANSFORM_DATA_TYPE
+        {
+            none            = 0,
+            categories      = 1,
+            indexes         = 2,
+            normalized      = 3
+        }
         public static double[] t025 = new double[] { 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201,
             2.179, 2.160, 2.145, 2.131, 2.120, 2.110, 2.101, 2.093, 2.086, 2.080, 2.074, 2.069, 2.064, 2.060, 2.056, 2.052,
             2.048, 2.045, 1.96, };
@@ -245,6 +251,24 @@ namespace DevTreks.Extensions.Algorithms
             }
             return colData;
         }
+        public static string[] GetStringArrayColumn(int colIndex, List<List<string>> data)
+        {
+            string[] colData = new string[data.Count()];
+            for (int i = 0; i < data.Count(); i++)
+            {
+                colData[i] = data[i][colIndex];
+            }
+            return colData;
+        }
+        public static double[] GetDoubleArrayColumn(int colIndex, List<List<string>> data)
+        {
+            double[] colData = new double[data.Count()];
+            for (int i = 0; i < data.Count(); i++)
+            {
+                colData[i] = CalculatorHelpers.ConvertStringToDouble(data[i][colIndex]);
+            }
+            return colData;
+        }
         public static Matrix<double> GetDoubleMatrix(List<List<double>> data, string[] colNames,
             string[] dataColNames)
         {
@@ -464,11 +488,7 @@ namespace DevTreks.Extensions.Algorithms
         {
             //convert data to 2 d string lists
             List<List<string>> rData = new List<List<string>>();
-            //let bad indexes throw errors -they return bad index error message
             int k = 0;
-            //int iDataColumn = 0;
-            //add dep column to col count
-            //int iColumnCount = dataColNames.Count() + 1;
             for (int i = 0; i < colNames.Count(); i++)
             {
                 if (i == 0)
@@ -483,14 +503,39 @@ namespace DevTreks.Extensions.Algorithms
                     //datacolnames coincides with what is in data
                     if (NeedsColumnName(dataColNames, colNames[i]))
                     {
-                        //dependent vars start in colNames[4] or fifth column
-                        //data[1] corresponds to that column, or 4 - 3 = 1
-                        //iDataColumn = i - 3;
                         var colX = from col in data select col.ElementAt(k);
                         rData.Add(colX.ToList());
-                        //rData[k] = colX.ToList();
                         k++;
-                    };
+                    }
+                }
+            }
+            return rData;
+        }
+        public static List<List<double>> GetDoubleData(List<List<string>> data, 
+            string[] colNames, string[] dataColNames)
+        {
+            //convert data to 2 d string lists
+            List<List<double>> rData = new List<List<double>>();
+            //let bad indexes throw errors -they return bad index error message
+            int k = 0;
+            for (int i = 0; i < colNames.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    //dependent vars start in first columns
+                    var colX = from col in data select CalculatorHelpers.ConvertStringToDouble(col.ElementAt(k));
+                    rData.Add(colX.ToList());
+                    k++;
+                }
+                else
+                {
+                    //datacolnames coincides with what is in data
+                    if (NeedsColumnName(dataColNames, colNames[i]))
+                    {
+                        var colX = from col in data select CalculatorHelpers.ConvertStringToDouble(col.ElementAt(k));
+                        rData.Add(colX.ToList());
+                        k++;
+                    }
                 }
             }
             return rData;
@@ -850,19 +895,20 @@ namespace DevTreks.Extensions.Algorithms
             }
             return dbNValue;
         }
-        public static Vector<double> GetNormalizedVector(
-            string subIndNormType, double startValue,
-            bool scaleUp4Digits, double[] subIndicatorData)
+       
+       public static Vector<double> GetNormalizedVector(
+            string normType, double startValue,
+            bool scaleUp4Digits, double[] data)
         {
             //normalize them
-            var stats = new MathNet.Numerics.Statistics.DescriptiveStatistics(subIndicatorData);
-            Vector<double> siIndex = Vector<double>.Build.Dense(subIndicatorData);
-            if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.none.ToString()
-                || string.IsNullOrEmpty(subIndNormType))
+            var stats = new MathNet.Numerics.Statistics.DescriptiveStatistics(data);
+            Vector<double> siIndex = Vector<double>.Build.Dense(data);
+            if (normType == CalculatorHelpers.NORMALIZATION_TYPES.none.ToString()
+                || string.IsNullOrEmpty(normType))
             {
                 //data has already been normalized
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.zscore.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.zscore.ToString())
             {
                 //z-score: (x – mean(x)) / stddev(x)
                 for (int x = 0; x < siIndex.Count; x++)
@@ -880,7 +926,7 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.minmax.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.minmax.ToString())
             {
                 //min-max: (x – min(x)) / (max(x) – min(x))
                 for (int x = 0; x < siIndex.Count; x++)
@@ -898,7 +944,7 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.logistic.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.logistic.ToString())
             {
                 for (int x = 0; x < siIndex.Count; x++)
                 {
@@ -918,7 +964,7 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.logit.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.logit.ToString())
             {
                 for (int x = 0; x < siIndex.Count; x++)
                 {
@@ -937,7 +983,7 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.tanh.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.tanh.ToString())
             {
                 for (int x = 0; x < siIndex.Count; x++)
                 {
@@ -955,7 +1001,7 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.pnorm.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.pnorm.ToString())
             {
                 //p value for ttest with n-1
                 double pValue = Shared.GetPValueForTDist(siIndex.Count() - 1,
@@ -973,7 +1019,7 @@ namespace DevTreks.Extensions.Algorithms
                     }
                 }
             }
-            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.weights.ToString())
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.weights.ToString())
             {
                 for (int x = 0; x < siIndex.Count; x++)
                 {
@@ -1173,6 +1219,37 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
+        public static double[] GetAttributeGroups(int colIndex, List<List<double>> data,
+            IndicatorQT1 qt1)
+        {
+            List<double> groups = new List<double>();
+            double dbAttribute = 0;
+            //data has normalized columns in data[0] first index
+            //so this is iterating rows
+            for (int i = 0; i < data[colIndex].Count; i++)
+            {
+                dbAttribute = data[colIndex][i];
+                //calling procedure handles dep var bin
+                if (!groups.Contains(dbAttribute))
+                {
+                    groups.Add(dbAttribute);
+                }
+            }
+            return groups.ToArray();
+        }
+        public static string[] GetAttributeGroups(List<string> data)
+        {
+            List<string> groups = new List<string>();
+            string sAttribute = string.Empty;
+            foreach (string attribute in data)
+            {
+                if (!groups.Contains(attribute))
+                {
+                    groups.Add(sAttribute);
+                }
+            }
+            return groups.ToArray();
+        }
         public static string[] GetAttributeGroups(int colIndex, List<List<string>> data, 
             IndicatorQT1 qt1)
         {
@@ -1186,7 +1263,7 @@ namespace DevTreks.Extensions.Algorithms
                     //need to bin double dependent variable data under these conditions
                     if (colIndex == 0)
                     {
-                        sAttribute = GetLabelAttributeIndex(sAttribute, qt1);
+                        sAttribute = ConvertAttributeToLabel(sAttribute, qt1);
                     }
                     if (!string.IsNullOrEmpty(sAttribute))
                     {
@@ -1199,7 +1276,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
-        public static string GetLabelAttributeIndex(string attribute, IndicatorQT1 qt1)
+        public static string ConvertAttributeToLabel(string attribute, IndicatorQT1 qt1)
         {
             string sAttribute = attribute;
             if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
@@ -1228,7 +1305,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sAttribute;
         }
-        public static string GetLabelAttributeIndex(int index, IndicatorQT1 qt1)
+        public static string ConvertIndexToLabel(int index, IndicatorQT1 qt1)
         {
             string sAttribute = Constants.NONE;
             if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
@@ -1256,62 +1333,177 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sAttribute;
         }
-        public static double GetLabelAttributeValue(int index, IndicatorQT1 qt1)
+        public static List<List<double>> GetNormalizedData(List<List<string>> data, int categoryLimit,
+            IndicatorQT1 qt1, string[] colNames, string[] depColNames,
+            TRANSFORM_DATA_TYPE transformOutputType, TRANSFORM_DATA_TYPE transformInputType,
+            CalculatorHelpers.NORMALIZATION_TYPES normOutputType, CalculatorHelpers.NORMALIZATION_TYPES normInputType)
         {
-            double dbAttribute = 0;
-            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            //train[0] will be columns for normalizing (while data[0] are rows)
+            List<List<double>> trainData = GetDoubleData(data, colNames, depColNames);
+            //normalize the data
+            List<List<double>> trainDB = new List<List<double>>();
+            List<double> normColumn = new List<double>();
+            for (int d = 0; d < trainData.Count; ++d)
             {
-                if (index == 0)
+                //check for binary and categorized data
+                double[] attributeValues = GetAttributeGroups(d, trainData, qt1);
+                CalculatorHelpers.NORMALIZATION_TYPES normType = CalculatorHelpers.NORMALIZATION_TYPES.none;
+                TRANSFORM_DATA_TYPE tType = TRANSFORM_DATA_TYPE.none;
+                if (d == 0)
                 {
-                    //return midpoints
-                    dbAttribute = qt1.Q1 / 2;
+                    normType = normOutputType;
+                    tType = transformOutputType;
                 }
-                else if (index == 1)
+                else
                 {
-                    dbAttribute = (qt1.Q2 - (qt1.Q2 - qt1.Q1));
+                    normType = normInputType;
+                    tType = transformInputType;
                 }
-                else if (index == 2)
+                normColumn = GetNormalizedData(trainData[d], categoryLimit, 
+                    attributeValues.Length, qt1, tType, normType);
+                if (d < trainData.Count)
                 {
-                    dbAttribute = (qt1.Q3 - (qt1.Q3 - qt1.Q2));
-                }
-                else if (index == 3)
-                {
-                    dbAttribute = (qt1.Q4 - (qt1.Q4 - qt1.Q3));
-                }
-                else if (index == 4)
-                {
-                    dbAttribute = (qt1.Q5 - (qt1.Q5 - qt1.Q4));
+                    //fill the col
+                    trainDB.Add(normColumn);
                 }
             }
-            return dbAttribute;
+            return trainDB;
         }
+        public static List<double> GetNormalizedData(List<double> data, 
+            int categoryLimit, int colCategoryCount,
+            IndicatorQT1 qt1, TRANSFORM_DATA_TYPE transformType,
+            CalculatorHelpers.NORMALIZATION_TYPES normType)
+        {
+            List<double> colNorms = new List<double>();
+            double dbAtt = 0;
+            if (transformType == TRANSFORM_DATA_TYPE.normalized)
+            {
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    colNorms.Add(data[i]);
+                }
+                //binary and categorized data rule
+                if (colCategoryCount > categoryLimit)
+                {
+                    colNorms = GetNormalizedVector(normType.ToString(), 0, false, 
+                        colNorms.ToArray()).ToList();
+                }
+            }
+            else if (transformType == TRANSFORM_DATA_TYPE.categories)
+            {
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    dbAtt = data[i];
+                    //binary and categorized data rule
+                    if (colCategoryCount > categoryLimit)
+                    {
+                        colNorms.Add(ConvertAttributeToCategory(dbAtt, qt1));
+                    }
+                    else
+                    {
+                        colNorms.Add(dbAtt);
+                    }
+                }
+            }
+            else if (transformType == TRANSFORM_DATA_TYPE.indexes)
+            {
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    dbAtt = data[i];
+                    //indexes always need index position set
+                    colNorms.Add(ConvertAttributeToIndexPosition(dbAtt, qt1));
+                }
+            }
+            else
+            {
+                //don't normalize the data
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    colNorms.Add(data[i]);
+                }
+            }
+            return colNorms;
+        }
+        public static double[] GetNormalizedData(List<string> data, int categoryLimit,
+            IndicatorQT1 qt1, TRANSFORM_DATA_TYPE transformType, 
+            CalculatorHelpers.NORMALIZATION_TYPES normType)
+        {
+            double[] colNorms = new double[data.Count];
+            double dbAtt = 0;
+            string[] attributeValues = Shared.GetAttributeGroups(data);
+            if (transformType == TRANSFORM_DATA_TYPE.normalized)
+            {
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    colNorms[i] = CalculatorHelpers.ConvertStringToDouble(data[i]);
+                }
+                //binary and categorized data rule
+                if (attributeValues.Length > categoryLimit)
+                {
+                    colNorms = GetNormalizedVector(normType.ToString(), 0, false, colNorms).ToArray();
+                }
+            }
+            else if (transformType == TRANSFORM_DATA_TYPE.categories)
+            {
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    dbAtt = CalculatorHelpers.ConvertStringToDouble(data[i]);
+                    //binary and categorized data rule
+                    if (attributeValues.Length > categoryLimit)
+                    {
+                        colNorms[i] = ConvertAttributeToCategory(dbAtt, qt1);
+                    }
+                    else
+                    {
+                        colNorms[i] = dbAtt;
+                    }
+                }
+            }
+            else if (transformType == TRANSFORM_DATA_TYPE.indexes)
+            {
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    dbAtt = CalculatorHelpers.ConvertStringToDouble(data[i]);
+                    if (attributeValues.Length > categoryLimit)
+                    {
+                        colNorms[i] = ConvertAttributeToIndexPosition(dbAtt, qt1);
+                    }
+                    else
+                    {
+                        colNorms[i] = dbAtt;
+                    }
+                }
+            }
+            else
+            {
+                //don't normalize the data
+                for (int i = 0; i < data.Count(); i++)
+                {
+                    colNorms[i] = CalculatorHelpers.ConvertStringToDouble(data[i]);
+                }
+            }
+            return colNorms;
+        }
+        
+        
         public static double[] ConvertAttributeToOutputs(string attribute, IndicatorQT1 qt1, int numOutputs)
+        {
+            double[] outputs = new double[numOutputs];
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                double dbAttribute = CalculatorHelpers.ConvertStringToDouble(attribute);
+                outputs = ConvertAttributeToOutputs(dbAttribute, qt1, numOutputs);
+            }
+            return outputs;
+        }
+        public static double[] ConvertAttributeToOutputs(double attribute, 
+            IndicatorQT1 qt1, int numOutputs)
         {
             double[] outputs = new double[numOutputs];
             int iIndexPosition = 0;
             if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
             {
-                double dbAttribute = CalculatorHelpers.ConvertStringToDouble(attribute);
-                if (dbAttribute < qt1.Q1)
-                {
-                    iIndexPosition = 0;
-                }
-                else if (dbAttribute < qt1.Q2)
-                {
-                    iIndexPosition = 1;
-                }
-                else if (dbAttribute < qt1.Q3)
-                {
-                    iIndexPosition = 2;
-                }
-                else if (dbAttribute < qt1.Q4)
-                {
-                    iIndexPosition = 3;
-                }
-                else if (dbAttribute < qt1.Q5)
-                {
-                    iIndexPosition = 4; 
-                }
+                iIndexPosition = ConvertAttributeToIndexPosition(attribute, qt1);
             }
             for (int i = 0; i < numOutputs; i++)
             {
@@ -1325,6 +1517,112 @@ namespace DevTreks.Extensions.Algorithms
                 }
             }
             return outputs;
+        }
+        public static double[] ConvertIndexToOutputs(double index,
+            IndicatorQT1 qt1, int numOutputs)
+        {
+            double[] outputs = new double[numOutputs];
+            double dbIndexPosition = Math.Round(index, 0);
+            for (int i = 0; i < numOutputs; i++)
+            {
+                if (i == dbIndexPosition)
+                {
+                    outputs[i] = 1;
+                }
+                else
+                {
+                    outputs[i] = 0;
+                }
+            }
+            return outputs;
+        }
+        public static int ConvertAttributeToIndexPosition(double attribute,
+            IndicatorQT1 qt1)
+        {
+            int iIndexPosition = CalculatorHelpers.ConvertStringToInt(attribute.ToString());
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                if (attribute < qt1.Q1)
+                {
+                    iIndexPosition = 0;
+                }
+                else if (attribute < qt1.Q2)
+                {
+                    iIndexPosition = 1;
+                }
+                else if (attribute < qt1.Q3)
+                {
+                    iIndexPosition = 2;
+                }
+                else if (attribute < qt1.Q4)
+                {
+                    iIndexPosition = 3;
+                }
+                else if (attribute < qt1.Q5)
+                {
+                    iIndexPosition = 4;
+                }
+            }
+            return iIndexPosition;
+        }
+        public static double ConvertIndexToAttribute(int index, IndicatorQT1 qt1)
+        {
+            double dbAttribute = 0;
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                if (index == 0)
+                {
+                    //return midpoints
+                    dbAttribute = qt1.Q1 / 2;
+                }
+                else if (index == 1)
+                {
+                    dbAttribute = (qt1.Q2 - ((qt1.Q2 - qt1.Q1) / 2));
+                }
+                else if (index == 2)
+                {
+                    dbAttribute = (qt1.Q3 - ((qt1.Q3 - qt1.Q2) / 2));
+                }
+                else if (index == 3)
+                {
+                    dbAttribute = (qt1.Q4 - ((qt1.Q4 - qt1.Q3) / 2));
+                }
+                else if (index == 4)
+                {
+                    dbAttribute = (qt1.Q5 - ((qt1.Q5 - qt1.Q4) / 2));
+                }
+            }
+            return dbAttribute;
+        }
+        
+        public static double ConvertAttributeToCategory(double attribute, IndicatorQT1 qt1)
+        {
+            double dbAttribute = attribute;
+            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            {
+                if (attribute < qt1.Q1)
+                {
+                    //return midpoints
+                    dbAttribute = qt1.Q1 / 2;
+                }
+                else if (dbAttribute < qt1.Q2)
+                {
+                    dbAttribute = (qt1.Q2 - ((qt1.Q2 - qt1.Q1) / 2));
+                }
+                else if (dbAttribute < qt1.Q3)
+                {
+                    dbAttribute = (qt1.Q3 - ((qt1.Q3 - qt1.Q2) / 2));
+                }
+                else if (dbAttribute < qt1.Q4)
+                {
+                    dbAttribute = (qt1.Q4 - ((qt1.Q4 - qt1.Q3) / 2));
+                }
+                else if (dbAttribute < qt1.Q5)
+                {
+                    dbAttribute = (qt1.Q5 - ((qt1.Q5 - qt1.Q4) / 2));
+                }
+            }
+            return dbAttribute;
         }
         public static double GetPopulationStartCount(double popStartCount,
             double popStartAllocation)
