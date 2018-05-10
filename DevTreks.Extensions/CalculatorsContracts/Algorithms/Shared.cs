@@ -11,8 +11,8 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		Shared static functions that support algos
     ///Author:		www.devtreks.org
-    ///Date:		2018, April
-    ///References:	CTA reference
+    ///Date:		2018, May
+    ///References:	Stock, M&E, CTA, and Social Performance tutorials
     ///</summary>
     public static class Shared
     {
@@ -540,6 +540,36 @@ namespace DevTreks.Extensions.Algorithms
             }
             return rData;
         }
+        public static List<List<string>> GetStringMLData(List<List<string>> data,
+            string[] colNames, string[] dataColNames)
+        {
+            //convert data to 2 d string lists
+            List<List<string>> rData = new List<List<string>>();
+            int k = 0;
+            for (int i = 0; i < colNames.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    //dependent vars start in first columns
+                    var colX = from col in data select col.ElementAt(k);
+                    //ml algos skip the instructions row in 1st row
+                    rData.Add(colX.Skip(1).ToList());
+                    k++;
+                }
+                else
+                {
+                    //datacolnames coincides with what is in data
+                    if (NeedsColumnName(dataColNames, colNames[i]))
+                    {
+                        var colX = from col in data select col.ElementAt(k);
+                        //ml algos skip the instructions row in 1st row
+                        rData.Add(colX.Skip(1).ToList());
+                        k++;
+                    }
+                }
+            }
+            return rData;
+        }
         public static StringBuilder GetRProjectDataFile(List<List<string>> data, string[] colNames,
             string[] depColNames)
         {
@@ -1004,7 +1034,7 @@ namespace DevTreks.Extensions.Algorithms
             else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.pnorm.ToString())
             {
                 //p value for ttest with n-1
-                double pValue = Shared.GetPValueForTDist(siIndex.Count() - 1,
+                double pValue = GetPValueForTDist(siIndex.Count() - 1,
                     startValue, stats.Mean, stats.Variance);
                 pValue = CalculatorHelpers.CheckForNaNandRound4(pValue);
                 //p norm
@@ -1092,7 +1122,7 @@ namespace DevTreks.Extensions.Algorithms
             {
                 //the columns are being normalized
                 double[] colArray = GetDoubleArrayColumn(i, trends);
-                Vector<double> normTrend = Shared.GetNormalizedVector(subIndNormType,
+                Vector<double> normTrend = GetNormalizedVector(subIndNormType,
                     weights.Sum(), scaleUp4Digits, colArray);
                 normTrends.Add(normTrend.ToList());
             }
@@ -1250,21 +1280,16 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
-        public static string[] GetAttributeGroups(int colIndex, List<List<string>> data, 
-            IndicatorQT1 qt1)
+        public static string[] GetAttributeGroups(int colIndex, 
+            List<List<string>> data, IndicatorQT1 qt1)
         {
             List<string> groups = new List<string>();
             string sAttribute = string.Empty;
-            foreach (List<string> row in data)
+            if (colIndex < data.Count)
             {
-                if (colIndex < row.Count)
+                foreach (string row in data[colIndex])
                 {
-                    sAttribute = row[colIndex];
-                    //need to bin double dependent variable data under these conditions
-                    if (colIndex == 0)
-                    {
-                        sAttribute = ConvertAttributeToLabel(sAttribute, qt1);
-                    }
+                    sAttribute = row;
                     if (!string.IsNullOrEmpty(sAttribute))
                     {
                         if (!groups.Contains(sAttribute))
@@ -1276,6 +1301,32 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
+        //public static string[] GetAttributeGroups(int colIndex, List<List<string>> data, 
+        //    IndicatorQT1 qt1)
+        //{
+        //    List<string> groups = new List<string>();
+        //    string sAttribute = string.Empty;
+        //    foreach (List<string> row in data)
+        //    {
+        //        if (colIndex < row.Count)
+        //        {
+        //            sAttribute = row[colIndex];
+        //            //need to bin double dependent variable data under these conditions
+        //            if (colIndex == 0)
+        //            {
+        //                sAttribute = ConvertAttributeToLabel(sAttribute, qt1);
+        //            }
+        //            if (!string.IsNullOrEmpty(sAttribute))
+        //            {
+        //                if (!groups.Contains(sAttribute))
+        //                {
+        //                    groups.Add(sAttribute);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return groups.ToArray();
+        //}
         public static string ConvertAttributeToLabel(string attribute, IndicatorQT1 qt1)
         {
             string sAttribute = attribute;
@@ -1333,157 +1384,229 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sAttribute;
         }
-        public static List<List<double>> GetNormalizedData(List<List<string>> data, int categoryLimit,
-            IndicatorQT1 qt1, string[] colNames, string[] depColNames,
-            TRANSFORM_DATA_TYPE transformOutputType, TRANSFORM_DATA_TYPE transformInputType,
-            CalculatorHelpers.NORMALIZATION_TYPES normOutputType, CalculatorHelpers.NORMALIZATION_TYPES normInputType)
+        public static List<string> GetAlgoInstructs(List<List<string>> data)
         {
-            //train[0] will be columns for normalizing (while data[0] are rows)
-            List<List<double>> trainData = GetDoubleData(data, colNames, depColNames);
+            List<string> algoInstructs = new List<string>(data[0]);
+            return algoInstructs;   
+        }
+        public static List<List<string>> GetNormalizedSData(List<List<string>> data, 
+            IndicatorQT1 qt1, string[] colNames, string[] depColNames, 
+            string stringDataType = null)
+        {
+            //train[0] will be normalized columns (while data[0] are rows)
+            //skips the ml instructions row
+            List<List<string>> trainData = GetStringMLData(data, colNames, depColNames);
             //normalize the data
-            List<List<double>> trainDB = new List<List<double>>();
-            List<double> normColumn = new List<double>();
+            List<List<string>> trainDB = new List<List<string>>();
+            List<string> norms = new List<string>();
+            string sAttribute = string.Empty;
             for (int d = 0; d < trainData.Count; ++d)
             {
-                //check for binary and categorized data
-                double[] attributeValues = GetAttributeGroups(d, trainData, qt1);
-                CalculatorHelpers.NORMALIZATION_TYPES normType = CalculatorHelpers.NORMALIZATION_TYPES.none;
-                TRANSFORM_DATA_TYPE tType = TRANSFORM_DATA_TYPE.none;
-                if (d == 0)
+                //see if the data needs transformation
+                CalculatorHelpers.NORMALIZATION_TYPES normType
+                    = CalculatorHelpers.GetNormalizationType(data[0][d]);
+                if (normType == CalculatorHelpers.NORMALIZATION_TYPES.qtext)
                 {
-                    normType = normOutputType;
-                    tType = transformOutputType;
+                    for (int i = 0; i < trainData[d].Count(); i++)
+                    {
+                        //needs qcategories from q1 to q5
+                        sAttribute = ConvertAttributeToLabel(trainData[d][i], qt1);
+                        norms.Add(sAttribute);
+                    }
+                    trainDB.Add(norms);
+                }
+                else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.text)
+                {
+                    //leave it alone
+                    trainDB.Add(trainData[d]);
                 }
                 else
                 {
-                    normType = normInputType;
-                    tType = transformInputType;
-                }
-                normColumn = GetNormalizedData(trainData[d], categoryLimit, 
-                    attributeValues.Length, qt1, tType, normType);
-                if (d < trainData.Count)
-                {
-                    //fill the col
-                    trainDB.Add(normColumn);
+                    double[] normColumn = GetNormalizedData(trainData[d], qt1, normType);
+                    if (d < trainData.Count)
+                    {
+                        norms = new List<string>();
+                        for (int i = 0; i < normColumn.Count(); i++)
+                        {
+                            if (stringDataType == null)
+                                stringDataType = "F4";
+                            norms.Add(normColumn[i].ToString(stringDataType));
+                        }
+                        //fill the col
+                        trainDB.Add(norms);
+                    }
                 }
             }
             return trainDB;
         }
-        public static List<double> GetNormalizedData(List<double> data, 
-            int categoryLimit, int colCategoryCount,
-            IndicatorQT1 qt1, TRANSFORM_DATA_TYPE transformType,
-            CalculatorHelpers.NORMALIZATION_TYPES normType)
+        public static List<List<double>> GetNormalizedDData(List<List<string>> data,
+            IndicatorQT1 qt1, string[] colNames, string[] depColNames,
+            string stringDataType = null)
         {
-            List<double> colNorms = new List<double>();
-            double dbAtt = 0;
-            if (transformType == TRANSFORM_DATA_TYPE.normalized)
+            //train[0] will be normalized columns (while data[0] are rows)
+            List<List<string>> trainData = GetStringMLData(data, colNames, depColNames);
+            //normalize the data
+            List<List<double>> trainDB = new List<List<double>>();
+            for (int d = 0; d < trainData.Count; ++d)
             {
-                for (int i = 0; i < data.Count(); i++)
+                //see if the data needs transformation
+                CalculatorHelpers.NORMALIZATION_TYPES normType
+                    = CalculatorHelpers.GetNormalizationType(data[0][d]);
+                double[] normColumn = GetNormalizedData(trainData[d], qt1, normType);
+                if (d < trainData.Count)
                 {
-                    colNorms.Add(data[i]);
-                }
-                //binary and categorized data rule
-                if (colCategoryCount > categoryLimit)
-                {
-                    colNorms = GetNormalizedVector(normType.ToString(), 0, false, 
-                        colNorms.ToArray()).ToList();
+                    //fill the col
+                    List<double> norms = new List<double>(normColumn);
+                    trainDB.Add(norms);
                 }
             }
-            else if (transformType == TRANSFORM_DATA_TYPE.categories)
-            {
-                for (int i = 0; i < data.Count(); i++)
-                {
-                    dbAtt = data[i];
-                    //binary and categorized data rule
-                    if (colCategoryCount > categoryLimit)
-                    {
-                        colNorms.Add(ConvertAttributeToCategory(dbAtt, qt1));
-                    }
-                    else
-                    {
-                        colNorms.Add(dbAtt);
-                    }
-                }
-            }
-            else if (transformType == TRANSFORM_DATA_TYPE.indexes)
-            {
-                for (int i = 0; i < data.Count(); i++)
-                {
-                    dbAtt = data[i];
-                    //indexes always need index position set
-                    colNorms.Add(ConvertAttributeToIndexPosition(dbAtt, qt1));
-                }
-            }
-            else
-            {
-                //don't normalize the data
-                for (int i = 0; i < data.Count(); i++)
-                {
-                    colNorms.Add(data[i]);
-                }
-            }
-            return colNorms;
+            return trainDB;
         }
-        public static double[] GetNormalizedData(List<string> data, int categoryLimit,
-            IndicatorQT1 qt1, TRANSFORM_DATA_TYPE transformType, 
-            CalculatorHelpers.NORMALIZATION_TYPES normType)
+        public static double[] GetNormalizedData(List<string> data, 
+            IndicatorQT1 qt1, CalculatorHelpers.NORMALIZATION_TYPES normType)
         {
             double[] colNorms = new double[data.Count];
+            for (int i = 0; i < data.Count(); i++)
+            {
+                colNorms[i] = CalculatorHelpers.ConvertStringToDouble(data[i]);
+            }
             double dbAtt = 0;
-            string[] attributeValues = Shared.GetAttributeGroups(data);
-            if (transformType == TRANSFORM_DATA_TYPE.normalized)
-            {
-                for (int i = 0; i < data.Count(); i++)
-                {
-                    colNorms[i] = CalculatorHelpers.ConvertStringToDouble(data[i]);
-                }
-                //binary and categorized data rule
-                if (attributeValues.Length > categoryLimit)
-                {
-                    colNorms = GetNormalizedVector(normType.ToString(), 0, false, colNorms).ToArray();
-                }
-            }
-            else if (transformType == TRANSFORM_DATA_TYPE.categories)
+            if (normType == CalculatorHelpers.NORMALIZATION_TYPES.qcategory)
             {
                 for (int i = 0; i < data.Count(); i++)
                 {
                     dbAtt = CalculatorHelpers.ConvertStringToDouble(data[i]);
-                    //binary and categorized data rule
-                    if (attributeValues.Length > categoryLimit)
-                    {
-                        colNorms[i] = ConvertAttributeToCategory(dbAtt, qt1);
-                    }
-                    else
-                    {
-                        colNorms[i] = dbAtt;
-                    }
+                    colNorms[i] = ConvertAttributeToCategory(dbAtt, qt1);
                 }
             }
-            else if (transformType == TRANSFORM_DATA_TYPE.indexes)
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.qindex)
             {
                 for (int i = 0; i < data.Count(); i++)
                 {
                     dbAtt = CalculatorHelpers.ConvertStringToDouble(data[i]);
-                    if (attributeValues.Length > categoryLimit)
-                    {
-                        colNorms[i] = ConvertAttributeToIndexPosition(dbAtt, qt1);
-                    }
-                    else
-                    {
-                        colNorms[i] = dbAtt;
-                    }
+                    colNorms[i] = ConvertAttributeToIndexPosition(dbAtt, qt1);
                 }
             }
-            else
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.index)
+            {
+                string[] attributeValues = GetAttributeGroups(data);
+                for (int i = 0; i < attributeValues.Count(); i++)
+                {
+                    
+                    dbAtt = CalculatorHelpers.ConvertStringToDouble(attributeValues[i]);
+                    colNorms[i] = dbAtt;
+                }
+            }
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.zscore
+                || normType == CalculatorHelpers.NORMALIZATION_TYPES.minmax
+                || normType == CalculatorHelpers.NORMALIZATION_TYPES.logistic
+                || normType == CalculatorHelpers.NORMALIZATION_TYPES.logit
+                || normType == CalculatorHelpers.NORMALIZATION_TYPES.tanh
+                || normType == CalculatorHelpers.NORMALIZATION_TYPES.weights
+                || normType == CalculatorHelpers.NORMALIZATION_TYPES.pnorm)
+            {
+                colNorms = GetNormalizedVector(normType.ToString(), 
+                    0, false, colNorms).ToArray();
+            }
+            else if (normType == CalculatorHelpers.NORMALIZATION_TYPES.none)
             {
                 //don't normalize the data
-                for (int i = 0; i < data.Count(); i++)
-                {
-                    colNorms[i] = CalculatorHelpers.ConvertStringToDouble(data[i]);
-                }
+                //return colNorms
             }
             return colNorms;
         }
+        //public static List<List<double>> GetNormalizedData(List<List<string>> data, int categoryLimit,
+        //    IndicatorQT1 qt1, string[] colNames, string[] depColNames,
+        //    TRANSFORM_DATA_TYPE transformOutputType, TRANSFORM_DATA_TYPE transformInputType,
+        //    CalculatorHelpers.NORMALIZATION_TYPES normOutputType, CalculatorHelpers.NORMALIZATION_TYPES normInputType)
+        //{
+        //    //train[0] will be columns for normalizing (while data[0] are rows)
+        //    List<List<double>> trainData = GetDoubleData(data, colNames, depColNames);
+        //    //normalize the data
+        //    List<List<double>> trainDB = new List<List<double>>();
+        //    List<double> normColumn = new List<double>();
+        //    for (int d = 0; d < trainData.Count; ++d)
+        //    {
+        //        //check for binary and categorized data
+        //        double[] attributeValues = GetAttributeGroups(d, trainData, qt1);
+        //        CalculatorHelpers.NORMALIZATION_TYPES normType = CalculatorHelpers.NORMALIZATION_TYPES.none;
+        //        TRANSFORM_DATA_TYPE tType = TRANSFORM_DATA_TYPE.none;
+        //        if (d == 0)
+        //        {
+        //            normType = normOutputType;
+        //            tType = transformOutputType;
+        //        }
+        //        else
+        //        {
+        //            normType = normInputType;
+        //            tType = transformInputType;
+        //        }
+        //        normColumn = GetNormalizedData(trainData[d], categoryLimit, 
+        //            attributeValues.Length, qt1, tType, normType);
+        //        if (d < trainData.Count)
+        //        {
+        //            //fill the col
+        //            trainDB.Add(normColumn);
+        //        }
+        //    }
+        //    return trainDB;
+        //}
+        //public static List<double> GetNormalizedData(List<double> data, 
+        //    int categoryLimit, int colCategoryCount,
+        //    IndicatorQT1 qt1, TRANSFORM_DATA_TYPE transformType,
+        //    CalculatorHelpers.NORMALIZATION_TYPES normType)
+        //{
+        //    List<double> colNorms = new List<double>();
+        //    double dbAtt = 0;
+        //    if (transformType == TRANSFORM_DATA_TYPE.normalized)
+        //    {
+        //        for (int i = 0; i < data.Count(); i++)
+        //        {
+        //            colNorms.Add(data[i]);
+        //        }
+        //        //binary and categorized data rule
+        //        if (colCategoryCount > categoryLimit)
+        //        {
+        //            colNorms = GetNormalizedVector(normType.ToString(), 0, false, 
+        //                colNorms.ToArray()).ToList();
+        //        }
+        //    }
+        //    else if (transformType == TRANSFORM_DATA_TYPE.categories)
+        //    {
+        //        for (int i = 0; i < data.Count(); i++)
+        //        {
+        //            dbAtt = data[i];
+        //            //binary and categorized data rule
+        //            if (colCategoryCount > categoryLimit)
+        //            {
+        //                colNorms.Add(ConvertAttributeToCategory(dbAtt, qt1));
+        //            }
+        //            else
+        //            {
+        //                colNorms.Add(dbAtt);
+        //            }
+        //        }
+        //    }
+        //    else if (transformType == TRANSFORM_DATA_TYPE.indexes)
+        //    {
+        //        for (int i = 0; i < data.Count(); i++)
+        //        {
+        //            dbAtt = data[i];
+        //            //indexes always need index position set
+        //            colNorms.Add(ConvertAttributeToIndexPosition(dbAtt, qt1));
+        //        }
+        //    }
+        //    else
+        //    {
+        //        //don't normalize the data
+        //        for (int i = 0; i < data.Count(); i++)
+        //        {
+        //            colNorms.Add(data[i]);
+        //        }
+        //    }
+        //    return colNorms;
+        //}
+        
         
         
         public static double[] ConvertAttributeToOutputs(string attribute, IndicatorQT1 qt1, int numOutputs)
@@ -1690,6 +1813,25 @@ namespace DevTreks.Extensions.Algorithms
                 }
             }
             return mType;
+        }
+        public static bool FillMLAlgoInstructions(int r, 
+            List<List<string>> dataResults, List<List<string>> testData)
+        {
+            bool bHasInstructs = false;
+            //insert the dataset instructions row
+            for (int i = 0; i < dataResults[r].Count; i++)
+            {
+                if (i < testData[0].Count)
+                {
+                    dataResults[r][i] = testData[0][i];
+                }
+                else
+                {
+                    dataResults[r][i] = Constants.NONE;
+                }
+            }
+            bHasInstructs = true;
+            return bHasInstructs;
         }
         public static async Task<bool> FillMathResult(IndicatorQT1 meta, 
             META_TYPE metaType, CalculatorParameters calcParams, 

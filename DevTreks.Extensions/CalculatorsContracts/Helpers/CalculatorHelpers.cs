@@ -19,7 +19,7 @@ namespace DevTreks.Extensions
     /// <summary>
     ///Purpose:		Helper utilities used by the DoStepsAddInView's extension calculators.
     ///Author:		www.devtreks.org
-    ///Date:		2018, April
+    ///Date:		2018, May
     ///References:	
     ///NOTES:
     ///             1. This class is an extension's only communication link 
@@ -118,16 +118,76 @@ namespace DevTreks.Extensions
         }
         public enum NORMALIZATION_TYPES
         {
-            none = 0,
-            zscore = 1,
-            minmax = 2,
-            logistic = 3,
-            logit = 4,
-            pnorm = 5,
-            tanh = 6,
-            weights = 7
+            none        = 0,
+            zscore      = 1,
+            minmax      = 2,
+            logistic    = 3,
+            logit       = 4,
+            pnorm       = 5,
+            tanh        = 6,
+            weights     = 7,
+            index       = 8,
+            qcategory   = 9,
+            qindex      = 10,
+            qtext       = 11,
+            text       = 12
         }
-        #region "set linked lists state"
+        public static NORMALIZATION_TYPES GetNormalizationType(string normType)
+        {
+            NORMALIZATION_TYPES eNormType = NORMALIZATION_TYPES.none;
+            if (normType.ToLower().Contains(NORMALIZATION_TYPES.zscore.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.zscore;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.minmax.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.minmax;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.logistic.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.logistic;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.logit.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.logit;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.pnorm.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.pnorm;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.tanh.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.tanh;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.weights.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.weights;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.index.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.index;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.qcategory.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.qcategory;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.qindex.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.qindex;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.qtext.ToString()))
+            {
+                eNormType = NORMALIZATION_TYPES.qtext;
+            }
+            else if (normType.ToLower().Contains(NORMALIZATION_TYPES.text.ToString()))
+            {
+                //has to be after qtext
+                eNormType = NORMALIZATION_TYPES.text;
+            }
+            
+            return eNormType;
+        }
+            #region "set linked lists state"
         public static async Task<bool> SetLinkedLocalsListsState(CalculatorParameters calcParameters)
         {
             bool bIsDone = false;

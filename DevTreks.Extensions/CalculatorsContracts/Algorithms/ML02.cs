@@ -44,11 +44,12 @@ namespace DevTreks.Extensions.Algorithms
                 
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_02.ToString())
                 {
+                    //use sb for feedback when training and testing; but don't use for production
+                    StringBuilder sb = new StringBuilder();
                     //classify testdata and return new dataset
-                    bHasCalculations = await Classify(trainData, rowNames, testData);
+                    sb = await Classify(trainData, rowNames, testData);
                     bHasCalculations = await SetMathResult(rowNames);
-
-                    //StringBuilder sb = new StringBuilder();
+                    
                     //debug first with reference dataset and show debugging messages in results
                     //put the results in MathResult
                     //sb = await DebugClassify(trainData, rowNames, testData);
@@ -63,10 +64,10 @@ namespace DevTreks.Extensions.Algorithms
             return bHasCalculations;
         }
 
-        private async Task<bool> Classify(List<List<string>> trainData,
-            List<List<string>> rowNames, List<List<string>> testData, StringBuilder sb = null)
+        private async Task<StringBuilder> Classify(List<List<string>> trainData,
+            List<List<string>> rowNames, List<List<string>> testData)
         {
-            bool bHasClassified = false;
+            StringBuilder sb = null;
             try
             {
                 //ml algo rule: long running calcs avoided by setting Score.Iterations
@@ -74,18 +75,20 @@ namespace DevTreks.Extensions.Algorithms
                 //dep var output count
                 string[] arrLabelCategories = Shared.GetAttributeGroups(0, trainData, this.IndicatorQT);
                 int numOutput = arrLabelCategories.Length;
-                //convert to normalized data using r and python colname conventions
-                int iCategoryLimit = 5;
-                //indexes for outputs and minmax for inputs
-                //converts rows to columns for normalization
-                List<List<double>> trainDB = Shared.GetNormalizedData(trainData,
-                    iCategoryLimit, this.IndicatorQT, _colNames, _depColNames,
-                    Shared.TRANSFORM_DATA_TYPE.indexes, Shared.TRANSFORM_DATA_TYPE.normalized,
-                    CalculatorHelpers.NORMALIZATION_TYPES.none, CalculatorHelpers.NORMALIZATION_TYPES.minmax);
-                List<List<double>> testDB = Shared.GetNormalizedData(testData,
-                    iCategoryLimit, this.IndicatorQT, _colNames, _depColNames,
-                    Shared.TRANSFORM_DATA_TYPE.indexes, Shared.TRANSFORM_DATA_TYPE.normalized,
-                    CalculatorHelpers.NORMALIZATION_TYPES.none, CalculatorHelpers.NORMALIZATION_TYPES.minmax);
+                //converts rows to columns with normalized data
+                List<List<double>> trainDB = Shared.GetNormalizedDData(trainData,
+                   this.IndicatorQT, _colNames, _depColNames, "F0");
+                List<List<double>> testDB = Shared.GetNormalizedDData(testData,
+                    this.IndicatorQT, _colNames, _depColNames, "F0");
+                //int iCategoryLimit = 5;
+                //List<List<double>> trainDB = Shared.GetNormalizedData(trainData,
+                //    iCategoryLimit, this.IndicatorQT, _colNames, _depColNames,
+                //    Shared.TRANSFORM_DATA_TYPE.indexes, Shared.TRANSFORM_DATA_TYPE.normalized,
+                //    CalculatorHelpers.NORMALIZATION_TYPES.none, CalculatorHelpers.NORMALIZATION_TYPES.minmax);
+                //List<List<double>> testDB = Shared.GetNormalizedData(testData,
+                //    iCategoryLimit, this.IndicatorQT, _colNames, _depColNames,
+                //    Shared.TRANSFORM_DATA_TYPE.indexes, Shared.TRANSFORM_DATA_TYPE.normalized,
+                //    CalculatorHelpers.NORMALIZATION_TYPES.none, CalculatorHelpers.NORMALIZATION_TYPES.minmax);
                 //make a new list with same matrix, to be replaced with results
                 int iColCount = testDB.Count;
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_02.ToString().ToString())
@@ -116,13 +119,12 @@ namespace DevTreks.Extensions.Algorithms
                 //add classified test data to DataResults
                 bool bHasNewClassifs = await AddNewClassifications(dn, testDB, 
                     trainAcc, trainMSE, iRowCount, _ciLevel);
-                bHasClassified = true;
             }
             catch (Exception ex)
             {
                 IndicatorQT.ErrorMessage = ex.Message;
             }
-            return bHasClassified;
+            return sb;
         }
         //strictly used to debug algorithms
         private async Task<StringBuilder> DebugClassify(List<List<string>> trainData,

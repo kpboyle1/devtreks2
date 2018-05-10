@@ -43,9 +43,10 @@ namespace DevTreks.Extensions.Algorithms
                 StringBuilder sResults = new StringBuilder();
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_01.ToString())
                 {
-                    
+                    //use sb for feedback when training and testing; but don't use for production
+                    StringBuilder sb = new StringBuilder();
                     //classify testdata and return new dataset
-                    bHasCalculations = await Classify(trainData, rowNames, testData);
+                    sb = await Classify(trainData, rowNames, testData);
                     bHasCalculations = await SetMathResult(rowNames);
 
                     //debug first with reference dataset and show debugging messages in results
@@ -62,149 +63,165 @@ namespace DevTreks.Extensions.Algorithms
             return bHasCalculations;
         }
         
-        private async Task<bool> Classify(List<List<string>> trainData,
+        private async Task<StringBuilder> Classify(List<List<string>> trainData,
             List<List<string>> rowNames, List<List<string>> testData)
         {
-            bool bHasClassified = false;
+            StringBuilder sb = null;
             try
             {
-                //make a new list with same matrix, to be replaced with results
-                int iRowCount = Shared.GetRowCount(_iterations, testData.Count);
-                int iColCount = testData[0].Count;
+                //instructions in both row names and datasets
+                List<string> dataInstructs = Shared.GetAlgoInstructs(rowNames);
+                // prevent joint counts with 0
+                bool withLaplacian 
+                    = dataInstructs[0].ToLower().Contains("true") ? true : false;
+                //converts rows to columns with normalized data
+                List<List<string>> trainDB = Shared.GetNormalizedSData(trainData,
+                    this.IndicatorQT, _colNames, _depColNames, "F0");
+                List<List<string>> testDB = Shared.GetNormalizedSData(testData,
+                    this.IndicatorQT, _colNames, _depColNames, "F0");
+                int iColCount = testDB.Count;
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_01.ToString().ToString())
                 {
-                    //subalgo01 needs qtm and percent probability of qtm
-                    iColCount = testData[0].Count + 2;
+                    //subalgo02 needs qtm and percent probability of accuracy, mse, qtm, low ci, high ci
+                    iColCount = testDB.Count + 2;
                 }
-                DataResults = CalculatorHelpers.GetList(iRowCount, iColCount);
+                //row count comes from original testdata to account for the instructions row
+                DataResults = CalculatorHelpers.GetList(testData.Count, iColCount);
                 // trainData columns define number of rows (depcolumns.Length + 1)
-                string[][] attributeValues = new string[trainData[0].Count][];
-                //for each column of trainData, fill in the unique attribute names (i.e. gender = 2 unique atts)
-                for (int i = 0; i < trainData[0].Count; i++)
+                string[][] attributeValues = new string[trainDB.Count][];
+                //for each column of trainDB, fill in the unique attribute names (i.e. gender = 2 unique atts)
+                for (int i = 0; i < trainDB.Count; i++)
                 {
-                    attributeValues[i] = Shared.GetAttributeGroups(i, trainData, this.IndicatorQT);
+                    attributeValues[i] = Shared.GetAttributeGroups(i, trainDB, this.IndicatorQT);
                 }
-                int[][][] jointCounts = MakeJointCounts(trainData, attributeValues);
+                int[][][] jointCounts = MakeJointCounts(trainDB, attributeValues);
                 int[] dependentCounts = MakeDependentCounts(jointCounts, attributeValues[0].Length);
-                // prevent joint counts with 0
-                bool withLaplacian = true;
                 //classify everything in test dataset and add result to new columns in test dataset
-                //display averages in Indicator metadata
-                int row = 0;
-                foreach (List<string> data in testData)
+                List<string> predictors = new List<string>();
+                for (int r = 0; r < DataResults.Count - 1; r++)
                 {
-                    //prepare mathresults
-                    for (int i = 0; i < data.Count; i++)
+                    if (r == 0)
                     {
-                        DataResults[row][i] = data[i];
+                        Shared.FillMLAlgoInstructions(r, DataResults, testData);
                     }
-                    int c = await Classify(row, attributeValues, data.ToArray(),
+                    predictors = new List<string>();
+                    //cols have separate set of predictors
+                    for (int j = 0; j < testDB.Count; j++)
+                    {
+                        //prepare mathresults
+                        DataResults[r+1][j] = testDB[j][r];
+                        if (j > 0)
+                        {
+                            //going down the rows (j) in the column (r)
+                            predictors.Add(testDB[j][r]);
+                        }
+                    }
+                    int d = await Classify(r+1, attributeValues, predictors.ToArray(),
                         jointCounts, dependentCounts, withLaplacian, attributeValues.Length - 1);
                     for (int l = 0; l < attributeValues[0].Length; l++)
                     {
-                        if (c == l)
+                        if (d == l)
                         {
-                            int iRowLength = DataResults[row].Count;
-                            DataResults[row][iRowLength - 2] = attributeValues[0][l].ToString();
+                            int iRowLength = DataResults[r].Count;
+                            string sAttribute = Shared.ConvertAttributeToLabel(attributeValues[0][l], this.IndicatorQT);
+                            DataResults[r+1][iRowLength - 2] = sAttribute;
                         }
                     }
-                    row++;
                 }
-                bHasClassified = true;
             }
             catch (Exception ex)
             {
                 IndicatorQT.ErrorMessage = ex.Message;
             }
-            return bHasClassified;
-        }
-        //strictly used to debug algorithms
-        private async Task<StringBuilder> DebugClassify(List<List<string>> trainData,
-            List<List<string>> rowNames, List<List<string>> testData)
-        {
-            StringBuilder sb = new StringBuilder();
-            try
-            {
-                // trainData columns define number of rows (depcolumns.Length + 1)
-                string[][] attributeValues = new string[trainData[0].Count][];
-                //for each column of trainData, fill in the unique attribute names (i.e. gender = 2 unique atts)
-                for (int i = 0; i < trainData[0].Count; i++)
-                {
-                    attributeValues[i] = Shared.GetAttributeGroups(i, trainData);
-                }
-                sb.AppendLine("First 4 lines of training data are:\n");
-                for (int i = 0; i < 4; ++i)
-                {
-                    List<string> atts = trainData[i];
-                    string sData = string.Empty;
-                    foreach (string att in atts)
-                    {
-                        sData += string.Concat(" ", att);
-                    }
-                    sb.AppendLine(sData);
-                }
-                int[][][] jointCounts = MakeJointCounts(trainData, attributeValues);
-                int[] dependentCounts = MakeDependentCounts(jointCounts, attributeValues[0].Length);
-                for (int j = 0; j < dependentCounts.Length; j++)
-                {
-                    if (attributeValues[0].Length > j)
-                    {
-                        string sDependent = attributeValues[0][j];
-                        sb.AppendLine(string.Concat("Total for ",
-                            sDependent, "s  = " + dependentCounts[j]));
-                    }
-                }
-                ShowJointCounts(sb, jointCounts, attributeValues);
-
-                // prevent joint counts with 0
-                bool withLaplacian = true;
-                sb.AppendLine("Using Naive Bayes " + (withLaplacian ? "with" : "without") + " Laplacian smoothing to classify when:");
-                //classify everything in test dataset and add result to new columns in test dataset
-                //display averages in Indicator metadata
-                int k = 0;
-                foreach (List<string> data in testData)
-                {
-                    string sData2 = string.Empty;
-                    if (k == 0)
-                    {
-                        for (int i = 1; i < data.Count; i++)
-                        {
-                            if (i < (_depColNames.Length + 1))
-                            {
-                                sData2 += string.Concat(" ", _depColNames[i - 1], " = ", data[i]);
-                            }
-                            else
-                            {
-                                sData2 += string.Concat(" ", " = ", data[i]);
-                            }
-                        }
-                        sb.AppendLine(sData2);
-                        //for debugging algo
-                        int c = await Classify(k, attributeValues, testData[0].ToArray(),
-                            jointCounts, dependentCounts, withLaplacian, 
-                            attributeValues.Length - 1, sb);
-                        for (int l = 0; l < attributeValues[0].Length; l++)
-                        {
-                            if (c == l)
-                            {
-                                sb.AppendLine(string.Concat("\nThe subject is most likely to be ",
-                                        attributeValues[0][l].ToString()));
-                            }
-                        }
-                    }
-                    else
-                    {
-
-                    }
-                    k++;
-                }
-            }
-            catch (Exception ex)
-            {
-                sb.AppendLine(ex.Message);
-            }
             return sb;
         }
+        ////strictly used to debug algorithms
+        //private async Task<StringBuilder> DebugClassify(List<List<string>> trainData,
+        //    List<List<string>> rowNames, List<List<string>> testData)
+        //{
+        //    StringBuilder sb = new StringBuilder();
+        //    try
+        //    {
+        //        // trainData columns define number of rows (depcolumns.Length + 1)
+        //        string[][] attributeValues = new string[trainData[0].Count][];
+        //        //for each column of trainData, fill in the unique attribute names (i.e. gender = 2 unique atts)
+        //        for (int i = 0; i < trainData[0].Count; i++)
+        //        {
+        //            attributeValues[i] = Shared.GetAttributeGroups(i, trainData);
+        //        }
+        //        sb.AppendLine("First 4 lines of training data are:\n");
+        //        for (int i = 0; i < 4; ++i)
+        //        {
+        //            List<string> atts = trainData[i];
+        //            string sData = string.Empty;
+        //            foreach (string att in atts)
+        //            {
+        //                sData += string.Concat(" ", att);
+        //            }
+        //            sb.AppendLine(sData);
+        //        }
+        //        int[][][] jointCounts = MakeJointCountsDebug(trainData, attributeValues);
+        //        int[] dependentCounts = MakeDependentCounts(jointCounts, attributeValues[0].Length);
+        //        for (int j = 0; j < dependentCounts.Length; j++)
+        //        {
+        //            if (attributeValues[0].Length > j)
+        //            {
+        //                string sDependent = attributeValues[0][j];
+        //                sb.AppendLine(string.Concat("Total for ",
+        //                    sDependent, "s  = " + dependentCounts[j]));
+        //            }
+        //        }
+        //        ShowJointCounts(sb, jointCounts, attributeValues);
+
+        //        // prevent joint counts with 0
+        //        bool withLaplacian = true;
+        //        sb.AppendLine("Using Naive Bayes " + (withLaplacian ? "with" : "without") + " Laplacian smoothing to classify when:");
+        //        //classify everything in test dataset and add result to new columns in test dataset
+        //        //display averages in Indicator metadata
+        //        int k = 0;
+        //        foreach (List<string> data in testData)
+        //        {
+        //            string sData2 = string.Empty;
+        //            if (k == 0)
+        //            {
+        //                for (int i = 1; i < data.Count; i++)
+        //                {
+        //                    if (i < (_depColNames.Length + 1))
+        //                    {
+        //                        sData2 += string.Concat(" ", _depColNames[i - 1], " = ", data[i]);
+        //                    }
+        //                    else
+        //                    {
+        //                        sData2 += string.Concat(" ", " = ", data[i]);
+        //                    }
+        //                }
+        //                sb.AppendLine(sData2);
+        //                //for debugging algo
+        //                int c = await Classify(k, attributeValues, testData[0].ToArray(),
+        //                    jointCounts, dependentCounts, withLaplacian, 
+        //                    attributeValues.Length - 1, sb);
+        //                for (int l = 0; l < attributeValues[0].Length; l++)
+        //                {
+        //                    if (c == l)
+        //                    {
+        //                        sb.AppendLine(string.Concat("\nThe subject is most likely to be ",
+        //                                attributeValues[0][l].ToString()));
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+
+        //            }
+        //            k++;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        sb.AppendLine(ex.Message);
+        //    }
+        //    return sb;
+        //}
         private int[][][] MakeJointCounts(List<List<string>> trainData,
             string[][] attributeValues)
         {
@@ -225,35 +242,74 @@ namespace DevTreks.Extensions.Algorithms
                     jointCounts[i - 1][j] = new int[iLabelCount];
                 }
             }
+            //skip the dep var column
             for (int i = 1; i < attributeValues.Length; ++i)
             {
-                for (int k = 0; k < trainData.Count; k++)
+                //rows
+                for (int k = 0; k < trainData[i].Count; k++)
                 {
-                    int iLabelIndex = AttributeValueToLabelIndex(trainData[k][0], attributeValues);
+                    int iLabelIndex = AttributeValueToLabelIndex(trainData[0][k], attributeValues);
                     int iFeatureIndex = 0;
                     //feature comes from each column
-                    if (i < trainData[k].Count)
+                    string sFeature = trainData[i][k];
+                    iFeatureIndex = AttributeValueToIndex(i, sFeature, attributeValues);
+                    if (jointCounts[i - 1].Length > iFeatureIndex)
                     {
-                        string sFeature = trainData[k][i];
-                        iFeatureIndex = AttributeValueToIndex(i, sFeature, attributeValues);
-                        if (jointCounts[i - 1].Length > iFeatureIndex)
-                        {
-                            ++jointCounts[i - 1][iFeatureIndex][iLabelIndex];
-                        }
+                        ++jointCounts[i - 1][iFeatureIndex][iLabelIndex];
                     }
                 }
             }
             return jointCounts;
         }
+        //private int[][][] MakeJointCountsDebug(List<List<string>> trainData,
+        //    string[][] attributeValues)
+        //{
+        //    // assumes binned trainData is occupation, dominance, height, sex
+        //    // result[][][] -> [attribute][att value][sex]
+        //    // ex: result[0][3][1] is the count of (occupation) (technology) (female), i.e., the count of technology AND female
+        //    // note the -1 (no label or dep variable in joint counts)
+        //    int[][][] jointCounts = new int[attributeValues.Length - 1][][];
+        //    //first column holds labels and first row has label names
+        //    int iLabelCount = attributeValues[0].Length;
+        //    for (int i = 1; i < attributeValues.Length; i++)
+        //    {
+        //        //features start in 2nd row
+        //        jointCounts[i - 1] = new int[attributeValues[i].Length][];
+        //        for (int j = 0; j < attributeValues[i].Length; j++)
+        //        {
+        //            //number of labels for each feature
+        //            jointCounts[i - 1][j] = new int[iLabelCount];
+        //        }
+        //    }
+        //    for (int i = 1; i < attributeValues.Length; ++i)
+        //    {
+        //        for (int k = 0; k < trainData.Count; k++)
+        //        {
+        //            int iLabelIndex = AttributeValueToLabelIndex(trainData[k][0], attributeValues);
+        //            int iFeatureIndex = 0;
+        //            //feature comes from each column
+        //            if (i < trainData[k].Count)
+        //            {
+        //                string sFeature = trainData[k][i];
+        //                iFeatureIndex = AttributeValueToIndex(i, sFeature, attributeValues);
+        //                if (jointCounts[i - 1].Length > iFeatureIndex)
+        //                {
+        //                    ++jointCounts[i - 1][iFeatureIndex][iLabelIndex];
+        //                }
+        //            }
+        //        }
+        //    }
+        //    return jointCounts;
+        //}
         private int AttributeValueToLabelIndex(string attributeValue, string[][] attributeValues)
         {
             int iAttributeIndex = -1;
-            string sAttribute = string.Empty;
+            //string sAttribute = string.Empty;
             //labels are in atts[0]
             for (int j = 0; j < attributeValues[0].Length; j++)
             {
-                sAttribute = Shared.ConvertAttributeToLabel(attributeValue, this.IndicatorQT);
-                if (sAttribute.Equals(attributeValues[0][j]))
+                //sAttribute = Shared.ConvertAttributeToLabel(attributeValue, this.IndicatorQT);
+                if (attributeValue.Equals(attributeValues[0][j]))
                 {
                     iAttributeIndex = j;
                     break;
@@ -362,20 +418,33 @@ namespace DevTreks.Extensions.Algorithms
             int iLabelIndex = AttributeValueToIndex(0, label, attributeValues);
             int iFeatureIndex = 0;
             //test data includes dependent var with na or none
-            int[] iFeatureIndexes = new int[featuresToTest.Length - 1];
+            int[] iFeatureIndexes = new int[featuresToTest.Length];
             int i = 0;
             foreach (string feature in featuresToTest)
             {
-                if (i > 0)
+                //attvalues include depvar row
+                iFeatureIndex = AttributeValueToIndex(i + 1, feature, attributeValues);
+                if (i < iFeatureIndexes.Length)
                 {
-                    iFeatureIndex = AttributeValueToIndex(i, feature, attributeValues);
-                    if ((i -1) < iFeatureIndexes.Length)
-                    {
-                        iFeatureIndexes[i - 1] = iFeatureIndex;
-                    }
+                    iFeatureIndexes[i] = iFeatureIndex;
                 }
                 i++;
             }
+            ////test data includes dependent var with na or none
+            //int[] iFeatureIndexes = new int[featuresToTest.Length - 1];
+            //int i = 0;
+            //foreach (string feature in featuresToTest)
+            //{
+            //    if (i > 0)
+            //    {
+            //        iFeatureIndex = AttributeValueToIndex(i, feature, attributeValues);
+            //        if ((i -1) < iFeatureIndexes.Length)
+            //        {
+            //            iFeatureIndexes[i - 1] = iFeatureIndex;
+            //        }
+            //    }
+            //    i++;
+            //}
             int totalCases = 0;
             for (i = 0; i < dependentCounts.Length; i++)
             {
