@@ -53,6 +53,10 @@ namespace DevTreks.Extensions.Algorithms
         //output
         //store the results of calculations
         public List<List<string>> DataResults = new List<List<string>>();
+        //actual columnnames used in analysis
+        public static string[] _actualColNames { get; set; }
+        //actual instructions used in analysis
+        public static string[] _actualMLInstructions { get; set; }
 
     }
 }

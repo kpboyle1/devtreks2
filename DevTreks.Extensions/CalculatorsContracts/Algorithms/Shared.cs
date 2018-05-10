@@ -18,10 +18,10 @@ namespace DevTreks.Extensions.Algorithms
     {
         public enum TRANSFORM_DATA_TYPE
         {
-            none            = 0,
-            categories      = 1,
-            indexes         = 2,
-            normalized      = 3
+            none = 0,
+            categories = 1,
+            indexes = 2,
+            normalized = 3
         }
         public static double[] t025 = new double[] { 12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201,
             2.179, 2.160, 2.145, 2.131, 2.120, 2.110, 2.101, 2.093, 2.086, 2.080, 2.074, 2.069, 2.064, 2.060, 2.056, 2.052,
@@ -511,30 +511,30 @@ namespace DevTreks.Extensions.Algorithms
             }
             return rData;
         }
-        public static List<List<double>> GetDoubleData(List<List<string>> data, 
+        public static List<List<double>> GetDoubleData(List<List<string>> data,
             string[] colNames, string[] dataColNames)
         {
+            //colnames includes row id columns while data does not
+            string[] allDataNames = colNames.Skip(3).ToArray();
             //convert data to 2 d string lists
             List<List<double>> rData = new List<List<double>>();
-            //let bad indexes throw errors -they return bad index error message
-            int k = 0;
-            for (int i = 0; i < colNames.Count(); i++)
+            for (int i = 0; i < allDataNames.Count(); i++)
             {
                 if (i == 0)
                 {
                     //dependent vars start in first columns
-                    var colX = from col in data select CalculatorHelpers.ConvertStringToDouble(col.ElementAt(k));
+                    var colX = from col in data select
+                               CalculatorHelpers.ConvertStringToDouble(col.ElementAt(i));
                     rData.Add(colX.ToList());
-                    k++;
                 }
                 else
                 {
                     //datacolnames coincides with what is in data
-                    if (NeedsColumnName(dataColNames, colNames[i]))
+                    if (NeedsColumnName(dataColNames, allDataNames[i]))
                     {
-                        var colX = from col in data select CalculatorHelpers.ConvertStringToDouble(col.ElementAt(k));
+                        var colX = from col in data select
+                                   CalculatorHelpers.ConvertStringToDouble(col.ElementAt(i));
                         rData.Add(colX.ToList());
-                        k++;
                     }
                 }
             }
@@ -543,32 +543,82 @@ namespace DevTreks.Extensions.Algorithms
         public static List<List<string>> GetStringMLData(List<List<string>> data,
             string[] colNames, string[] dataColNames)
         {
+            //colnames includes row id columns while data does not
+            string[] allDataNames = colNames.Skip(3).ToArray();
             //convert data to 2 d string lists
             List<List<string>> rData = new List<List<string>>();
-            int k = 0;
-            for (int i = 0; i < colNames.Count(); i++)
+            for (int i = 0; i < allDataNames.Count(); i++)
             {
                 if (i == 0)
                 {
                     //dependent vars start in first columns
-                    var colX = from col in data select col.ElementAt(k);
+                    var colX = from col in data select col.ElementAt(i);
                     //ml algos skip the instructions row in 1st row
                     rData.Add(colX.Skip(1).ToList());
-                    k++;
                 }
                 else
                 {
                     //datacolnames coincides with what is in data
-                    if (NeedsColumnName(dataColNames, colNames[i]))
+                    if (NeedsColumnName(dataColNames, allDataNames[i]))
                     {
-                        var colX = from col in data select col.ElementAt(k);
+                        var colX = from col in data select col.ElementAt(i);
                         //ml algos skip the instructions row in 1st row
                         rData.Add(colX.Skip(1).ToList());
-                        k++;
                     }
                 }
             }
             return rData;
+        }
+        public static List<string> GetNormTypes(List<string> mlInstructs,
+            string[] colNames, string[] dataColNames)
+        {
+            List<string> normTypes = new List<string>();
+            //colnames includes row id columns while data does not
+            string[] allDataNames = colNames.Skip(3).ToArray();
+            CalculatorHelpers.NORMALIZATION_TYPES normType
+                = CalculatorHelpers.NORMALIZATION_TYPES.none;
+            string sNormType = normType.ToString();
+            for (int i = 0; i < allDataNames.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    sNormType = mlInstructs[i];
+                    normTypes.Add(sNormType);
+                }
+                else
+                {
+                    //datacolnames coincides with what is in data
+                    if (NeedsColumnName(dataColNames, allDataNames[i]))
+                    {
+                        sNormType = mlInstructs[i];
+                        normTypes.Add(sNormType);
+                    }
+                }
+            }
+            return normTypes;
+        }
+        public static List<string> GetActualColNames(string[] colNames, string[] dataColNames)
+        {
+            List<string> actualColNames = new List<string>();
+            //need 3row ids
+            actualColNames.AddRange(colNames.Take(3));
+            string[] allDataNames = colNames.Skip(3).ToArray();
+            for (int i = 0; i < allDataNames.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    actualColNames.Add(allDataNames[i]);
+                }
+                else
+                {
+                    //datacolnames coincides with what is in data
+                    if (NeedsColumnName(dataColNames, allDataNames[i]))
+                    {
+                        actualColNames.Add(allDataNames[i]);
+                    }
+                }
+            }
+            return actualColNames;
         }
         public static StringBuilder GetRProjectDataFile(List<List<string>> data, string[] colNames,
             string[] depColNames)
@@ -925,10 +975,10 @@ namespace DevTreks.Extensions.Algorithms
             }
             return dbNValue;
         }
-       
-       public static Vector<double> GetNormalizedVector(
-            string normType, double startValue,
-            bool scaleUp4Digits, double[] data)
+
+        public static Vector<double> GetNormalizedVector(
+             string normType, double startValue,
+             bool scaleUp4Digits, double[] data)
         {
             //normalize them
             var stats = new MathNet.Numerics.Statistics.DescriptiveStatistics(data);
@@ -1232,21 +1282,24 @@ namespace DevTreks.Extensions.Algorithms
             }
             return todata;
         }
-        public static string[] GetAttributeGroups(int colIndex, List<List<string>> data)
+
+        public static double[] GetAttributeGroups(int colIndex, List<List<double>> data)
         {
-            List<string> groups = new List<string>();
-            string sAttribute = string.Empty;
-            foreach (List<string> row in data)
+            List<double> groups = new List<double>();
+            double dbAttribute = 0;
+            if (colIndex < data.Count)
             {
-                if (colIndex < row.Count)
+                foreach (double row in data[colIndex])
                 {
-                    sAttribute = row[colIndex];
-                    if (!groups.Contains(sAttribute))
+                    //groups mean 1 digit
+                    dbAttribute = Math.Round(row, 1);
+                    if (!groups.Contains(dbAttribute))
                     {
-                        groups.Add(sAttribute);
+                        groups.Add(dbAttribute);
                     }
                 }
             }
+            groups.Sort();
             return groups.ToArray();
         }
         public static double[] GetAttributeGroups(int colIndex, List<List<double>> data,
@@ -1254,17 +1307,21 @@ namespace DevTreks.Extensions.Algorithms
         {
             List<double> groups = new List<double>();
             double dbAttribute = 0;
-            //data has normalized columns in data[0] first index
-            //so this is iterating rows
-            for (int i = 0; i < data[colIndex].Count; i++)
+            if (colIndex < data.Count)
             {
-                dbAttribute = data[colIndex][i];
-                //calling procedure handles dep var bin
-                if (!groups.Contains(dbAttribute))
+                //data has normalized columns in data[0] first index
+                //so this is iterating rows
+                for (int i = 0; i < data[colIndex].Count; i++)
                 {
-                    groups.Add(dbAttribute);
+                    //groups mean digit
+                    dbAttribute = Math.Round(data[colIndex][i], 1);
+                    if (!groups.Contains(dbAttribute))
+                    {
+                        groups.Add(dbAttribute);
+                    }
                 }
             }
+            groups.Sort();
             return groups.ToArray();
         }
         public static string[] GetAttributeGroups(List<string> data)
@@ -1280,7 +1337,24 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
-        public static string[] GetAttributeGroups(int colIndex, 
+        public static string[] GetAttributeGroups(int colIndex, List<List<string>> data)
+        {
+            List<string> groups = new List<string>();
+            string sAttribute = string.Empty;
+            if (colIndex < data.Count)
+            {
+                foreach (string row in data[colIndex])
+                {
+                    sAttribute = row;
+                    if (!groups.Contains(sAttribute))
+                    {
+                        groups.Add(sAttribute);
+                    }
+                }
+            }
+            return groups.ToArray();
+        }
+        public static string[] GetAttributeGroups(int colIndex,
             List<List<string>> data, IndicatorQT1 qt1)
         {
             List<string> groups = new List<string>();
@@ -1301,32 +1375,6 @@ namespace DevTreks.Extensions.Algorithms
             }
             return groups.ToArray();
         }
-        //public static string[] GetAttributeGroups(int colIndex, List<List<string>> data, 
-        //    IndicatorQT1 qt1)
-        //{
-        //    List<string> groups = new List<string>();
-        //    string sAttribute = string.Empty;
-        //    foreach (List<string> row in data)
-        //    {
-        //        if (colIndex < row.Count)
-        //        {
-        //            sAttribute = row[colIndex];
-        //            //need to bin double dependent variable data under these conditions
-        //            if (colIndex == 0)
-        //            {
-        //                sAttribute = ConvertAttributeToLabel(sAttribute, qt1);
-        //            }
-        //            if (!string.IsNullOrEmpty(sAttribute))
-        //            {
-        //                if (!groups.Contains(sAttribute))
-        //                {
-        //                    groups.Add(sAttribute);
-        //                }
-        //            }
-        //        }
-        //    }
-        //    return groups.ToArray();
-        //}
         public static string ConvertAttributeToLabel(string attribute, IndicatorQT1 qt1)
         {
             string sAttribute = attribute;
@@ -1387,11 +1435,11 @@ namespace DevTreks.Extensions.Algorithms
         public static List<string> GetAlgoInstructs(List<List<string>> data)
         {
             List<string> algoInstructs = new List<string>(data[0]);
-            return algoInstructs;   
+            return algoInstructs;
         }
-        public static List<List<string>> GetNormalizedSData(List<List<string>> data, 
-            IndicatorQT1 qt1, string[] colNames, string[] depColNames, 
-            string stringDataType = null)
+        public static List<List<string>> GetNormalizedSData(List<List<string>> data,
+            IndicatorQT1 qt1, string[] colNames, string[] depColNames,
+            List<string> normTypes, string stringDataType = null)
         {
             //train[0] will be normalized columns (while data[0] are rows)
             //skips the ml instructions row
@@ -1404,7 +1452,7 @@ namespace DevTreks.Extensions.Algorithms
             {
                 //see if the data needs transformation
                 CalculatorHelpers.NORMALIZATION_TYPES normType
-                    = CalculatorHelpers.GetNormalizationType(data[0][d]);
+                    = CalculatorHelpers.GetNormalizationType(normTypes[d]);
                 if (normType == CalculatorHelpers.NORMALIZATION_TYPES.qtext)
                 {
                     for (int i = 0; i < trainData[d].Count(); i++)
@@ -1441,7 +1489,7 @@ namespace DevTreks.Extensions.Algorithms
         }
         public static List<List<double>> GetNormalizedDData(List<List<string>> data,
             IndicatorQT1 qt1, string[] colNames, string[] depColNames,
-            string stringDataType = null)
+            List<string> normTypes, string stringDataType = null)
         {
             //train[0] will be normalized columns (while data[0] are rows)
             List<List<string>> trainData = GetStringMLData(data, colNames, depColNames);
@@ -1451,7 +1499,7 @@ namespace DevTreks.Extensions.Algorithms
             {
                 //see if the data needs transformation
                 CalculatorHelpers.NORMALIZATION_TYPES normType
-                    = CalculatorHelpers.GetNormalizationType(data[0][d]);
+                    = CalculatorHelpers.GetNormalizationType(normTypes[d]);
                 double[] normColumn = GetNormalizedData(trainData[d], qt1, normType);
                 if (d < trainData.Count)
                 {
@@ -1461,6 +1509,11 @@ namespace DevTreks.Extensions.Algorithms
                 }
             }
             return trainDB;
+        }
+        public static double GetScaledData(double inLo, double inHi, double input)
+        {
+            double dbScaledInput = (inHi - inLo) * input + inLo;
+            return dbScaledInput;
         }
         public static double[] GetNormalizedData(List<string> data, 
             IndicatorQT1 qt1, CalculatorHelpers.NORMALIZATION_TYPES normType)
@@ -1515,98 +1568,6 @@ namespace DevTreks.Extensions.Algorithms
             }
             return colNorms;
         }
-        //public static List<List<double>> GetNormalizedData(List<List<string>> data, int categoryLimit,
-        //    IndicatorQT1 qt1, string[] colNames, string[] depColNames,
-        //    TRANSFORM_DATA_TYPE transformOutputType, TRANSFORM_DATA_TYPE transformInputType,
-        //    CalculatorHelpers.NORMALIZATION_TYPES normOutputType, CalculatorHelpers.NORMALIZATION_TYPES normInputType)
-        //{
-        //    //train[0] will be columns for normalizing (while data[0] are rows)
-        //    List<List<double>> trainData = GetDoubleData(data, colNames, depColNames);
-        //    //normalize the data
-        //    List<List<double>> trainDB = new List<List<double>>();
-        //    List<double> normColumn = new List<double>();
-        //    for (int d = 0; d < trainData.Count; ++d)
-        //    {
-        //        //check for binary and categorized data
-        //        double[] attributeValues = GetAttributeGroups(d, trainData, qt1);
-        //        CalculatorHelpers.NORMALIZATION_TYPES normType = CalculatorHelpers.NORMALIZATION_TYPES.none;
-        //        TRANSFORM_DATA_TYPE tType = TRANSFORM_DATA_TYPE.none;
-        //        if (d == 0)
-        //        {
-        //            normType = normOutputType;
-        //            tType = transformOutputType;
-        //        }
-        //        else
-        //        {
-        //            normType = normInputType;
-        //            tType = transformInputType;
-        //        }
-        //        normColumn = GetNormalizedData(trainData[d], categoryLimit, 
-        //            attributeValues.Length, qt1, tType, normType);
-        //        if (d < trainData.Count)
-        //        {
-        //            //fill the col
-        //            trainDB.Add(normColumn);
-        //        }
-        //    }
-        //    return trainDB;
-        //}
-        //public static List<double> GetNormalizedData(List<double> data, 
-        //    int categoryLimit, int colCategoryCount,
-        //    IndicatorQT1 qt1, TRANSFORM_DATA_TYPE transformType,
-        //    CalculatorHelpers.NORMALIZATION_TYPES normType)
-        //{
-        //    List<double> colNorms = new List<double>();
-        //    double dbAtt = 0;
-        //    if (transformType == TRANSFORM_DATA_TYPE.normalized)
-        //    {
-        //        for (int i = 0; i < data.Count(); i++)
-        //        {
-        //            colNorms.Add(data[i]);
-        //        }
-        //        //binary and categorized data rule
-        //        if (colCategoryCount > categoryLimit)
-        //        {
-        //            colNorms = GetNormalizedVector(normType.ToString(), 0, false, 
-        //                colNorms.ToArray()).ToList();
-        //        }
-        //    }
-        //    else if (transformType == TRANSFORM_DATA_TYPE.categories)
-        //    {
-        //        for (int i = 0; i < data.Count(); i++)
-        //        {
-        //            dbAtt = data[i];
-        //            //binary and categorized data rule
-        //            if (colCategoryCount > categoryLimit)
-        //            {
-        //                colNorms.Add(ConvertAttributeToCategory(dbAtt, qt1));
-        //            }
-        //            else
-        //            {
-        //                colNorms.Add(dbAtt);
-        //            }
-        //        }
-        //    }
-        //    else if (transformType == TRANSFORM_DATA_TYPE.indexes)
-        //    {
-        //        for (int i = 0; i < data.Count(); i++)
-        //        {
-        //            dbAtt = data[i];
-        //            //indexes always need index position set
-        //            colNorms.Add(ConvertAttributeToIndexPosition(dbAtt, qt1));
-        //        }
-        //    }
-        //    else
-        //    {
-        //        //don't normalize the data
-        //        for (int i = 0; i < data.Count(); i++)
-        //        {
-        //            colNorms.Add(data[i]);
-        //        }
-        //    }
-        //    return colNorms;
-        //}
-        
         
         
         public static double[] ConvertAttributeToOutputs(string attribute, IndicatorQT1 qt1, int numOutputs)
@@ -1641,20 +1602,20 @@ namespace DevTreks.Extensions.Algorithms
             }
             return outputs;
         }
-        public static double[] ConvertIndexToOutputs(double index,
-            IndicatorQT1 qt1, int numOutputs)
+        public static double[] ConvertDoubleToOutputsIndex(double attribute,
+            IndicatorQT1 qt1, double[] outputCategories)
         {
-            double[] outputs = new double[numOutputs];
-            double dbIndexPosition = Math.Round(index, 0);
-            for (int i = 0; i < numOutputs; i++)
+            double[] outputs = new double[outputCategories.Length];
+            for (int i = 0; i < outputCategories.Length; i++)
             {
-                if (i == dbIndexPosition)
+                outputs[i] = 0;
+            }
+            for (int i = 0; i < outputCategories.Length; i++)
+            {
+                if (attribute <= outputCategories[i])
                 {
                     outputs[i] = 1;
-                }
-                else
-                {
-                    outputs[i] = 0;
+                    break;
                 }
             }
             return outputs;
@@ -1663,7 +1624,8 @@ namespace DevTreks.Extensions.Algorithms
             IndicatorQT1 qt1)
         {
             int iIndexPosition = CalculatorHelpers.ConvertStringToInt(attribute.ToString());
-            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            if ((!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+                && (qt1.Q1 > 0 && qt1.Q2 > 0))
             {
                 if (attribute < qt1.Q1)
                 {
@@ -1691,7 +1653,8 @@ namespace DevTreks.Extensions.Algorithms
         public static double ConvertIndexToAttribute(int index, IndicatorQT1 qt1)
         {
             double dbAttribute = 0;
-            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            if ((!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+                && (qt1.Q1 > 0 && qt1.Q2 > 0))
             {
                 if (index == 0)
                 {
@@ -1721,7 +1684,8 @@ namespace DevTreks.Extensions.Algorithms
         public static double ConvertAttributeToCategory(double attribute, IndicatorQT1 qt1)
         {
             double dbAttribute = attribute;
-            if (!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+            if ((!string.IsNullOrEmpty(qt1.Q1Unit) && !string.IsNullOrEmpty(qt1.Q2Unit))
+                && (qt1.Q1 > 0 && qt1.Q2 >0))
             {
                 if (attribute < qt1.Q1)
                 {
@@ -1814,25 +1778,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return mType;
         }
-        public static bool FillMLAlgoInstructions(int r, 
-            List<List<string>> dataResults, List<List<string>> testData)
-        {
-            bool bHasInstructs = false;
-            //insert the dataset instructions row
-            for (int i = 0; i < dataResults[r].Count; i++)
-            {
-                if (i < testData[0].Count)
-                {
-                    dataResults[r][i] = testData[0][i];
-                }
-                else
-                {
-                    dataResults[r][i] = Constants.NONE;
-                }
-            }
-            bHasInstructs = true;
-            return bHasInstructs;
-        }
+        
         public static async Task<bool> FillMathResult(IndicatorQT1 meta, 
             META_TYPE metaType, CalculatorParameters calcParams, 
             StringBuilder sb, List<string> lastLines)
