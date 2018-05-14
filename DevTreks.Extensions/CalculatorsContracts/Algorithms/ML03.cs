@@ -23,9 +23,8 @@ namespace DevTreks.Extensions.Algorithms
             : base(indicatorIndex, label, mathTerms,
             colNames, depColNames, subalgorithm, ciLevel, iterations,
             random, qT1, calcParams)
-        {
+        {}
 
-        }
         public async Task<bool> RunAlgorithmAsync(List<List<string>> trainData,
             List<List<string>> rowNames, List<List<string>> testData)
         {
@@ -40,20 +39,20 @@ namespace DevTreks.Extensions.Algorithms
                         "variable and 1 input variable with 3 rows of test data.";
                     return bHasCalculations;
                 }
-                StringBuilder sResults = new StringBuilder();
+
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_03.ToString())
                 {
-
-                    //classify testdata and return new dataset
-                    //bHasCalculations = await Classify(trainData, rowNames, testData);
-                    //bHasCalculations = await SetMathResult(rowNames);
+                    //use sb for feedback when training and testing; but don't use for production
+                    StringBuilder sb = new StringBuilder();
+                    ////classify testdata and return new dataset
+                    sb = await Predict(trainData, rowNames, testData);
+                    bHasCalculations = await SetMathResult(rowNames);
 
                     //debug first with reference dataset and show debugging messages in results
-                    sResults = await DebugPredict(trainData, rowNames, testData);
                     //put the results in MathResult
-                    bHasCalculations = await SetMathResult(rowNames, sResults);
+                    //sb = await DebugPredict(trainData, rowNames, testData);
+                    //bHasCalculations = await SetMathResult(rowNames, sb);
                 }
-
             }
             catch (Exception ex)
             {
@@ -62,59 +61,70 @@ namespace DevTreks.Extensions.Algorithms
             return bHasCalculations;
         }
 
-        private async Task<bool> Predict(List<List<string>> trainData,
+        private async Task<StringBuilder> Predict(List<List<string>> trainData,
             List<List<string>> rowNames, List<List<string>> testData)
         {
-            bool bHasClassified = false;
+            StringBuilder sb = null;
             try
             {
+                //ml algo rule: long running calcs avoided by setting Score.Iterations
+                int iRowCount = Shared.GetRowCount(_iterations, testData.Count);
+                //columns of data used and returned in DataResults
+                _actualColNames = Shared.GetActualColNames(_colNames, _depColNames).ToArray();
+                //ml instructions associated with actual colNames
+                List<string> normTypes = Shared.GetNormTypes(trainData[0], _colNames, _depColNames);
+                //instructions in both row names and datasets
+                List<string> actualMLInstructs = Shared.GetAlgoInstructs(rowNames);
+                actualMLInstructs.AddRange(normTypes);
+                // prevent joint counts with 0
+                double dbPlusorMinus
+                    = CalculatorHelpers.ConvertStringToDouble(actualMLInstructs[0]);
+                //converts rows to columns with normalized data
+                List<List<double>> trainDB = Shared.GetNormalizedDData(trainData,
+                   this.IndicatorQT, _colNames, _depColNames, normTypes, "F2");
+                List<List<double>> testDB = Shared.GetNormalizedDData(testData,
+                    this.IndicatorQT, _colNames, _depColNames, normTypes, "F2");
                 //make a new list with same matrix, to be replaced with results
-                int iColCount = testData[0].Count;
-                if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_02.ToString().ToString())
+                int iColCount = testDB.Count;
+                if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_03.ToString().ToString())
                 {
-                    //subalgo01 needs qtm and percent probability of qtm
-                    iColCount = testData[0].Count + 2;
+                    //subalgo02 needs qtm and percent probability of accuracy, qtm, low ci, high ci
+                    iColCount = testDB.Count + 4;
                 }
+                //row count comes from original testdata to account for the instructions row
                 DataResults = CalculatorHelpers.GetList(testData.Count, iColCount);
+                DataResults[0] = normTypes;
+                //dep var output count
+                int numOutput = 1;
+                //less col[0]
+                int numInput = trainDB.Count - 1;
+                int numHidden = 12;
+                double[][] trainArrData = MakeData(trainDB, iRowCount, this.IndicatorQT,
+                    numInput);
+                //build a neural network
+                NeuralNetwork2 nn2 = new NeuralNetwork2(numInput, numHidden, numOutput);
 
-                //// trainData columns define number of rows (depcolumns.Length + 1)
-                //string[][] attributeValues = new string[trainData[0].Count][];
-                ////for each column of trainData, fill in the unique attribute names (i.e. gender = 2 unique atts)
-                //for (int i = 0; i < trainData[0].Count; i++)
-                //{
-                //    attributeValues[i] = Shared.GetAttributeGroups(i, trainData, this.IndicatorQT);
-                //}
-                //int[][][] jointCounts = MakeJointCounts(trainData, attributeValues);
-                //int[] dependentCounts = MakeDependentCounts(jointCounts, attributeValues[0].Length);
-                //// prevent joint counts with 0
-                //bool withLaplacian = true;
-                ////classify everything in test dataset and add result to new columns in test dataset
-                ////display averages in Indicator metadata
-                //int row = 0;
-                //foreach (List<string> data in testData)
-                //{
-                //    //prepare mathresults
-                //    DataResults[row].AddRange(data);
-                //    int c = await Classify(row, attributeValues, data.ToArray(),
-                //        jointCounts, dependentCounts, withLaplacian, attributeValues.Length - 1);
-                //    for (int l = 0; l < attributeValues[0].Length; l++)
-                //    {
-                //        if (c == l)
-                //        {
-                //            int iRowLength = DataResults[row].Count;
-                //            DataResults[row][iRowLength - 2] = attributeValues[0][l].ToString();
-                //        }
-                //    }
-                //    row++;
-                //}
-                bHasClassified = true;
+                int maxEpochs = iRowCount;
+                double learnRate = 0.001;
+                //train nn2
+                double[] wts = nn2.Train(trainArrData, maxEpochs, learnRate, sb);
+                //final model accuracy
+                double trainAcc = nn2.Accuracy(trainArrData, dbPlusorMinus);
+                //add classified test data to DataResults
+                bool bHasNewClassifs = await AddNewClassifications(nn2, testDB,
+                    trainAcc, iRowCount, dbPlusorMinus);
             }
             catch (Exception ex)
             {
                 IndicatorQT.ErrorMessage = ex.Message;
             }
-            return bHasClassified;
+            return sb;
         }
+
+
+        
+
+        
         //strictly used to debug algorithms
         private async Task<StringBuilder> DebugPredict(List<List<string>> trainData,
             List<List<string>> rowNames, List<List<string>> testData)
@@ -145,7 +155,7 @@ namespace DevTreks.Extensions.Algorithms
                 sb.AppendLine("Setting learnRate = " + learnRate.ToString("F2"));
 
                 sb.AppendLine("\nStarting training");
-                double[] weights = nn.Train(sb, trainArrData, maxEpochs, learnRate);
+                double[] weights = nn.Train(trainArrData, maxEpochs, learnRate, sb);
                 sb.AppendLine("Done");
                 sb.AppendLine("\nFinal neural network model weights and biases:\n");
                 ShowVector(sb, weights, 2, 10, true);
@@ -157,15 +167,15 @@ namespace DevTreks.Extensions.Algorithms
                 double[] predictors = new double[] { 5.08, 4.61, 3.90, 4.32 };
                 double[] forecast = nn.ComputeOutputs(predictors);  // 4.33362252510741
                 sb.AppendLine("\nPredicted passengers for January 1961 (t=145): ");
-                sb.AppendLine((forecast[0] * 100).ToString("F0"));
+                sb.AppendLine((forecast[0]).ToString("F2"));
 
-                //double[] predictors = new double[] { 4.61, 3.90, 4.32, 4.33362252510741 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 4.33933519590564
-                //sb.AppendLine(forecast[0]);
+                predictors = new double[] { 4.61, 3.90, 4.32, 4.33362252510741 };
+                forecast = nn.ComputeOutputs(predictors);  // 4.33933519590564
+                sb.AppendLine(forecast[0].ToString("F2"));
 
-                //double[] predictors = new double[] { 3.90, 4.32, 4.33362252510741, 4.33933519590564 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 4.69036205766231
-                //sb.AppendLine(forecast[0]);
+                predictors = new double[] { 3.90, 4.32, 4.33362252510741, 4.33933519590564 };
+                forecast = nn.ComputeOutputs(predictors);  // 4.69036205766231
+                sb.AppendLine(forecast[0].ToString("F2"));
 
                 //double[] predictors = new double[] { 4.32, 4.33362252510741, 4.33933519590564, 4.69036205766231 };
                 //double[] forecast = nn.ComputeOutputs(predictors);  // 4.83360378041341
@@ -384,7 +394,35 @@ namespace DevTreks.Extensions.Algorithms
             airData[139] = new double[] { 606, 508, 461, 390, 432 };
             return airData;
         }
-
+        static double[][] MakeData(List<List<double>> trainData, int numItems,
+            IndicatorQT1 qt1, int numInput)
+        {
+            
+            // make the result matrix holder (now first index is row)
+            double[][] result = new double[numItems][];
+            for (int r = 0; r < numItems; ++r)
+                // allocate the cols
+                result[r] = new double[numInput];
+            double dbInput = 0;
+            for (int r = 0; r < numItems; ++r)
+            {
+                double[] inputs = new double[numInput];
+                if ((trainData.Count + 1) > numInput)
+                {
+                    for (int i = 0; i < numInput; ++i)
+                    {
+                        //skip col[0]
+                        dbInput = trainData[i + 1][r];
+                        inputs[i] = dbInput;
+                    }
+                    int c = 0;
+                    for (int i = 0; i < numInput; ++i)
+                        result[r][c++] = inputs[i];
+                }
+            }
+            return result;
+        }
+        
         static void ShowMatrix(StringBuilder sb, double[][] matrix, int numRows,
           int decimals, bool indices)
         {
@@ -432,6 +470,50 @@ namespace DevTreks.Extensions.Algorithms
             if (newLine == true)
                 sb.AppendLine("");
         }
+        private async Task<bool> AddNewClassifications(NeuralNetwork2 nn2, List<List<double>> testData,
+            double trainAccuracy, int rowCount, double hiLow)
+        {
+            bool bHasNewClassifs = false;
+            int iRowLength = 0;
+            string sResult = string.Empty;
+            List<double> predictors = new List<double>();
+            double dbInput = 0;
+            //test data stores cols in testdata[0] first index
+            for (int r = 0; r < DataResults.Count - 1; r++)
+            {
+                if (r == 0)
+                {
+                    iRowLength = DataResults[r + 1].Count;
+                }
+                predictors = new List<double>();
+                for (int c = 0; c < testData.Count; c++)
+                {
+                    //prepare mathresults
+                    dbInput = testData[c][r];
+                    DataResults[r + 1][c] = dbInput.ToString("F4");
+                    if (c > 0)
+                    {
+                        predictors.Add(dbInput);
+                    }
+                }
+                //predict 
+                double[] forecast = nn2.ComputeOutputs(predictors.ToArray());
+                DataResults[r + 1][iRowLength - 4] = trainAccuracy.ToString("F4");
+                double dbMostLikelyQTM = forecast[0];
+                DataResults[r + 1][iRowLength - 3] = dbMostLikelyQTM.ToString("F4");
+                if (r == DataResults.Count - 2)
+                {
+                    this.IndicatorQT.QTM = dbMostLikelyQTM;
+                    this.IndicatorQT.QTL = dbMostLikelyQTM - hiLow;
+                    this.IndicatorQT.QTU = dbMostLikelyQTM + hiLow;
+                }
+                //low estimation
+                DataResults[r + 1][iRowLength - 2] = (dbMostLikelyQTM - hiLow).ToString("F4");
+                //high estimation
+                DataResults[r + 1][iRowLength - 1] = (dbMostLikelyQTM + hiLow).ToString("F4");
+            }
+            return bHasNewClassifs;
+        }
         private async Task<bool> SetMathResult(List<List<string>> rowNames, StringBuilder sb = null)
         {
             bool bHasSet = false;
@@ -439,19 +521,21 @@ namespace DevTreks.Extensions.Algorithms
             {
                 //add the data to a string builder
                 sb = new StringBuilder();
-                if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_02.ToString())
+                if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_03.ToString())
                 {
                     sb.AppendLine("ml results");
-                    string[] newColNames = new string[_colNames.Length + 2];
-                    for (int i = 0; i < _colNames.Length; i++)
+                    string[] newColNames = new string[_actualColNames.Length + 4];
+                    for (int i = 0; i < _actualColNames.Length; i++)
                     {
-                        newColNames[i] = _colNames[i];
+                        newColNames[i] = _actualColNames[i];
                     }
                     //new cols changed by algo
-                    newColNames[_colNames.Length] = "label";
-                    newColNames[_colNames.Length + 1] = "probability";
-                    _colNames = newColNames;
-                    CalculatorHelpers.SetIndMathResult(sb, _colNames, rowNames, DataResults);
+                    newColNames[_actualColNames.Length] = "accuracy";
+                    newColNames[_actualColNames.Length + 1] = "qtm";
+                    newColNames[_actualColNames.Length + 2] = "qtl";
+                    newColNames[_actualColNames.Length + 3] = "qtu";
+                    _actualColNames = newColNames;
+                    CalculatorHelpers.SetIndMathResult(sb, _actualColNames, rowNames, DataResults);
                 }
 
             }
@@ -626,8 +710,8 @@ namespace DevTreks.Extensions.Algorithms
             else return 1.0 / (1.0 + Math.Exp(x));
         }
 
-        public double[] Train(StringBuilder sb, double[][] trainData, int maxEpochs,
-          double learnRate)
+        public double[] Train(double[][] trainData, int maxEpochs,
+          double learnRate, StringBuilder sb = null)
         {
             // train using back-prop
             // back-prop specific arrays
@@ -658,8 +742,11 @@ namespace DevTreks.Extensions.Algorithms
                 if (epoch % errInterval == 0 && epoch < maxEpochs)
                 {
                     double trainErr = Error(trainData);
-                    sb.AppendLine("epoch = " + epoch + "  error = " +
-                      trainErr.ToString("F4"));
+                    if (sb != null)
+                    {
+                        sb.AppendLine("epoch = " + epoch + "  error = " +
+                          trainErr.ToString("F4"));
+                    }
                 }
 
                 Shuffle(sequence); // visit each training data in random order
@@ -667,7 +754,8 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     int idx = sequence[ii];
                     Array.Copy(trainData[idx], xValues, numInput);
-                    Array.Copy(trainData[idx], numInput, tValues, 0, numOutput);
+                    //always use dep var col[0]
+                    Array.Copy(trainData[idx], 0, tValues, 0, numOutput);
                     ComputeOutputs(xValues); // copy xValues in, compute outputs 
 
                     // indices: i = inputs, j = hiddens, k = outputs
@@ -775,7 +863,8 @@ namespace DevTreks.Extensions.Algorithms
             for (int i = 0; i < trainData.Length; ++i)
             {
                 Array.Copy(trainData[i], xValues, numInput);
-                Array.Copy(trainData[i], numInput, tValues, 0, numOutput); // get target values
+                //always use dep var col[0]
+                Array.Copy(trainData[i], 0, tValues, 0, numOutput); // get target values
                 double[] yValues = this.ComputeOutputs(xValues); // outputs using current weights
                 for (int j = 0; j < numOutput; ++j)
                 {
@@ -798,7 +887,8 @@ namespace DevTreks.Extensions.Algorithms
             for (int i = 0; i < testData.Length; ++i)
             {
                 Array.Copy(testData[i], xValues, numInput); // get x-values
-                Array.Copy(testData[i], numInput, tValues, 0, numOutput); // get t-values
+                //always use dep var col[0]
+                Array.Copy(testData[i], 0, tValues, 0, numOutput); // get t-values
                 yValues = this.ComputeOutputs(xValues);
 
                 if (Math.Abs(yValues[0] - tValues[0]) < howClose)  // within 30

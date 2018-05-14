@@ -253,7 +253,7 @@ namespace DevTreks.Extensions.ME2Statistics
                         this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
-                FillBaseIndicator(ml.IndicatorQT, index, sLowerCI, sUpperCI);
+                FillBaseIndicator(ml.IndicatorQT, index);
             }
             else if (this.ME2Indicators[index].IndMathSubType == MATHML_SUBTYPES.subalgorithm_02.ToString())
             {
@@ -279,7 +279,7 @@ namespace DevTreks.Extensions.ME2Statistics
                         this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
-                FillBaseIndicator(ml.IndicatorQT, index, sLowerCI, sUpperCI);
+                FillBaseIndicator(ml.IndicatorQT, index);
             }
             if (bHasCalcs)
             {

@@ -975,7 +975,30 @@ namespace DevTreks.Extensions.Algorithms
             }
             return dbNValue;
         }
-
+        public static double ConvertNormalizedValue(string subIndNormType, double normValue,
+            MathNet.Numerics.Statistics.DescriptiveStatistics stats)
+        {
+            double dbNValue = normValue;
+            if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.none.ToString()
+                || string.IsNullOrEmpty(subIndNormType))
+            {
+                //data has already been normalized
+                return dbNValue;
+            }
+            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.zscore.ToString())
+            {
+                //z-score: (x – mean(x)) / stddev(x)
+                dbNValue = (normValue * stats.StandardDeviation) + stats.Mean;
+                dbNValue = CalculatorHelpers.CheckForNaNandRound4(dbNValue);
+            }
+            else if (subIndNormType == CalculatorHelpers.NORMALIZATION_TYPES.minmax.ToString())
+            {
+                //min-max: (x – min(x)) / (max(x) – min(x))
+                dbNValue = (normValue * (stats.Maximum - stats.Minimum)) + stats.Minimum;
+                dbNValue = CalculatorHelpers.CheckForNaNandRound4(dbNValue);
+            }
+            return dbNValue;
+        }
         public static Vector<double> GetNormalizedVector(
              string normType, double startValue,
              bool scaleUp4Digits, double[] data)

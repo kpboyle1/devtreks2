@@ -248,20 +248,23 @@ namespace DevTreks.Extensions.Algorithms
             for (int r = 0; r < numItems; ++r)
             {
                 double[] inputs = new double[numInput];
-                for (int i = 0; i < numInput; ++i)
+                if ((trainData.Count + 1) > numInput)
                 {
-                    //skip col[0]
-                    dbInput = trainData[i + 1][r];
-                    inputs[i] = Shared.GetScaledData(inLo, inHi, dbInput);
+                    for (int i = 0; i < numInput; ++i)
+                    {
+                        //skip col[0]
+                        dbInput = trainData[i + 1][r];
+                        inputs[i] = Shared.GetScaledData(inLo, inHi, dbInput);
+                    }
+                    //traindata has been categorized into doubles
+                    double[] outputs = Shared.ConvertDoubleToOutputsIndex(trainData[0][r],
+                        qt1, arrLabelCategories);
+                    int c = 0;
+                    for (int i = 0; i < numInput; ++i)
+                        result[r][c++] = inputs[i];
+                    for (int i = 0; i < numOutput; ++i)
+                        result[r][c++] = outputs[i];
                 }
-                //traindata has been categorized into doubles
-                double[] outputs = Shared.ConvertDoubleToOutputsIndex(trainData[0][r], 
-                    qt1, arrLabelCategories);
-                int c = 0;
-                for (int i = 0; i < numInput; ++i)
-                    result[r][c++] = inputs[i];
-                for (int i = 0; i < numOutput; ++i)
-                    result[r][c++] = outputs[i];
             }
             return result;
         }
@@ -450,7 +453,7 @@ namespace DevTreks.Extensions.Algorithms
                 DataResults[r+1][iRowLength - 4] = dbMostLikelyQTM.ToString("F4");
                 //fill in indicator from last row
                 sLabelClass = Shared.ConvertIndexToLabel(iIndex, this.IndicatorQT);
-                if (r == DataResults.Count - 1)
+                if (r == DataResults.Count - 2)
                 {
                     this.IndicatorQT.QTM = dbMostLikelyQTM;
                     if ((string.IsNullOrEmpty(this.IndicatorQT.QTMUnit)
