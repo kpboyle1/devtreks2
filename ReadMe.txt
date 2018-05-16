@@ -36,6 +36,9 @@ https://github.com/kpboyle1/devtreks2 (.NET Core 2.0)
 database.zip file
 https://devtreks1.blob.core.windows.net/resources/db214.zip
 
+214 datafiles (any exceeding 500KB must be manually uploaded)
+https://devtreks1.blob.core.windows.net/resources/network_carbon.zip
+
 What's New in Version 2.1.4
 1. This release includes the algorithms documented in the Social Performance Analysis 3 tutorial. 
 Specifically, this release supports fuller sustainability assessments, mainly involving Impact Evaluation.
