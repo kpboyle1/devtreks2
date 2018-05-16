@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Properties\PublishProfiles\devtreks-staging - FTP.pubxml" />
     <None Remove="Properties\PublishProfiles\devtreks-staging - Web Deploy.pubxml" />
   </ItemGroup>
 
