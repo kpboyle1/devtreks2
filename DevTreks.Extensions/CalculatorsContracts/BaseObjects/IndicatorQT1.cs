@@ -61,8 +61,9 @@ namespace DevTreks.Extensions
             //210 added q6 to q11 for supplemental storage (not because UI changed)
             this.Indicators = new string[] { };
         }
-        //copy constructor
+        //copy constructor (base added for ml algos)
         public IndicatorQT1(IndicatorQT1 indQT1)
+        :base(indQT1)
         {
             CopyIndicatorQT1sProperties(indQT1);
         }

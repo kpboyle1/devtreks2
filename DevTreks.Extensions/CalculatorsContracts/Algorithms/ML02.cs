@@ -66,12 +66,18 @@ namespace DevTreks.Extensions.Algorithms
             StringBuilder sb = null;
             try
             {
-                //ml algo rule: long running calcs avoided by setting Score.Iterations
-                int iRowCount = Shared.GetRowCount(_iterations, testData.Count);
+                //ml algo rule: iterations can also set rowcount and -1 for mlinstructs removed
+                int iRowCount = (Shared.GetRowCount(_iterations, trainData.Count) - 1);
                 //columns of data used and returned in DataResults
                 _actualColNames = Shared.GetActualColNames(_colNames, _depColNames).ToArray();
                 //ml instructions associated with actual colNames
                 List<string> normTypes = Shared.GetNormTypes(trainData[0], _colNames, _depColNames);
+                //instructions in both row names and datasets
+                List<string> actualMLInstructs = Shared.GetAlgoInstructs(rowNames);
+                actualMLInstructs.AddRange(normTypes);
+                // error allowance
+                double dbPlusorMinus
+                    = CalculatorHelpers.ConvertStringToDouble(actualMLInstructs[0]);
                 //converts rows to columns with normalized data
                 List<List<double>> trainDB = Shared.GetNormalizedDData(trainData,
                    this.IndicatorQT, _colNames, _depColNames, normTypes, "F0");
@@ -83,6 +89,8 @@ namespace DevTreks.Extensions.Algorithms
                 {
                     //subalgo02 needs qtm and percent probability of accuracy, mse, qtm, low ci, high ci
                     iColCount = testDB.Count + 7;
+                    //normtypes need full columns before insertion
+                    normTypes = Shared.FixNormTypes(normTypes, iColCount);
                 }
                 //row count comes from original testdata to account for the instructions row
                 DataResults = CalculatorHelpers.GetList(testData.Count, iColCount);
@@ -111,7 +119,7 @@ namespace DevTreks.Extensions.Algorithms
                 double trainAcc = dn.Accuracy(trainArrData, bVerbose, sb);
                 //add classified test data to DataResults
                 bool bHasNewClassifs = await AddNewClassifications(dn, testDB, 
-                    trainAcc, trainMSE, iRowCount, _ciLevel);
+                    trainAcc, trainMSE, iRowCount, dbPlusorMinus, _ciLevel);
             }
             catch (Exception ex)
             {
@@ -397,7 +405,7 @@ namespace DevTreks.Extensions.Algorithms
             sb.AppendLine("");
         }
         private async Task<bool> AddNewClassifications(DeepNet dn, List<List<double>> testData,
-            double trainAccuracy, double trainMSE, int rowCount, int ciPercent)
+            double trainAccuracy, double trainMSE, int rowCount, double hiLow, int ciPercent)
         {
             bool bHasNewClassifs = false;
             int iRowLength = 0;
@@ -407,12 +415,16 @@ namespace DevTreks.Extensions.Algorithms
             int iIndex = 0;
             string sLabelClass = string.Empty;
             double dbProb = 0;
-            double dbCI = CalculatorHelpers.GetConfidenceIntervalFromMSE(
-                ciPercent, rowCount, trainMSE);
+            if (ciPercent > 5)
+            {
+                hiLow = CalculatorHelpers.GetConfidenceIntervalFromMSE(
+                    ciPercent, rowCount, trainMSE);
+            }
             //same scaling as makedata
             double inLo = -4.0;
             double inHi = 4.0;
             double dbInput = 0;
+            double dbTarget = 0;
             //test data stores cols in testdata[0] first index
             for (int r = 0; r < DataResults.Count - 1; r++)
             {
@@ -445,11 +457,26 @@ namespace DevTreks.Extensions.Algorithms
                         iIndex = i;
                     }
                 }
-                DataResults[r+1][iRowLength - 7] = trainMSE.ToString("F4");
-                DataResults[r+1][iRowLength - 6] = trainAccuracy.ToString("F4");
                 DataResults[r+1][iRowLength - 5] = dbHighest.ToString("F4");
                 double dbMostLikelyQTM = Shared.ConvertIndexToAttribute(
                     iIndex, this.IndicatorQT);
+                if (r == 0)
+                {
+                    DataResults[r][iRowLength - 7] = trainMSE.ToString("F4");
+                    DataResults[r][iRowLength - 6] = trainAccuracy.ToString("F4");
+                }
+                dbTarget = testData[0][r];
+                double dbError = Math.Abs(dbTarget - dbMostLikelyQTM);
+                this.DataResults[r + 1][iRowLength - 7] = dbError.ToString("F4");
+                if (dbTarget == dbMostLikelyQTM)
+                {
+                    DataResults[r + 1][iRowLength - 6] = "true";
+                }
+                else
+                {
+                    DataResults[r + 1][iRowLength - 6] = "false";
+                }
+
                 DataResults[r+1][iRowLength - 4] = dbMostLikelyQTM.ToString("F4");
                 //fill in indicator from last row
                 sLabelClass = Shared.ConvertIndexToLabel(iIndex, this.IndicatorQT);
@@ -462,15 +489,15 @@ namespace DevTreks.Extensions.Algorithms
                     {
                         this.IndicatorQT.QTMUnit = sLabelClass;
                     }
-                    this.IndicatorQT.QTL = dbMostLikelyQTM - dbCI;
-                    this.IndicatorQT.QTU = dbMostLikelyQTM + dbCI;
+                    this.IndicatorQT.QTL = dbMostLikelyQTM - hiLow;
+                    this.IndicatorQT.QTU = dbMostLikelyQTM + hiLow;
                 }
                 //convert output with a 1 to text classification
                 DataResults[r+1][iRowLength - 3] = sLabelClass;
                 //low estimation
-                DataResults[r+1][iRowLength - 2] = (dbMostLikelyQTM - dbCI).ToString("F4");
+                DataResults[r+1][iRowLength - 2] = (dbMostLikelyQTM - hiLow).ToString("F4");
                 //high estimation
-                DataResults[r+1][iRowLength - 1] = (dbMostLikelyQTM + dbCI).ToString("F4");
+                DataResults[r+1][iRowLength - 1] = (dbMostLikelyQTM + hiLow).ToString("F4");
             }
             return bHasNewClassifs;
         }
@@ -490,8 +517,8 @@ namespace DevTreks.Extensions.Algorithms
                         newColNames[i] = _actualColNames[i];
                     }
                     //new cols changed by algo
-                    newColNames[_actualColNames.Length] = "accuracy";
-                    newColNames[_actualColNames.Length + 1] = "mse";
+                    newColNames[_actualColNames.Length] = "mse";
+                    newColNames[_actualColNames.Length + 1] = "accuracy";
                     newColNames[_actualColNames.Length + 2] = "probability";
                     newColNames[_actualColNames.Length + 3] = "qtm";
                     newColNames[_actualColNames.Length + 4] = "class";
@@ -724,10 +751,10 @@ namespace DevTreks.Extensions.Algorithms
                 ++epoch;
                 if (epoch % errInterval == 0 && epoch < maxEpochs)  // display curr MSE
                 {
-                    double trainErr = Error(trainData, false, sb);  // using curr weights & biases
-                    double trainAcc = this.Accuracy(trainData, false, sb);
                     if (sb != null)
                     {
+                        double trainErr = Error(trainData, false, sb);  // using curr weights & biases
+                        double trainAcc = this.Accuracy(trainData, false, sb);
                         sb.Append("epoch = " + epoch + "  MS error = " +
                           trainErr.ToString("F4"));
                         sb.AppendLine("  accuracy = " +
@@ -999,7 +1026,8 @@ namespace DevTreks.Extensions.Algorithms
                         sb.AppendLine("");
                     }
                 }
-                int maxIndex = MaxIndex(yValues); // which cell in yValues has largest value?
+                // which cell in yValues has largest value?
+                int maxIndex = MaxIndex(yValues); 
                 int tMaxIndex = MaxIndex(tValues);
 
                 if (maxIndex == tMaxIndex)

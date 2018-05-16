@@ -205,9 +205,15 @@ namespace DevTreks.Extensions.ME2Statistics
             string sPlatForm = CalculatorHelpers.GetPlatform(this.CalcParameters.ExtensionDocToCalcURI, dataURL2);
             if (sPlatForm == CalculatorHelpers.PLATFORM_TYPES.azure.ToString())
             {
-                if (this.HasMathType(index, MATH_TYPES.algorithm4))
+                if (this.HasMathType(index, MATH_TYPES.algorithm1))
                 {
                     //if its a good calc returns the string
+                    algoindicator = await SetMLIndicatorStats(index,
+                        colNames, data1, colData, data2);
+                }
+                else if (this.HasMathType(index, MATH_TYPES.algorithm4))
+                {
+                    //hold off until 216
                     //algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
                 }
             }
@@ -231,10 +237,13 @@ namespace DevTreks.Extensions.ME2Statistics
             List<List<string>> data1, List<List<string>> colData, List<List<string>> data2)
         {
             int algoIndicator = -1;
-            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), 
-                this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), 
-                this.ME2Indicators[0].IndCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            int iCILevel = this.ME2Indicators[0].IndCILevel;
+            int iIterations = this.ME2Indicators[0].IndIterations;
+            int iRndSeed = this.ME2Indicators[0].IndRandom;
+            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"),
+                iCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"),
+                iCILevel.ToString(), Errors.GetMessage("CI_PCT"));
             //mathterms define which qamount to send to algorith for predicting a given set of qxs
             List<string> mathTerms = new List<string>();
             //dependent var colNames found in MathExpression
@@ -249,8 +258,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.ML01 ml
                     = new Algorithms.ML01(index, this.ME2Indicators[index].IndLabel,
                         mathTerms.ToArray(), colNames, depColNames.ToArray(), this.ME2Indicators[index].IndMathSubType,
-                        this.ME2Indicators[index].IndCILevel, this.ME2Indicators[index].IndIterations, 
-                        this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
+                        iCILevel, iIterations, iRndSeed, qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
                 FillBaseIndicator(ml.IndicatorQT, index);
@@ -262,8 +270,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.ML02 ml
                     = new Algorithms.ML02(index, this.ME2Indicators[index].IndLabel,
                         mathTerms.ToArray(), colNames, depColNames.ToArray(), this.ME2Indicators[index].IndMathSubType,
-                        this.ME2Indicators[index].IndCILevel, this.ME2Indicators[index].IndIterations,
-                        this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
+                        iCILevel, iIterations, iRndSeed, qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
                 FillBaseIndicator(ml.IndicatorQT, index, sLowerCI, sUpperCI);
@@ -275,8 +282,7 @@ namespace DevTreks.Extensions.ME2Statistics
                 DevTreks.Extensions.Algorithms.ML03 ml
                     = new Algorithms.ML03(index, this.ME2Indicators[index].IndLabel,
                         mathTerms.ToArray(), colNames, depColNames.ToArray(), this.ME2Indicators[index].IndMathSubType,
-                        this.ME2Indicators[index].IndCILevel, this.ME2Indicators[index].IndIterations,
-                        this.ME2Indicators[index].IndRandom, qt1, this.CalcParameters);
+                        iCILevel, iIterations, iRndSeed, qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
                 FillBaseIndicator(ml.IndicatorQT, index);
@@ -849,6 +855,8 @@ namespace DevTreks.Extensions.ME2Statistics
         public IndicatorQT1 FillIndicator(int index, Calculator1 baseCalculator)
         {
             IndicatorQT1 qt = new IndicatorQT1();
+            //version 2.1.4 started using Label2 to specify stat library to use with ml algos
+            baseCalculator.Label2 = this.ME2Indicators[index].IndRelLabel;
             if (index == 0
                 && HasMathExpression(this.ME2Indicators[0].IndMathExpression))
             {

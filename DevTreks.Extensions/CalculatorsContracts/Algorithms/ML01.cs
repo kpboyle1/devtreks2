@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Text;
+using Accord.MachineLearning.Bayes;
+using Accord.Statistics.Filters;
 
 namespace DevTreks.Extensions.Algorithms
 {
@@ -23,9 +25,7 @@ namespace DevTreks.Extensions.Algorithms
             : base(indicatorIndex, label, mathTerms,
             colNames, depColNames, subalgorithm, ciLevel, iterations,
             random, qT1, calcParams)
-        {
-
-        }
+        { }
         public async Task<bool> RunAlgorithmAsync(List<List<string>> trainData,
             List<List<string>> rowNames, List<List<string>> testData)
         {
@@ -40,13 +40,22 @@ namespace DevTreks.Extensions.Algorithms
                         "variable and 1 input variable with 3 rows of test data.";
                     return bHasCalculations;
                 }
-                StringBuilder sResults = new StringBuilder();
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_01.ToString())
                 {
-                    //use sb for feedback when training and testing; but don't use for production
+                    //use sb for feedback when training and testing; 
+                    //but use SetMathResult for reporting
                     StringBuilder sb = new StringBuilder();
                     //classify testdata and return new dataset
-                    sb = await Classify(trainData, rowNames, testData);
+                    if (IndicatorQT.Label2.ToLower() == "accord")
+                    {
+                        //use the accord ml library
+                        sb = await ClassifyAccord(trainData, rowNames, testData);
+                    }
+                    else
+                    {
+                        //use standard dotnet libraries
+                        sb = await Classify(trainData, rowNames, testData);
+                    }
                     bHasCalculations = await SetMathResult(rowNames);
                 }
 
@@ -65,6 +74,7 @@ namespace DevTreks.Extensions.Algorithms
             try
             {
                 //columns of data used and returned in DataResults
+                int iRowCount = (Shared.GetRowCount(_iterations, trainData.Count) - 1);
                 _actualColNames = Shared.GetActualColNames(_colNames, _depColNames).ToArray();
                 //ml instructions associated with actual colNames
                 List<string> normTypes = Shared.GetNormTypes(trainData[0], _colNames, _depColNames);
@@ -97,9 +107,11 @@ namespace DevTreks.Extensions.Algorithms
                 }
                 int[][][] jointCounts = MakeJointCounts(trainDB, attributeValues);
                 int[] dependentCounts = MakeDependentCounts(jointCounts, attributeValues[0].Length);
-
                 //classify everything in test dataset and add result to new columns in test dataset
                 List<string> predictors = new List<string>();
+                int d = 0;
+                int iRowLength = DataResults[1].Count;
+                string sAttribute = string.Empty;
                 for (int r = 0; r < DataResults.Count - 1; r++)
                 {
                     predictors = new List<string>();
@@ -114,14 +126,14 @@ namespace DevTreks.Extensions.Algorithms
                             predictors.Add(testDB[j][r]);
                         }
                     }
-                    int d = await Classify(r+1, attributeValues, predictors.ToArray(),
+                    d = await Classify(r+1, attributeValues, predictors.ToArray(),
                         jointCounts, dependentCounts, withLaplacian, attributeValues.Length - 1);
                     for (int l = 0; l < attributeValues[0].Length; l++)
                     {
                         if (d == l)
                         {
-                            int iRowLength = DataResults[r+1].Count;
-                            string sAttribute = Shared.ConvertAttributeToLabel(attributeValues[0][l], this.IndicatorQT);
+                            sAttribute = Shared.ConvertAttributeToLabel(attributeValues[0][l], 
+                                this.IndicatorQT);
                             DataResults[r+1][iRowLength - 2] = sAttribute;
                         }
                     }
@@ -133,7 +145,114 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sb;
         }
-       
+        private async Task<StringBuilder> ClassifyAccord(List<List<string>> trainData,
+            List<List<string>> rowNames, List<List<string>> testData)
+        {
+            StringBuilder sb = null;
+            try
+            {
+                int iRowCount = (Shared.GetRowCount(_iterations, trainData.Count) - 1);
+                //columns of data used and returned in DataResults
+                _actualColNames = Shared.GetActualColNames(_colNames, _depColNames).ToArray();
+                //ml instructions associated with actual colNames
+                List<string> normTypes = Shared.GetNormTypes(trainData[0], _colNames, _depColNames);
+                //instructions in both row names and datasets
+                List<string> actualMLInstructs = Shared.GetAlgoInstructs(rowNames);
+                actualMLInstructs.AddRange(normTypes);
+                // prevent joint counts with 0
+                bool withLaplacian
+                    = actualMLInstructs[0].ToLower().Contains("true") ? true : false;
+                //converts rows to columns with normalized data
+                List<List<string>> trainDB = Shared.GetNormalizedSData(trainData,
+                    this.IndicatorQT, _colNames, _depColNames, normTypes, "F0");
+                List<List<string>> testDB = Shared.GetNormalizedSData(testData,
+                    this.IndicatorQT, _colNames, _depColNames, normTypes, "F0");
+                int iColCount = testDB.Count;
+                if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_01.ToString().ToString())
+                {
+                    //subalgo02 needs qtm and percent probability of accuracy, mse, qtm, low ci, high ci
+                    iColCount = testDB.Count + 2;
+                    //normtypes need full columns before insertion
+                    normTypes = Shared.FixNormTypes(normTypes, iColCount);
+                }
+                //row count comes from original testdata to account for the instructions row
+                DataResults = CalculatorHelpers.GetList(testData.Count, iColCount);
+                DataResults[0] = normTypes;
+                // testData columns define number of rows (depcolumns.Length + 1)
+                string[][] attributeValues = new string[testDB.Count][];
+                //for each column of testDB, fill in the unique attribute names 
+                for (int i = 0; i < testDB.Count; i++)
+                {
+                    attributeValues[i] = Shared.GetAttributeGroups(i, testDB, this.IndicatorQT);
+                }
+                //convert column-row to std row column array
+                string[][] trainInsandOuts = Shared.MakeSData(trainDB, iRowCount, this.IndicatorQT);
+                // Create a new codification codebook to
+                // convert strings into discrete symbols
+                string[] colNames = new string[_depColNames.Length + 1];
+                colNames[0] = _colNames[3];
+                _depColNames.CopyTo(colNames, 1);
+                //codebook converts to integer classifs
+                Codification codebook = new Codification(colNames, trainInsandOuts);
+                // Extract input and output pairs to train
+                int[][] insAndOuts = codebook.Transform(trainInsandOuts);
+                int[][] inputs = Shared.GetInputs(insAndOuts);
+                int[] outputs = Shared.GetOutputs(insAndOuts);
+                // Create a new Naive Bayes learning
+                var learner = new NaiveBayesLearning();
+                NaiveBayes nb = learner.Learn(inputs, outputs);
+                //same transform with test dataset
+                string[][] testInsandOuts = Shared.MakeSData(testDB, testDB[0].Count, this.IndicatorQT);
+                codebook = new Codification(colNames, testInsandOuts);
+                // Extract input and output pairs to train
+                insAndOuts = codebook.Transform(testInsandOuts);
+                inputs = Shared.GetInputs(insAndOuts);
+                string sAttribute = string.Empty;
+                string result = string.Empty;
+                double dbHighestP = 0;
+                int iRowLength = DataResults[1].Count;
+                int[] instance = new int[] { };
+                int c = 0;
+                double[] probs = new double[] { };
+                for (int r = 0; r < DataResults.Count - 1; r++)
+                {
+                    instance = inputs[r];
+                    for (int j = 0; j < inputs[r].Length; j++)
+                    {
+                        //prepare mathresults
+                        DataResults[r + 1][j] = inputs[r][j].ToString("F4");
+                    }
+                    // numeric output that represents the answer
+                    c = nb.Decide(instance);
+                    //convert the numeric output to original output
+                    result = codebook.Revert(colNames[0], c); 
+                    //get the probabilities
+                    probs = nb.Probabilities(instance); 
+                    //get the probability associated with the answer
+                    for(int p = 0; p < probs.Length; p++)
+                    {
+                        if (probs[p] > dbHighestP)
+                        {
+                            dbHighestP = probs[p];
+                        }
+                    }
+                    DataResults[r + 1][iRowLength - 1] = dbHighestP.ToString("F4");
+                    for (int l = 0; l < attributeValues[0].Length; l++)
+                    {
+                        if (attributeValues[0][l] == result)
+                        {
+                            sAttribute = Shared.ConvertAttributeToLabel(attributeValues[0][l], this.IndicatorQT);
+                            DataResults[r + 1][iRowLength - 2] = sAttribute;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                IndicatorQT.ErrorMessage = ex.Message;
+            }
+            return sb;
+        }
         private int[][][] MakeJointCounts(List<List<string>> trainData,
             string[][] attributeValues)
         {

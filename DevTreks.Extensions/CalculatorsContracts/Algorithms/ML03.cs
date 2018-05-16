@@ -67,8 +67,8 @@ namespace DevTreks.Extensions.Algorithms
             StringBuilder sb = null;
             try
             {
-                //ml algo rule: long running calcs avoided by setting Score.Iterations
-                int iRowCount = Shared.GetRowCount(_iterations, testData.Count);
+                //ml algo rule: iterations can also set rowcount and -1 for mlinstructs removed
+                int iRowCount = (Shared.GetRowCount(_iterations, trainData.Count) - 1);
                 //columns of data used and returned in DataResults
                 _actualColNames = Shared.GetActualColNames(_colNames, _depColNames).ToArray();
                 //ml instructions associated with actual colNames
@@ -76,7 +76,7 @@ namespace DevTreks.Extensions.Algorithms
                 //instructions in both row names and datasets
                 List<string> actualMLInstructs = Shared.GetAlgoInstructs(rowNames);
                 actualMLInstructs.AddRange(normTypes);
-                // prevent joint counts with 0
+                // error allowance
                 double dbPlusorMinus
                     = CalculatorHelpers.ConvertStringToDouble(actualMLInstructs[0]);
                 //converts rows to columns with normalized data
@@ -89,30 +89,34 @@ namespace DevTreks.Extensions.Algorithms
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_03.ToString().ToString())
                 {
                     //subalgo02 needs qtm and percent probability of accuracy, qtm, low ci, high ci
-                    iColCount = testDB.Count + 4;
+                    iColCount = testDB.Count + 5;
+                    //normtypes need full columns before insertion
+                    normTypes = Shared.FixNormTypes(normTypes, iColCount);
                 }
                 //row count comes from original testdata to account for the instructions row
                 DataResults = CalculatorHelpers.GetList(testData.Count, iColCount);
-                DataResults[0] = normTypes;
+                DataResults[0]= normTypes;
                 //dep var output count
                 int numOutput = 1;
                 //less col[0]
                 int numInput = trainDB.Count - 1;
                 int numHidden = 12;
-                double[][] trainArrData = MakeData(trainDB, iRowCount, this.IndicatorQT,
+                //can truncate the data to iRowCount
+                double[][] trainInputs = Shared.MakeInputDData(trainDB, iRowCount, this.IndicatorQT,
                     numInput);
                 //build a neural network
                 NeuralNetwork2 nn2 = new NeuralNetwork2(numInput, numHidden, numOutput);
-
                 int maxEpochs = iRowCount;
                 double learnRate = 0.001;
                 //train nn2
-                double[] wts = nn2.Train(trainArrData, maxEpochs, learnRate, sb);
+                double[] wts = nn2.Train(trainInputs, maxEpochs, learnRate, sb);
+                //mean squared error
+                double trainErr = nn2.Error(trainInputs);
                 //final model accuracy
-                double trainAcc = nn2.Accuracy(trainArrData, dbPlusorMinus);
+                double trainAcc = nn2.Accuracy(trainInputs, dbPlusorMinus);
                 //add classified test data to DataResults
                 bool bHasNewClassifs = await AddNewClassifications(nn2, testDB,
-                    trainAcc, iRowCount, dbPlusorMinus);
+                    trainAcc, trainErr, iRowCount, dbPlusorMinus, _ciLevel);
             }
             catch (Exception ex)
             {
@@ -120,280 +124,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return sb;
         }
-
-
         
-
-        
-        //strictly used to debug algorithms
-        private async Task<StringBuilder> DebugPredict(List<List<string>> trainData,
-            List<List<string>> rowNames, List<List<string>> testData)
-        {
-            StringBuilder sb = new StringBuilder();
-            try
-            {
-                sb.AppendLine("\nBegin neural network times series demo");
-                sb.AppendLine("Goal is to predict airline passengers over time ");
-                sb.AppendLine("Data from January 1949 to December 1960 \n");
-
-                double[][] trainArrData = GetAirlineData();
-                trainArrData = Normalize(trainArrData);
-                sb.AppendLine("Normalized training data:");
-                ShowMatrix(sb, trainArrData, 5, 2, true);  // first 5 rows, 2 decimals, show indices
-
-                int numInput = 4; // number predictors
-                int numHidden = 12;
-                int numOutput = 1; // regression
-
-                sb.AppendLine("Creating a " + numInput + "-" + numHidden +
-                  "-" + numOutput + " neural network");
-                NeuralNetwork2 nn = new NeuralNetwork2(numInput, numHidden, numOutput);
-
-                int maxEpochs = 10000;
-                double learnRate = 0.01;
-                sb.AppendLine("\nSetting maxEpochs = " + maxEpochs);
-                sb.AppendLine("Setting learnRate = " + learnRate.ToString("F2"));
-
-                sb.AppendLine("\nStarting training");
-                double[] weights = nn.Train(trainArrData, maxEpochs, learnRate, sb);
-                sb.AppendLine("Done");
-                sb.AppendLine("\nFinal neural network model weights and biases:\n");
-                ShowVector(sb, weights, 2, 10, true);
-
-                double trainAcc = nn.Accuracy(trainArrData, 0.30);  // within 30
-                sb.AppendLine("\nModel accuracy (+/- 30) on training data = " +
-                  trainAcc.ToString("F4"));
-
-                double[] predictors = new double[] { 5.08, 4.61, 3.90, 4.32 };
-                double[] forecast = nn.ComputeOutputs(predictors);  // 4.33362252510741
-                sb.AppendLine("\nPredicted passengers for January 1961 (t=145): ");
-                sb.AppendLine((forecast[0]).ToString("F2"));
-
-                predictors = new double[] { 4.61, 3.90, 4.32, 4.33362252510741 };
-                forecast = nn.ComputeOutputs(predictors);  // 4.33933519590564
-                sb.AppendLine(forecast[0].ToString("F2"));
-
-                predictors = new double[] { 3.90, 4.32, 4.33362252510741, 4.33933519590564 };
-                forecast = nn.ComputeOutputs(predictors);  // 4.69036205766231
-                sb.AppendLine(forecast[0].ToString("F2"));
-
-                //double[] predictors = new double[] { 4.32, 4.33362252510741, 4.33933519590564, 4.69036205766231 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 4.83360378041341
-                //sb.AppendLine(forecast[0]);
-
-                //double[] predictors = new double[] { 4.33362252510741, 4.33933519590564, 4.69036205766231, 4.83360378041341 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 5.50703476366623
-                //sb.AppendLine(forecast[0]);
-
-                //double[] predictors = new double[] { 4.33933519590564, 4.69036205766231, 4.83360378041341, 5.50703476366623 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 6.39605763609294
-                //sb.AppendLine(forecast[0]);
-
-                //double[] predictors = new double[] { 4.69036205766231, 4.83360378041341, 5.50703476366623, 6.39605763609294 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 6.06664881070054
-                //sb.AppendLine(forecast[0]);
-
-                //double[] predictors = new double[] { 4.83360378041341, 5.50703476366623, 6.39605763609294, 6.06664881070054 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 4.95781531728514
-                //sb.AppendLine(forecast[0]);
-
-                //double[] predictors = new double[] { 5.50703476366623, 6.39605763609294, 6.06664881070054, 4.95781531728514 };
-                //double[] forecast = nn.ComputeOutputs(predictors);  // 4.45837470369601
-                //sb.AppendLine(forecast[0]);
-
-
-                sb.AppendLine("\nEnd time series demo\n");
-                //Console.ReadLine();
-            }
-            catch (Exception ex)
-            {
-                sb.AppendLine(ex.Message);
-            }
-            return sb;
-        }
-        static double[][] Normalize(double[][] data)
-        {
-            // divide all by 100.0
-            int rows = data.Length;
-            int cols = data[0].Length;
-            double[][] result = new double[rows][];
-            for (int i = 0; i < rows; ++i)
-                result[i] = new double[cols];
-
-            for (int i = 0; i < rows; ++i)
-                for (int j = 0; j < cols; ++j)
-                    result[i][j] = data[i][j] / 100.0;
-            return result;
-        }
-
-        //static double[][] MakeSineData()
-        //{
-        //  double[][] sineData = new double[17][];
-        //  sineData[0] = new double[] { 0.0000, 0.841470985, 0.909297427, 0.141120008 };
-        //  sineData[1] = new double[] { 0.841470985, 0.909297427, 0.141120008, -0.756802495 };
-        //  sineData[2] = new double[] { 0.909297427, 0.141120008, -0.756802495, -0.958924275 };
-        //  sineData[3] = new double[] { 0.141120008, -0.756802495, -0.958924275, -0.279415498 };
-        //  sineData[4] = new double[] { -0.756802495, -0.958924275, -0.279415498, 0.656986599 };
-        //  sineData[5] = new double[] { -0.958924275, -0.279415498, 0.656986599, 0.989358247 };
-        //  sineData[6] = new double[] { -0.279415498, 0.656986599, 0.989358247, 0.412118485 };
-        //  sineData[7] = new double[] { 0.656986599, 0.989358247, 0.412118485, -0.544021111 };
-        //  sineData[8] = new double[] { 0.989358247, 0.412118485, -0.544021111, -0.999990207 };
-        //  sineData[9] = new double[] { 0.412118485, -0.544021111, -0.999990207, -0.536572918 };
-        //  sineData[10] = new double[] { -0.544021111, -0.999990207, -0.536572918, 0.420167037 };
-        //  sineData[11] = new double[] { -0.999990207, -0.536572918, 0.420167037, 0.990607356 };
-        //  sineData[12] = new double[] { -0.536572918, 0.420167037, 0.990607356, 0.65028784 };
-        //  sineData[13] = new double[] { 0.420167037, 0.990607356, 0.65028784, -0.287903317 };
-        //  sineData[14] = new double[] { 0.990607356, 0.65028784, -0.287903317, -0.961397492 };
-        //  sineData[15] = new double[] { 0.65028784, -0.287903317, -0.961397492, -0.750987247 };
-        //  sineData[16] = new double[] { -0.287903317, -0.961397492, -0.750987247, 0.14987721 };
-        //  return sineData;
-        //} // MakeSineData
-
-        static double[][] GetAirlineData()
-        {
-            double[][] airData = new double[140][];
-            airData[0] = new double[] { 112, 118, 132, 129, 121 };
-            airData[1] = new double[] { 118, 132, 129, 121, 135 };
-            airData[2] = new double[] { 132, 129, 121, 135, 148 };
-            airData[3] = new double[] { 129, 121, 135, 148, 148 };
-            airData[4] = new double[] { 121, 135, 148, 148, 136 };
-            airData[5] = new double[] { 135, 148, 148, 136, 119 };
-            airData[6] = new double[] { 148, 148, 136, 119, 104 };
-            airData[7] = new double[] { 148, 136, 119, 104, 118 };
-            airData[8] = new double[] { 136, 119, 104, 118, 115 };
-            airData[9] = new double[] { 119, 104, 118, 115, 126 };
-            airData[10] = new double[] { 104, 118, 115, 126, 141 };
-            airData[11] = new double[] { 118, 115, 126, 141, 135 };
-            airData[12] = new double[] { 115, 126, 141, 135, 125 };
-            airData[13] = new double[] { 126, 141, 135, 125, 149 };
-            airData[14] = new double[] { 141, 135, 125, 149, 170 };
-            airData[15] = new double[] { 135, 125, 149, 170, 170 };
-            airData[16] = new double[] { 125, 149, 170, 170, 158 };
-            airData[17] = new double[] { 149, 170, 170, 158, 133 };
-            airData[18] = new double[] { 170, 170, 158, 133, 114 };
-            airData[19] = new double[] { 170, 158, 133, 114, 140 };
-            airData[20] = new double[] { 158, 133, 114, 140, 145 };
-            airData[21] = new double[] { 133, 114, 140, 145, 150 };
-            airData[22] = new double[] { 114, 140, 145, 150, 178 };
-            airData[23] = new double[] { 140, 145, 150, 178, 163 };
-            airData[24] = new double[] { 145, 150, 178, 163, 172 };
-            airData[25] = new double[] { 150, 178, 163, 172, 178 };
-            airData[26] = new double[] { 178, 163, 172, 178, 199 };
-            airData[27] = new double[] { 163, 172, 178, 199, 199 };
-            airData[28] = new double[] { 172, 178, 199, 199, 184 };
-            airData[29] = new double[] { 178, 199, 199, 184, 162 };
-            airData[30] = new double[] { 199, 199, 184, 162, 146 };
-            airData[31] = new double[] { 199, 184, 162, 146, 166 };
-            airData[32] = new double[] { 184, 162, 146, 166, 171 };
-            airData[33] = new double[] { 162, 146, 166, 171, 180 };
-            airData[34] = new double[] { 146, 166, 171, 180, 193 };
-            airData[35] = new double[] { 166, 171, 180, 193, 181 };
-            airData[36] = new double[] { 171, 180, 193, 181, 183 };
-            airData[37] = new double[] { 180, 193, 181, 183, 218 };
-            airData[38] = new double[] { 193, 181, 183, 218, 230 };
-            airData[39] = new double[] { 181, 183, 218, 230, 242 };
-            airData[40] = new double[] { 183, 218, 230, 242, 209 };
-            airData[41] = new double[] { 218, 230, 242, 209, 191 };
-            airData[42] = new double[] { 230, 242, 209, 191, 172 };
-            airData[43] = new double[] { 242, 209, 191, 172, 194 };
-            airData[44] = new double[] { 209, 191, 172, 194, 196 };
-            airData[45] = new double[] { 191, 172, 194, 196, 196 };
-            airData[46] = new double[] { 172, 194, 196, 196, 236 };
-            airData[47] = new double[] { 194, 196, 196, 236, 235 };
-            airData[48] = new double[] { 196, 196, 236, 235, 229 };
-            airData[49] = new double[] { 196, 236, 235, 229, 243 };
-            airData[50] = new double[] { 236, 235, 229, 243, 264 };
-            airData[51] = new double[] { 235, 229, 243, 264, 272 };
-            airData[52] = new double[] { 229, 243, 264, 272, 237 };
-            airData[53] = new double[] { 243, 264, 272, 237, 211 };
-            airData[54] = new double[] { 264, 272, 237, 211, 180 };
-            airData[55] = new double[] { 272, 237, 211, 180, 201 };
-            airData[56] = new double[] { 237, 211, 180, 201, 204 };
-            airData[57] = new double[] { 211, 180, 201, 204, 188 };
-            airData[58] = new double[] { 180, 201, 204, 188, 235 };
-            airData[59] = new double[] { 201, 204, 188, 235, 227 };
-            airData[60] = new double[] { 204, 188, 235, 227, 234 };
-            airData[61] = new double[] { 188, 235, 227, 234, 264 };
-            airData[62] = new double[] { 235, 227, 234, 264, 302 };
-            airData[63] = new double[] { 227, 234, 264, 302, 293 };
-            airData[64] = new double[] { 234, 264, 302, 293, 259 };
-            airData[65] = new double[] { 264, 302, 293, 259, 229 };
-            airData[66] = new double[] { 302, 293, 259, 229, 203 };
-            airData[67] = new double[] { 293, 259, 229, 203, 229 };
-            airData[68] = new double[] { 259, 229, 203, 229, 242 };
-            airData[69] = new double[] { 229, 203, 229, 242, 233 };
-            airData[70] = new double[] { 203, 229, 242, 233, 267 };
-            airData[71] = new double[] { 229, 242, 233, 267, 269 };
-            airData[72] = new double[] { 242, 233, 267, 269, 270 };
-            airData[73] = new double[] { 233, 267, 269, 270, 315 };
-            airData[74] = new double[] { 267, 269, 270, 315, 364 };
-            airData[75] = new double[] { 269, 270, 315, 364, 347 };
-            airData[76] = new double[] { 270, 315, 364, 347, 312 };
-            airData[77] = new double[] { 315, 364, 347, 312, 274 };
-            airData[78] = new double[] { 364, 347, 312, 274, 237 };
-            airData[79] = new double[] { 347, 312, 274, 237, 278 };
-            airData[80] = new double[] { 312, 274, 237, 278, 284 };
-            airData[81] = new double[] { 274, 237, 278, 284, 277 };
-            airData[82] = new double[] { 237, 278, 284, 277, 317 };
-            airData[83] = new double[] { 278, 284, 277, 317, 313 };
-            airData[84] = new double[] { 284, 277, 317, 313, 318 };
-            airData[85] = new double[] { 277, 317, 313, 318, 374 };
-            airData[86] = new double[] { 317, 313, 318, 374, 413 };
-            airData[87] = new double[] { 313, 318, 374, 413, 405 };
-            airData[88] = new double[] { 318, 374, 413, 405, 355 };
-            airData[89] = new double[] { 374, 413, 405, 355, 306 };
-            airData[90] = new double[] { 413, 405, 355, 306, 271 };
-            airData[91] = new double[] { 405, 355, 306, 271, 306 };
-            airData[92] = new double[] { 355, 306, 271, 306, 315 };
-            airData[93] = new double[] { 306, 271, 306, 315, 301 };
-            airData[94] = new double[] { 271, 306, 315, 301, 356 };
-            airData[95] = new double[] { 306, 315, 301, 356, 348 };
-            airData[96] = new double[] { 315, 301, 356, 348, 355 };
-            airData[97] = new double[] { 301, 356, 348, 355, 422 };
-            airData[98] = new double[] { 356, 348, 355, 422, 465 };
-            airData[99] = new double[] { 348, 355, 422, 465, 467 };
-            airData[100] = new double[] { 355, 422, 465, 467, 404 };
-            airData[101] = new double[] { 422, 465, 467, 404, 347 };
-            airData[102] = new double[] { 465, 467, 404, 347, 305 };
-            airData[103] = new double[] { 467, 404, 347, 305, 336 };
-            airData[104] = new double[] { 404, 347, 305, 336, 340 };
-            airData[105] = new double[] { 347, 305, 336, 340, 318 };
-            airData[106] = new double[] { 305, 336, 340, 318, 362 };
-            airData[107] = new double[] { 336, 340, 318, 362, 348 };
-            airData[108] = new double[] { 340, 318, 362, 348, 363 };
-            airData[109] = new double[] { 318, 362, 348, 363, 435 };
-            airData[110] = new double[] { 362, 348, 363, 435, 491 };
-            airData[111] = new double[] { 348, 363, 435, 491, 505 };
-            airData[112] = new double[] { 363, 435, 491, 505, 404 };
-            airData[113] = new double[] { 435, 491, 505, 404, 359 };
-            airData[114] = new double[] { 491, 505, 404, 359, 310 };
-            airData[115] = new double[] { 505, 404, 359, 310, 337 };
-            airData[116] = new double[] { 404, 359, 310, 337, 360 };
-            airData[117] = new double[] { 359, 310, 337, 360, 342 };
-            airData[118] = new double[] { 310, 337, 360, 342, 406 };
-            airData[119] = new double[] { 337, 360, 342, 406, 396 };
-            airData[120] = new double[] { 360, 342, 406, 396, 420 };
-            airData[121] = new double[] { 342, 406, 396, 420, 472 };
-            airData[122] = new double[] { 406, 396, 420, 472, 548 };
-            airData[123] = new double[] { 396, 420, 472, 548, 559 };
-            airData[124] = new double[] { 420, 472, 548, 559, 463 };
-            airData[125] = new double[] { 472, 548, 559, 463, 407 };
-            airData[126] = new double[] { 548, 559, 463, 407, 362 };
-            airData[127] = new double[] { 559, 463, 407, 362, 405 };
-            airData[128] = new double[] { 463, 407, 362, 405, 417 };
-            airData[129] = new double[] { 407, 362, 405, 417, 391 };
-            airData[130] = new double[] { 362, 405, 417, 391, 419 };
-            airData[131] = new double[] { 405, 417, 391, 419, 461 };
-            airData[132] = new double[] { 417, 391, 419, 461, 472 };
-            airData[133] = new double[] { 391, 419, 461, 472, 535 };
-            airData[134] = new double[] { 419, 461, 472, 535, 622 };
-            airData[135] = new double[] { 461, 472, 535, 622, 606 };
-            airData[136] = new double[] { 472, 535, 622, 606, 508 };
-            airData[137] = new double[] { 535, 622, 606, 508, 461 };
-            airData[138] = new double[] { 622, 606, 508, 461, 390 };
-            airData[139] = new double[] { 606, 508, 461, 390, 432 };
-            return airData;
-        }
         static double[][] MakeData(List<List<double>> trainData, int numItems,
             IndicatorQT1 qt1, int numInput)
         {
@@ -471,13 +202,19 @@ namespace DevTreks.Extensions.Algorithms
                 sb.AppendLine("");
         }
         private async Task<bool> AddNewClassifications(NeuralNetwork2 nn2, List<List<double>> testData,
-            double trainAccuracy, int rowCount, double hiLow)
+            double trainAccuracy, double mse, int rowCount, double hiLow, int ciPercent)
         {
             bool bHasNewClassifs = false;
+            if (ciPercent > 5)
+            {
+                hiLow = CalculatorHelpers.GetConfidenceIntervalFromMSE(
+                    ciPercent, rowCount, mse);
+            }
             int iRowLength = 0;
             string sResult = string.Empty;
             List<double> predictors = new List<double>();
             double dbInput = 0;
+            double dbTarget = 0;
             //test data stores cols in testdata[0] first index
             for (int r = 0; r < DataResults.Count - 1; r++)
             {
@@ -498,8 +235,23 @@ namespace DevTreks.Extensions.Algorithms
                 }
                 //predict 
                 double[] forecast = nn2.ComputeOutputs(predictors.ToArray());
-                DataResults[r + 1][iRowLength - 4] = trainAccuracy.ToString("F4");
                 double dbMostLikelyQTM = forecast[0];
+                if (r == 0)
+                {
+                    DataResults[r][iRowLength - 5] = mse.ToString("F4");
+                    DataResults[r][iRowLength - 4] = trainAccuracy.ToString("F4");
+                }
+                dbTarget = testData[0][r];
+                double dbError = Math.Abs(dbTarget - dbMostLikelyQTM);
+                this.DataResults[r + 1][iRowLength - 5] = dbError.ToString("F4");
+                if (dbError < hiLow)
+                {
+                    DataResults[r + 1][iRowLength - 4] = "true";
+                }
+                else
+                {
+                    DataResults[r + 1][iRowLength - 4] = "false";
+                }
                 DataResults[r + 1][iRowLength - 3] = dbMostLikelyQTM.ToString("F4");
                 if (r == DataResults.Count - 2)
                 {
@@ -514,6 +266,7 @@ namespace DevTreks.Extensions.Algorithms
             }
             return bHasNewClassifs;
         }
+        
         private async Task<bool> SetMathResult(List<List<string>> rowNames, StringBuilder sb = null)
         {
             bool bHasSet = false;
@@ -524,16 +277,17 @@ namespace DevTreks.Extensions.Algorithms
                 if (_subalgorithm == MATHML_SUBTYPES.subalgorithm_03.ToString())
                 {
                     sb.AppendLine("ml results");
-                    string[] newColNames = new string[_actualColNames.Length + 4];
+                    string[] newColNames = new string[_actualColNames.Length + 5];
                     for (int i = 0; i < _actualColNames.Length; i++)
                     {
                         newColNames[i] = _actualColNames[i];
                     }
                     //new cols changed by algo
-                    newColNames[_actualColNames.Length] = "accuracy";
-                    newColNames[_actualColNames.Length + 1] = "qtm";
-                    newColNames[_actualColNames.Length + 2] = "qtl";
-                    newColNames[_actualColNames.Length + 3] = "qtu";
+                    newColNames[_actualColNames.Length] = "mse";
+                    newColNames[_actualColNames.Length + 1] = "accuracy";
+                    newColNames[_actualColNames.Length + 2] = "qtm";
+                    newColNames[_actualColNames.Length + 3] = "qtl";
+                    newColNames[_actualColNames.Length + 4] = "qtu";
                     _actualColNames = newColNames;
                     CalculatorHelpers.SetIndMathResult(sb, _actualColNames, rowNames, DataResults);
                 }
@@ -576,6 +330,7 @@ namespace DevTreks.Extensions.Algorithms
         private double[][] hoWeights; // hidden-output
         private double[] oBiases;
         private double[] oNodes;
+        public double MSE;
 
         private Random rnd;
 
@@ -596,7 +351,10 @@ namespace DevTreks.Extensions.Algorithms
             this.oNodes = new double[numOutput];
 
             this.rnd = new Random(0);
-            this.InitializeWeights(); // all weights and biases
+            // all weights and biases
+            this.InitializeWeights();
+            //mean squared error
+            this.MSE = 0;
         } // ctor
 
         private static double[][] MakeMatrix(int rows,
@@ -630,8 +388,8 @@ namespace DevTreks.Extensions.Algorithms
               (numHidden * numOutput) + numHidden + numOutput;
             if (weights.Length != numWeights)
                 throw new Exception("Bad weights array in SetWeights");
-
-            int k = 0; // points into weights param
+            // points into weights param
+            int k = 0; 
 
             for (int i = 0; i < numInput; ++i)
                 for (int j = 0; j < numHidden; ++j)
@@ -666,32 +424,35 @@ namespace DevTreks.Extensions.Algorithms
 
         public double[] ComputeOutputs(double[] xValues)
         {
-            double[] hSums = new double[numHidden]; // hidden nodes sums scratch array
-            double[] oSums = new double[numOutput]; // output nodes sums
-
-            for (int i = 0; i < xValues.Length; ++i) // copy x-values to inputs
+            // hidden nodes sums scratch array
+            double[] hSums = new double[numHidden];
+            // output nodes sums
+            double[] oSums = new double[numOutput];
+            // copy x-values to inputs
+            for (int i = 0; i < xValues.Length; ++i) 
                 this.iNodes[i] = xValues[i];
-
-            for (int j = 0; j < numHidden; ++j)  // compute i-h sum of weights * inputs
+            // compute i-h sum of weights * inputs
+            for (int j = 0; j < numHidden; ++j)  
                 for (int i = 0; i < numInput; ++i)
                     hSums[j] += this.iNodes[i] * this.ihWeights[i][j]; // note +=
-
-            for (int i = 0; i < numHidden; ++i)  // add biases to hidden sums
+            // add biases to hidden sums
+            for (int i = 0; i < numHidden; ++i)  
                 hSums[i] += this.hBiases[i];
-
-            for (int i = 0; i < numHidden; ++i)   // apply activation
-                this.hNodes[i] = HyperTan(hSums[i]); // hard-coded
-
-            for (int j = 0; j < numOutput; ++j)   // compute h-o sum of weights * hOutputs
+            // apply activation
+            for (int i = 0; i < numHidden; ++i)
+                // hard-coded
+                this.hNodes[i] = HyperTan(hSums[i]);
+            // compute h-o sum of weights * hOutputs
+            for (int j = 0; j < numOutput; ++j)  
                 for (int i = 0; i < numHidden; ++i)
                     oSums[j] += hNodes[i] * hoWeights[i][j];
-
-            for (int i = 0; i < numOutput; ++i)  // add biases to output sums
+            // add biases to output sums
+            for (int i = 0; i < numOutput; ++i)  
                 oSums[i] += oBiases[i];
+            // really only 1 value
+            Array.Copy(oSums, this.oNodes, oSums.Length);  
 
-            Array.Copy(oSums, this.oNodes, oSums.Length);  // really only 1 value
-
-            double[] retResult = new double[numOutput]; // could define a GetOutputs 
+            double[] retResult = new double[numOutput]; 
             Array.Copy(this.oNodes, retResult, retResult.Length);
             return retResult;
         }
@@ -715,14 +476,18 @@ namespace DevTreks.Extensions.Algorithms
         {
             // train using back-prop
             // back-prop specific arrays
-            double[][] hoGrads = MakeMatrix(numHidden, numOutput, 0.0); // hidden-to-output weight gradients
-            double[] obGrads = new double[numOutput];                   // output bias gradients
-
-            double[][] ihGrads = MakeMatrix(numInput, numHidden, 0.0);  // input-to-hidden weight gradients
-            double[] hbGrads = new double[numHidden];                   // hidden bias gradients
-
-            double[] oSignals = new double[numOutput];                  // local gradient output signals
-            double[] hSignals = new double[numHidden];                  // local gradient hidden node signals
+            // hidden-to-output weight gradients
+            double[][] hoGrads = MakeMatrix(numHidden, numOutput, 0.0);
+            // output bias gradients
+            double[] obGrads = new double[numOutput];
+            // input-to-hidden weight gradients
+            double[][] ihGrads = MakeMatrix(numInput, numHidden, 0.0);
+            // hidden bias gradients
+            double[] hbGrads = new double[numHidden];
+            // local gradient output signals
+            double[] oSignals = new double[numOutput];
+            // local gradient hidden node signals
+            double[] hSignals = new double[numHidden];                  
 
             int epoch = 0;
             double[] xValues = new double[numInput]; // inputs
@@ -733,23 +498,23 @@ namespace DevTreks.Extensions.Algorithms
             int[] sequence = new int[trainData.Length];
             for (int i = 0; i < sequence.Length; ++i)
                 sequence[i] = i;
-
-            int errInterval = maxEpochs / 5; // interval to check error
+            // interval to check error
+            int errInterval = maxEpochs / 5; 
             while (epoch < maxEpochs)
             {
                 ++epoch;
 
                 if (epoch % errInterval == 0 && epoch < maxEpochs)
                 {
-                    double trainErr = Error(trainData);
                     if (sb != null)
                     {
+                        double trainErr = Error(trainData);
                         sb.AppendLine("epoch = " + epoch + "  error = " +
                           trainErr.ToString("F4"));
                     }
                 }
-
-                Shuffle(sequence); // visit each training data in random order
+                // visit each training data in random order
+                Shuffle(sequence); 
                 for (int ii = 0; ii < trainData.Length; ++ii)
                 {
                     int idx = sequence[ii];
@@ -764,7 +529,8 @@ namespace DevTreks.Extensions.Algorithms
                     for (int k = 0; k < numOutput; ++k)
                     {
                         errorSignal = tValues[k] - oNodes[k];  // Wikipedia uses (o-t)
-                        derivative = 1.0;  // for Identity activation
+                        // for Identity activation
+                        derivative = 1.0;  
                         oSignals[k] = errorSignal * derivative;
                     }
 
@@ -852,20 +618,23 @@ namespace DevTreks.Extensions.Algorithms
             }
         } // Shuffle
 
-        private double Error(double[][] trainData)
+        public double Error(double[][] trainData)
         {
             // average squared error per training item
             double sumSquaredError = 0.0;
-            double[] xValues = new double[numInput]; // first numInput values in trainData
-            double[] tValues = new double[numOutput]; // last numOutput values
+            // first numInput values in trainData
+            double[] xValues = new double[numInput];
+            // last numOutput values
+            double[] tValues = new double[numOutput]; 
 
             // walk thru each training case. looks like (6.9 3.2 5.7 2.3) (0 0 1)
             for (int i = 0; i < trainData.Length; ++i)
             {
                 Array.Copy(trainData[i], xValues, numInput);
                 //always use dep var col[0]
-                Array.Copy(trainData[i], 0, tValues, 0, numOutput); // get target values
-                double[] yValues = this.ComputeOutputs(xValues); // outputs using current weights
+                Array.Copy(trainData[i], 0, tValues, 0, numOutput);
+                // outputs using current weights
+                double[] yValues = this.ComputeOutputs(xValues); 
                 for (int j = 0; j < numOutput; ++j)
                 {
                     double err = tValues[j] - yValues[j];
@@ -886,19 +655,23 @@ namespace DevTreks.Extensions.Algorithms
 
             for (int i = 0; i < testData.Length; ++i)
             {
-                Array.Copy(testData[i], xValues, numInput); // get x-values
+                // get x-values
+                Array.Copy(testData[i], xValues, numInput);
+                // get t-values
                 //always use dep var col[0]
-                Array.Copy(testData[i], 0, tValues, 0, numOutput); // get t-values
+                Array.Copy(testData[i], 0, tValues, 0, numOutput); 
                 yValues = this.ComputeOutputs(xValues);
-
-                if (Math.Abs(yValues[0] - tValues[0]) < howClose)  // within 30
+                // howclose is passed in training dataset
+                if (Math.Abs(yValues[0] - tValues[0]) < howClose)
+                {
                     ++numCorrect;
+                }
                 else
+                {
                     ++numWrong;
-
+                }
             }
             return (numCorrect * 1.0) / (numCorrect + numWrong);
         }
-
     } // class NeuralNetwork2
 }

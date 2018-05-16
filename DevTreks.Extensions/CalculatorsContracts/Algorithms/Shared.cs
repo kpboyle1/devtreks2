@@ -597,6 +597,22 @@ namespace DevTreks.Extensions.Algorithms
             }
             return normTypes;
         }
+        public static List<string> FixNormTypes(List<string> normTypes, int colCount)
+        {
+            List<string> fullNormTypes = new List<string>();
+            for (int i = 0; i < colCount; i++)
+            {
+                if (normTypes.Count > i)
+                {
+                    fullNormTypes.Add(normTypes[i]);
+                }
+                else
+                {
+                    fullNormTypes.Add("none");
+                }
+            }
+            return fullNormTypes;
+        }
         public static List<string> GetActualColNames(string[] colNames, string[] dataColNames)
         {
             List<string> actualColNames = new List<string>();
@@ -1533,6 +1549,138 @@ namespace DevTreks.Extensions.Algorithms
             }
             return trainDB;
         }
+        public static string[][] MakeInputSData(List<List<string>> trainData, int numItems,
+            IndicatorQT1 qt1, int numInput)
+        {
+
+            // make the result matrix holder (now first index is row)
+            string[][] result = new string[numItems][];
+            for (int r = 0; r < numItems; ++r)
+                // allocate the cols
+                result[r] = new string[numInput];
+            string sInput = string.Empty;
+            for (int r = 0; r < numItems; ++r)
+            {
+                string[] inputs = new string[numInput];
+                if ((trainData.Count + 1) > numInput)
+                {
+                    for (int i = 0; i < numInput; ++i)
+                    {
+                        //skip col[0]
+                        sInput = trainData[i + 1][r];
+                        inputs[i] = sInput;
+                    }
+                    int c = 0;
+                    for (int i = 0; i < numInput; ++i)
+                        result[r][c++] = inputs[i];
+                }
+            }
+            return result;
+        }
+        public static string[][] MakeSData(List<List<string>> trainData, int numItems,
+            IndicatorQT1 qt1)
+        {
+            //reverses rows and cols for std ml datasets
+            int iAllColsCount = trainData.Count;
+            // make the result matrix holder (now first index is row)
+            string[][] result = new string[numItems][];
+            for (int r = 0; r < numItems; ++r)
+                // allocate the cols
+                result[r] = new string[iAllColsCount];
+            string sInput = string.Empty;
+            for (int r = 0; r < numItems; ++r)
+            {
+                for (int i = 0; i < iAllColsCount; ++i)
+                {
+                    result[r][i] = trainData[i][r];
+                }
+            }
+            return result;
+        }
+        public static int[][] GetInputs(int[][] alls)
+        {
+            int iNumRows = alls.Length;
+            int iNumCols = alls[0].Length;
+            int[][] inputs = new int[iNumRows][];
+            List<int> rowData = new List<int>();
+            for (int r = 0; r < iNumRows; ++r)
+            {
+                rowData = new List<int>();
+                for (int c = 1; c < iNumCols; ++c)
+                {
+                    rowData.Add(alls[r][c]);
+                }
+                inputs[r] = rowData.ToArray();
+            }
+            return inputs;
+        }
+        public static int[] GetOutputs(int[][] alls)
+        {
+            int iNumRows = alls.Length;
+            int iNumCols = alls[0].Length;
+            int[] outputs = new int[iNumRows];
+            List<int> rowData = new List<int>();
+            for (int r = 0; r < iNumRows; ++r)
+            {
+                rowData.Add(alls[r][0]);
+                outputs[r] = alls[r][0];
+            }
+            return outputs;
+        }
+        public static double[][] MakeInputDData(List<List<double>> trainData, int numItems,
+            IndicatorQT1 qt1, int numInput)
+        {
+            // make the result matrix holder (now first index is row)
+            double[][] result = new double[numItems][];
+            for (int r = 0; r < numItems; ++r)
+                // allocate the cols
+                result[r] = new double[numInput];
+            double dbInput = 0;
+            for (int r = 0; r < numItems; ++r)
+            {
+                double[] inputs = new double[numInput];
+                if ((trainData.Count + 1) > numInput)
+                {
+                    for (int i = 0; i < numInput; ++i)
+                    {
+                        //skip col[0]
+                        dbInput = trainData[i + 1][r];
+                        inputs[i] = dbInput;
+                    }
+                    int c = 0;
+                    for (int i = 0; i < numInput; ++i)
+                        result[r][c++] = inputs[i];
+                }
+            }
+            return result;
+        }
+        //public static string[][] MakeInputIData(List<List<string>> trainData, int numItems,
+        //    IndicatorQT1 qt1, int numInput)
+        //{
+        //    // make the result matrix holder (now first index is row)
+        //    int[][] result = new int[numItems][];
+        //    for (int r = 0; r < numItems; ++r)
+        //        // allocate the cols
+        //        result[r] = new int[numInput];
+        //    double dbInput = 0;
+        //    for (int r = 0; r < numItems; ++r)
+        //    {
+        //        double[] inputs = new double[numInput];
+        //        if ((trainData.Count + 1) > numInput)
+        //        {
+        //            for (int i = 0; i < numInput; ++i)
+        //            {
+        //                //skip col[0]
+        //                dbInput = trainData[i + 1][r];
+        //                inputs[i] = dbInput;
+        //            }
+        //            int c = 0;
+        //            for (int i = 0; i < numInput; ++i)
+        //                result[r][c++] = inputs[i];
+        //        }
+        //    }
+        //    return result;
+        //}
         public static double GetScaledData(double inLo, double inHi, double input)
         {
             double dbScaledInput = (inHi - inLo) * input + inLo;
@@ -1918,7 +2066,7 @@ namespace DevTreks.Extensions.Algorithms
         public static int GetRowCount(int iterations, int testCount)
         {
             int iRowCount = (iterations > 0) ? iterations : testCount;
-            iRowCount = (testCount < iRowCount) ? iRowCount : 2000;
+            //iRowCount = (testCount < iRowCount) ? iRowCount : testCount;
             return iRowCount;
         }
     }

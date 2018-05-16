@@ -202,9 +202,15 @@ namespace DevTreks.Extensions.SB1Statistics
             string sPlatForm = CalculatorHelpers.GetPlatform(this.CalcParameters.ExtensionDocToCalcURI, dataURL2);
             if (sPlatForm == CalculatorHelpers.PLATFORM_TYPES.azure.ToString())
             {
-                if (this.HasMathType(qt1.Label, MATH_TYPES.algorithm4))
+                if (this.HasMathType(qt1.Label, MATH_TYPES.algorithm1))
                 {
                     //if its a good calc returns the string
+                    algoindicator = await SetMLIndicatorStats(qt1,
+                        colNames, data1, colData, data2);
+                }
+                else if (this.HasMathType(qt1.Label, MATH_TYPES.algorithm4))
+                {
+                    //hold off until 216
                     //algoindicator = await SetScriptCloudStats(label, colNames, dataURL, scriptURL);
                 }
             }
@@ -228,9 +234,11 @@ namespace DevTreks.Extensions.SB1Statistics
             List<List<string>> data1, List<List<string>> colData, List<List<string>> data2)
         {
             string algoIndicator = string.Empty;
-            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), this.SB1CILevel.ToString(), Errors.GetMessage("CI_PCT"));
-            //IndicatorQT1 qt1 = FillIndicator(label, );
+            int iCILevel = this.SB1CILevel;
+            int iIterations = this.SB1Iterations;
+            int iRndSeed = this.SB1Random;
+            string sLowerCI = string.Concat(Errors.GetMessage("LOWER"), iCILevel.ToString(), Errors.GetMessage("CI_PCT"));
+            string sUpperCI = string.Concat(Errors.GetMessage("UPPER"), iCILevel.ToString(), Errors.GetMessage("CI_PCT"));
             //mathterms define which qamount to send to algorith for predicting a given set of qxs
             List<string> mathTerms = new List<string>();
             //dependent var colNames found in MathExpression
@@ -243,8 +251,8 @@ namespace DevTreks.Extensions.SB1Statistics
                 //init algo
                 DevTreks.Extensions.Algorithms.ML01 ml 
                     = new Algorithms.ML01(this.IndicatorIndex, qt1.Label,
-                        mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType, 
-                        this.SB1CILevel, this.SB1Iterations, this.SB1Random,
+                        mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType,
+                        iCILevel, iIterations, iRndSeed,
                         qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
@@ -256,7 +264,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.ML02 ml
                     = new Algorithms.ML02(this.IndicatorIndex, qt1.Label,
                         mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType,
-                        this.SB1CILevel, this.SB1Iterations, this.SB1Random,
+                        iCILevel, iIterations, iRndSeed,
                         qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
@@ -268,7 +276,7 @@ namespace DevTreks.Extensions.SB1Statistics
                 DevTreks.Extensions.Algorithms.ML03 ml
                     = new Algorithms.ML03(this.IndicatorIndex, qt1.Label,
                         mathTerms.ToArray(), colNames, depColNames.ToArray(), qt1.QMathSubType,
-                        this.SB1CILevel, this.SB1Iterations, this.SB1Random,
+                        iCILevel, iIterations, iRndSeed,
                         qt1, this.CalcParameters);
                 //run algo
                 bHasCalcs = await ml.RunAlgorithmAsync(data1, colData, data2);
@@ -844,6 +852,8 @@ namespace DevTreks.Extensions.SB1Statistics
             if (label == _score
                 && HasMathExpression(this.SB1ScoreMathExpression))
             {
+                //label2 doesn't exist in this ui
+                //baseCalculator.Label2
                 qt = new IndicatorQT1(baseCalculator, _score, this.SB1ScoreM, this.SB1ScoreLAmount, SB1ScoreUAmount,
                     this.SB1Score, this.SB1ScoreD1Amount, this.SB1ScoreD2Amount, this.SB1ScoreMUnit, this.SB1ScoreLUnit, this.SB1ScoreUUnit,
                     this.SB1ScoreUnit, this.SB1ScoreD1Unit, this.SB1ScoreD2Unit, this.SB1ScoreMathType, this.SB1ScoreMathSubType,
@@ -853,6 +863,8 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label1
                 && HasMathExpression(this.SB1MathExpression1))
             {
+                //version 2.1.4 started using Label2 to specify stat library to use with ml algos
+                baseCalculator.Label2 = this.SB1RelLabel1;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label1, this.SB1TMAmount1, this.SB1TLAmount1, SB1TUAmount1,
                     this.SB1TAmount1, this.SB1TD1Amount1, this.SB1TD2Amount1, this.SB1TMUnit1, this.SB1TLUnit1, this.SB1TUUnit1,
                     this.SB1TUnit1, this.SB1TD1Unit1, this.SB1TD2Unit1, this.SB1MathType1, this.SB1MathSubType1,
@@ -863,6 +875,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label2
                 && HasMathExpression(this.SB1MathExpression2))
             {
+                baseCalculator.Label2 = this.SB1RelLabel2;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label2, this.SB1TMAmount2, this.SB1TLAmount2, SB1TUAmount2,
                     this.SB1TAmount2, this.SB1TD1Amount2, this.SB1TD2Amount2, this.SB1TMUnit2, this.SB1TLUnit2, this.SB1TUUnit2,
                     this.SB1TUnit2, this.SB1TD1Unit2, this.SB1TD2Unit2, this.SB1MathType2, this.SB1MathSubType2,
@@ -873,6 +886,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label3
                 && HasMathExpression(this.SB1MathExpression3))
             {
+                baseCalculator.Label2 = this.SB1RelLabel3;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label3, this.SB1TMAmount3, this.SB1TLAmount3, SB1TUAmount3,
                     this.SB1TAmount3, this.SB1TD1Amount3, this.SB1TD2Amount3, this.SB1TMUnit3, this.SB1TLUnit3, this.SB1TUUnit3,
                     this.SB1TUnit3, this.SB1TD1Unit3, this.SB1TD2Unit3, this.SB1MathType3, this.SB1MathSubType3,
@@ -883,6 +897,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label4
                 && HasMathExpression(this.SB1MathExpression4))
             {
+                baseCalculator.Label2 = this.SB1RelLabel4;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label4, this.SB1TMAmount4, this.SB1TLAmount4, SB1TUAmount4,
                     this.SB1TAmount4, this.SB1TD1Amount4, this.SB1TD2Amount4, this.SB1TMUnit4, this.SB1TLUnit4, this.SB1TUUnit4,
                     this.SB1TUnit4, this.SB1TD1Unit4, this.SB1TD2Unit4, this.SB1MathType4, this.SB1MathSubType4,
@@ -893,6 +908,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label5
                 && HasMathExpression(this.SB1MathExpression5))
             {
+                baseCalculator.Label2 = this.SB1RelLabel5;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label5, this.SB1TMAmount5, this.SB1TLAmount5, SB1TUAmount5,
                     this.SB1TAmount5, this.SB1TD1Amount5, this.SB1TD2Amount5, this.SB1TMUnit5, this.SB1TLUnit5, this.SB1TUUnit5,
                     this.SB1TUnit5, this.SB1TD1Unit5, this.SB1TD2Unit5, this.SB1MathType5, this.SB1MathSubType5,
@@ -903,6 +919,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label6
                 && HasMathExpression(this.SB1MathExpression6))
             {
+                baseCalculator.Label2 = this.SB1RelLabel6;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label6, this.SB1TMAmount6, this.SB1TLAmount6, SB1TUAmount6,
                     this.SB1TAmount6, this.SB1TD1Amount6, this.SB1TD2Amount6, this.SB1TMUnit6, this.SB1TLUnit6, this.SB1TUUnit6,
                     this.SB1TUnit6, this.SB1TD1Unit6, this.SB1TD2Unit6, this.SB1MathType6, this.SB1MathSubType6,
@@ -913,6 +930,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label7
                 && HasMathExpression(this.SB1MathExpression7))
             {
+                baseCalculator.Label2 = this.SB1RelLabel7;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label7, this.SB1TMAmount7, this.SB1TLAmount7, SB1TUAmount7,
                     this.SB1TAmount7, this.SB1TD1Amount7, this.SB1TD2Amount7, this.SB1TMUnit7, this.SB1TLUnit7, this.SB1TUUnit7,
                     this.SB1TUnit7, this.SB1TD1Unit7, this.SB1TD2Unit7, this.SB1MathType7, this.SB1MathSubType7,
@@ -923,6 +941,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label8
                 && HasMathExpression(this.SB1MathExpression8))
             {
+                baseCalculator.Label2 = this.SB1RelLabel8;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label8, this.SB1TMAmount8, this.SB1TLAmount8, SB1TUAmount8,
                     this.SB1TAmount8, this.SB1TD1Amount8, this.SB1TD2Amount8, this.SB1TMUnit8, this.SB1TLUnit8, this.SB1TUUnit8,
                     this.SB1TUnit8, this.SB1TD1Unit8, this.SB1TD2Unit8, this.SB1MathType8, this.SB1MathSubType8,
@@ -933,6 +952,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label9
                 && HasMathExpression(this.SB1MathExpression9))
             {
+                baseCalculator.Label2 = this.SB1RelLabel9;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label9, this.SB1TMAmount9, this.SB1TLAmount9, SB1TUAmount9,
                     this.SB1TAmount9, this.SB1TD1Amount9, this.SB1TD2Amount9, this.SB1TMUnit9, this.SB1TLUnit9, this.SB1TUUnit9,
                     this.SB1TUnit9, this.SB1TD1Unit9, this.SB1TD2Unit9, this.SB1MathType9, this.SB1MathSubType9,
@@ -943,6 +963,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label10
                 && HasMathExpression(this.SB1MathExpression10))
             {
+                baseCalculator.Label2 = this.SB1RelLabel10;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label10, this.SB1TMAmount10, this.SB1TLAmount10, SB1TUAmount10,
                     this.SB1TAmount10, this.SB1TD1Amount10, this.SB1TD2Amount10, this.SB1TMUnit10, this.SB1TLUnit10, this.SB1TUUnit10,
                     this.SB1TUnit10, this.SB1TD1Unit10, this.SB1TD2Unit10, this.SB1MathType10, this.SB1MathSubType10,
@@ -953,6 +974,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label11
                 && HasMathExpression(this.SB1MathExpression11))
             {
+                baseCalculator.Label2 = this.SB1RelLabel11;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label11, this.SB1TMAmount11, this.SB1TLAmount11, SB1TUAmount11,
                     this.SB1TAmount11, this.SB1TD1Amount11, this.SB1TD2Amount11, this.SB1TMUnit11, this.SB1TLUnit11, this.SB1TUUnit11,
                     this.SB1TUnit11, this.SB1TD1Unit11, this.SB1TD2Unit11, this.SB1MathType11, this.SB1MathSubType11,
@@ -963,6 +985,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label12
                 && HasMathExpression(this.SB1MathExpression12))
             {
+                baseCalculator.Label2 = this.SB1RelLabel12;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label12, this.SB1TMAmount12, this.SB1TLAmount12, SB1TUAmount12,
                     this.SB1TAmount12, this.SB1TD1Amount12, this.SB1TD2Amount12, this.SB1TMUnit12, this.SB1TLUnit12, this.SB1TUUnit12,
                     this.SB1TUnit12, this.SB1TD1Unit12, this.SB1TD2Unit12, this.SB1MathType12, this.SB1MathSubType12,
@@ -973,6 +996,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label13
                 && HasMathExpression(this.SB1MathExpression13))
             {
+                baseCalculator.Label2 = this.SB1RelLabel13;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label13, this.SB1TMAmount13, this.SB1TLAmount13, SB1TUAmount13,
                     this.SB1TAmount13, this.SB1TD1Amount13, this.SB1TD2Amount13, this.SB1TMUnit13, this.SB1TLUnit13, this.SB1TUUnit13,
                     this.SB1TUnit13, this.SB1TD1Unit13, this.SB1TD2Unit13, this.SB1MathType13, this.SB1MathSubType13,
@@ -983,6 +1007,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label14
                 && HasMathExpression(this.SB1MathExpression14))
             {
+                baseCalculator.Label2 = this.SB1RelLabel14;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label14, this.SB1TMAmount14, this.SB1TLAmount14, SB1TUAmount14,
                     this.SB1TAmount14, this.SB1TD1Amount14, this.SB1TD2Amount14, this.SB1TMUnit14, this.SB1TLUnit14, this.SB1TUUnit14,
                     this.SB1TUnit14, this.SB1TD1Unit14, this.SB1TD2Unit14, this.SB1MathType14, this.SB1MathSubType14,
@@ -993,6 +1018,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label15
                 && HasMathExpression(this.SB1MathExpression15))
             {
+                baseCalculator.Label2 = this.SB1RelLabel15;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label15, this.SB1TMAmount15, this.SB1TLAmount15, SB1TUAmount15,
                     this.SB1TAmount15, this.SB1TD1Amount15, this.SB1TD2Amount15, this.SB1TMUnit15, this.SB1TLUnit15, this.SB1TUUnit15,
                     this.SB1TUnit15, this.SB1TD1Unit15, this.SB1TD2Unit15, this.SB1MathType15, this.SB1MathSubType15,
@@ -1003,6 +1029,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label16
                 && HasMathExpression(this.SB1MathExpression16))
             {
+                baseCalculator.Label2 = this.SB1RelLabel16;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label16, this.SB1TMAmount16, this.SB1TLAmount16, SB1TUAmount16,
                     this.SB1TAmount16, this.SB1TD1Amount16, this.SB1TD2Amount16, this.SB1TMUnit16, this.SB1TLUnit16, this.SB1TUUnit16,
                     this.SB1TUnit16, this.SB1TD1Unit16, this.SB1TD2Unit16, this.SB1MathType16, this.SB1MathSubType16,
@@ -1013,6 +1040,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label17
                 && HasMathExpression(this.SB1MathExpression17))
             {
+                baseCalculator.Label2 = this.SB1RelLabel17;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label17, this.SB1TMAmount17, this.SB1TLAmount17, SB1TUAmount17,
                     this.SB1TAmount17, this.SB1TD1Amount17, this.SB1TD2Amount17, this.SB1TMUnit17, this.SB1TLUnit17, this.SB1TUUnit17,
                     this.SB1TUnit17, this.SB1TD1Unit17, this.SB1TD2Unit17, this.SB1MathType17, this.SB1MathSubType17,
@@ -1023,6 +1051,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label18
                 && HasMathExpression(this.SB1MathExpression18))
             {
+                baseCalculator.Label2 = this.SB1RelLabel18;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label18, this.SB1TMAmount18, this.SB1TLAmount18, SB1TUAmount18,
                     this.SB1TAmount18, this.SB1TD1Amount18, this.SB1TD2Amount18, this.SB1TMUnit18, this.SB1TLUnit18, this.SB1TUUnit18,
                     this.SB1TUnit18, this.SB1TD1Unit18, this.SB1TD2Unit18, this.SB1MathType18, this.SB1MathSubType18,
@@ -1033,6 +1062,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label19
                 && HasMathExpression(this.SB1MathExpression19))
             {
+                baseCalculator.Label2 = this.SB1RelLabel19;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label19, this.SB1TMAmount19, this.SB1TLAmount19, SB1TUAmount19,
                     this.SB1TAmount19, this.SB1TD1Amount19, this.SB1TD2Amount19, this.SB1TMUnit19, this.SB1TLUnit19, this.SB1TUUnit19,
                     this.SB1TUnit19, this.SB1TD1Unit19, this.SB1TD2Unit19, this.SB1MathType19, this.SB1MathSubType19,
@@ -1043,6 +1073,7 @@ namespace DevTreks.Extensions.SB1Statistics
             else if (label == this.SB1Label20
                 && HasMathExpression(this.SB1MathExpression20))
             {
+                baseCalculator.Label2 = this.SB1RelLabel20;
                 qt = new IndicatorQT1(baseCalculator, this.SB1Label20, this.SB1TMAmount20, this.SB1TLAmount20, SB1TUAmount20,
                     this.SB1TAmount20, this.SB1TD1Amount20, this.SB1TD2Amount20, this.SB1TMUnit20, this.SB1TLUnit20, this.SB1TUUnit20,
                     this.SB1TUnit20, this.SB1TD1Unit20, this.SB1TD2Unit20, this.SB1MathType20, this.SB1MathSubType20,
