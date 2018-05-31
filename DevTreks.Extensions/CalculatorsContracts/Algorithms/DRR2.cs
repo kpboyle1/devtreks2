@@ -12,7 +12,7 @@ namespace DevTreks.Extensions.Algorithms
     /// <summary>
     ///Purpose:		DRR2 algorithm
     ///Author:		www.devtreks.org
-    ///Date:		2018, March
+    ///Date:		2018, May
     ///References:	CTA algo1, CTAP subalgo 9, 10, 11, 12, RCA subalgo 13, 14, 15, 16, 17, 18
     ///</summary>
     public class DRR2 : DRR1
@@ -6348,8 +6348,8 @@ namespace DevTreks.Extensions.Algorithms
                 //11, 12, and 13 don't change
                 //ColNames[11] = "quantity";
             }
-            //sb.AppendLine(GetColumnNameRow());
-            
+            //214 bug fix: 214 release mistakenly commented out this line 
+            sb.AppendLine(GetColumnNameRow());
             if (IndicatorIndex == 5
                 || (_subalgorithm == MATH_SUBTYPES.subalgorithm11.ToString()
                 && IndicatorIndex == 2)
@@ -6392,57 +6392,7 @@ namespace DevTreks.Extensions.Algorithms
             bHasSet = true;
             return bHasSet;
         }
-        //private void SetIndMathResult(StringBuilder sb,  
-        //    List<List<string>> rowNames)
-        //{
-        //    StringBuilder rb = new StringBuilder();
-        //    int iRowCount = 0;
-        //    int iColCount = 0;
-        //    foreach (var row in rowNames)
-        //    {
-        //        iColCount = 0;
-        //        string sRowName = string.Empty;
-        //        foreach (var colc in row)
-        //        {
-        //            sRowName = colc;
-        //            rb.Append(string.Concat(sRowName, Constants.CSV_DELIMITER));
-        //        }
-        //        if (DataResults.Count() > iRowCount)
-        //        {
-        //            var resultrow = DataResults[iRowCount];
-        //            iColCount = 0;
-        //            foreach (var resultcolumn in resultrow)
-        //            {
-        //                if (!string.IsNullOrEmpty(resultcolumn))
-        //                {
-        //                    if (iColCount == resultrow.Count - 1)
-        //                    {
-        //                        rb.Append(resultcolumn.ToString());
-        //                    }
-        //                    else
-        //                    {
-        //                        rb.Append(string.Concat(resultcolumn.ToString(), Constants.CSV_DELIMITER));
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    if (iColCount == resultrow.Count - 1)
-        //                    {
-        //                        rb.Append(Constants.NONE);
-        //                    }
-        //                    else
-        //                    {
-        //                        rb.Append(string.Concat(Constants.NONE, Constants.CSV_DELIMITER));
-        //                    }
-        //                }
-        //                iColCount++;
-        //            }
-        //        }
-        //        sb.AppendLine(rb.ToString());
-        //        rb = new StringBuilder();
-        //        iRowCount++;
-        //    }
-        //}
+       
         private void SetInd5MathResult(StringBuilder sb, List<List<string>> rowNames)
         {
             StringBuilder rb = new StringBuilder();
@@ -6451,14 +6401,6 @@ namespace DevTreks.Extensions.Algorithms
             int iCount = 0;
             int iRNIndex = 0;
             int iRateIndex = 0;
-            //214: bug hack: why does DatSet2 have no error checking, and why can it break an algorithm when it's use is so inconsequential here
-            if (DataSet2 != null)
-            {
-                if (DataSet2.Count <= 0)
-                {
-                    IndicatorQT.ErrorMessage = "The Math Result could not be displayed because of a bug with the dataset holding interest rates and life spans.";
-                }
-            }
             for (int i = 0; i < DataResults.Count; i++)
             {
                 if (RowNameIndex.Count > i)

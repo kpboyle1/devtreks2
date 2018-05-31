@@ -1398,7 +1398,8 @@ namespace DevTreks.Extensions.Algorithms
                                     {
                                         if (alternLineRows.Count > 0)
                                         {
-                                            if (i == 0 && r == 0 && l == 0)
+                                            //214 debug replaced condition: if (i == 0 && r == 0 && l == 0)
+                                            if (BCRs.Count == 0)
                                             {
                                                 sb.AppendLine(GetBCHeaderRow(sLabel, alternLineRows));
                                                 //196 sorts for best cumulative bcr
