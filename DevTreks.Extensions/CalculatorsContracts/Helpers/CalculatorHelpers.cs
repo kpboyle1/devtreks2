@@ -4684,10 +4684,8 @@ namespace DevTreks.Extensions
             StringBuilder rb = new StringBuilder();
             sb.AppendLine(GetColumnNameRow(colNames));
             int iRowCount = 0;
-            int iColCount = 0;
             foreach (var row in rowNames)
             {
-                iColCount = 0;
                 string sRowName = string.Empty;
                 foreach (var colc in row)
                 {

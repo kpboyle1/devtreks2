@@ -6348,8 +6348,6 @@ namespace DevTreks.Extensions.Algorithms
                 //11, 12, and 13 don't change
                 //ColNames[11] = "quantity";
             }
-            //214 bug fix: 214 release mistakenly commented out this line 
-            sb.AppendLine(GetColumnNameRow());
             if (IndicatorIndex == 5
                 || (_subalgorithm == MATH_SUBTYPES.subalgorithm11.ToString()
                 && IndicatorIndex == 2)
@@ -6367,6 +6365,8 @@ namespace DevTreks.Extensions.Algorithms
                 }
                 else
                 {
+                    //214 bug fix: 214 release mistakenly left out this line
+                    sb.AppendLine(GetColumnNameRow());
                     SetInd5MathResult(sb, rowNames);
                 }
             }

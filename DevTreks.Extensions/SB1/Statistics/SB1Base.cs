@@ -45,6 +45,7 @@ namespace DevTreks.Extensions
         //don't analyze more than this.CalcParameters.UrisToAnalyze inds
         public string[] _indicators = new string[] { };
         public const string _score = "score";
+        //indicatorindex is not passed to all functions
         public int IndicatorIndex = -1;
         //minus 1 because ++ syntax inits with jdata[0]
         private int _dataIndex = -1;
@@ -14026,6 +14027,8 @@ namespace DevTreks.Extensions
                 {
                     //convention is to use score = 0
                     indicatorIndex = 0;
+                    //214 released bug left this out (indicatorindex isn't passsed to all functions)
+                    IndicatorIndex = 0;
                     //214: Score.URL = joint data url (so Score.DataURL now holds joint data, but has been deprecated)
                     qt1 = algos.FillIndicator(_score, this);
                     sAlgo = await ProcessIndicators(indicatorIndex, this.SB1JointDataURL, qt1);
@@ -14175,7 +14178,7 @@ namespace DevTreks.Extensions
                 }
                 sAlgo = await ProcessAlgosAsync2(qt1, sScriptURL, sDataURL);
             }
-            else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm5, MATH_SUBTYPES.subalgorithm1))
             {
                 //properties filled in manually
                 _indicators = GetIndicatorsDisplay();
@@ -14213,8 +14216,8 @@ namespace DevTreks.Extensions
                 _indicators = GetIndicators(indicatorscsvs);
                 bHasCalculations = true;
             }
-            else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
             {
                 //these algos must have data urls
                 if (!string.IsNullOrEmpty(DataURL)
@@ -14238,8 +14241,8 @@ namespace DevTreks.Extensions
                     CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
                 }
             }
-            else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
             {
                 //these algos must have joint data urls with standard dataset format
                 if (!string.IsNullOrEmpty(this.SB1JointDataURL)
@@ -14262,9 +14265,9 @@ namespace DevTreks.Extensions
                     CalculatorDescription += string.Concat(" ", Errors.MakeStandardErrorMsg("DATAURL_MISSING"));
                 }
             }
-            else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
                 //these algos must have joint urls but these are not standard dataset format
                 if (!string.IsNullOrEmpty(this.SB1JointDataURL)
@@ -14317,14 +14320,14 @@ namespace DevTreks.Extensions
             if (!string.IsNullOrEmpty(this.SB1JointDataURL)
                 && (this.SB1JointDataURL != Constants.NONE))
             {
-                if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                    || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
+                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7))
                 {
                     return true;
                 }
-                else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                    || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                    || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+                else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
                 {
                     return true;
                 }
@@ -15172,10 +15175,10 @@ namespace DevTreks.Extensions
                 //reset the data
                 data = new Dictionary<string, List<List<double>>>();
                 //it's ok for subsequent datasets to overwrite previous results (by design)
-                if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
-                    || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
-                    || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
-                    || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
+                if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm5)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm6)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm7)
+                    || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm8))
                 {
                     //214 uses regular R and Python-style datasets for compatibility
                     data = GetDataSetRandPy(qt1.Label, lines);
@@ -15298,9 +15301,9 @@ namespace DevTreks.Extensions
             //this requires a 1 to 1 relation between dataurls and jointdataurls
             IDictionary<string, List<List<double>>> data = await GetDataSet1(dataURL);
             //has to replace the algo code above
-            if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
+            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm4))
             {
                 //the correlation matrixes make limitation on indicators to analyze difficult, so not implemented
                 algoindicators = await SetAlgoCorrStats(indicatorIndex, scriptURL, data);
@@ -15330,8 +15333,8 @@ namespace DevTreks.Extensions
             {
                 if (indicatorIndex == 3)
                 {
-                    if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                        || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12))
+                    if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12))
                     {
                         //ind 3 has the rmis
                         lines = GetMathResultLines(1);
@@ -15421,9 +15424,9 @@ namespace DevTreks.Extensions
                 }
                 else
                 {
-                    if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1,
+                    if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm11)
-                        || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1,
+                        || HasMathType(indicatorIndex, MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm12))
                     {
                         if (indicatorIndex == 2)
@@ -15431,7 +15434,7 @@ namespace DevTreks.Extensions
                             lines2 = GetDataLines(1, urls);
                         }
                     }
-                    else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1,
+                    else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1,
                         MATH_SUBTYPES.subalgorithm17))
                     {
                         //1st url is sdg and 2nd is pop
@@ -15454,14 +15457,14 @@ namespace DevTreks.Extensions
                     {
                         algoIndicator = string.Empty;
                         sLabel = ds.Key;
-                        if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14) 
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
-                            || HasMathType(IndicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
+                        if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm11)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm12)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm13)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm14) 
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm15)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm16)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm17)
+                            || HasMathType(indicatorIndex, MATH_TYPES.algorithm1, MATH_SUBTYPES.subalgorithm18))
                         {
                             if (indicatorIndex == 0)
                             {
@@ -15501,16 +15504,16 @@ namespace DevTreks.Extensions
             List<List<string>> data = new List<List<string>>();
             List<List<string>> data2 = new List<List<string>>();
             List<List<string>> colSet = new List<List<string>>();
-            if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm1))
+            if (HasMathType(indicatorIndex, MATH_TYPES.algorithm1))
             {
                 //training dataset
                 lines = await GetDataLinesAsync(dataURL1);
                 //test dataset
                 lines2 = await GetDataLinesAsync(dataURL2);
             }
-            else if (HasMathType(IndicatorIndex, MATH_TYPES.algorithm2)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm3)
-                || HasMathType(IndicatorIndex, MATH_TYPES.algorithm4))
+            else if (HasMathType(indicatorIndex, MATH_TYPES.algorithm2)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm3)
+                || HasMathType(indicatorIndex, MATH_TYPES.algorithm4))
             {
                 //wrong algorithm: they use ProcessAlgosAsync2 until more sophisticated algos built
                 this.CalculatorDescription += "Version 214 does not support subalgorithm_01 syntax for R or Python.";
